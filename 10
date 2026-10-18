@@ -1,0 +1,508 @@
+#EXTM3U url-tvg=http://wotom.net/jtv.zip tvg-logo=http://uplink.kz/Icons/ cache=Auto
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",QAZAQSTAN (base)
+http://fs.uplink.kz/qazaqstan/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",QAZAQSTAN (mono)
+https://fs.uplink.kz/qazaqstan/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",QAZAQSTAN (ts)
+https://fs.uplink.kz/qazaqstan/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",Алматы (base)
+http://fs.uplink.kz/almaty/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",Алматы (mono)
+https://fs.uplink.kz/almaty/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",Алматы (ts)
+https://fs.uplink.kz/almaty/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",Astana TV (base)
+http://fs.uplink.kz/astana/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",Astana TV (mono)
+https://fs.uplink.kz/astana/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",Astana TV (ts)
+https://fs.uplink.kz/astana/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",31 канал (base)
+http://fs.uplink.kz/31kanal/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",31 канал (mono)
+https://fs.uplink.kz/31kanal/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",31 канал (ts)
+https://fs.uplink.kz/31kanal/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",Jibek Joly (base)
+http://fs.uplink.kz/jibek_joly/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",Jibek Joly (mono)
+https://fs.uplink.kz/jibek_joly/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",Jibek Joly (ts)
+https://fs.uplink.kz/jibek_joly/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",КТК (base)
+http://fs.uplink.kz/ktk/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",КТК (mono)
+https://fs.uplink.kz/ktk/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",КТК (ts)
+https://fs.uplink.kz/ktk/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",24 KZ (base)
+http://fs.uplink.kz/24KZ/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",24 KZ (mono)
+https://fs.uplink.kz/24KZ/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",24 KZ (ts)
+https://fs.uplink.kz/24KZ/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",Туран ТВ (base)
+http://fs.uplink.kz/turan/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",Туран ТВ (mono)
+https://fs.uplink.kz/turan/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",Туран ТВ (ts)
+https://fs.uplink.kz/turan/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",ABAI TV (base)
+http://fs.uplink.kz/abai_tv/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",ABAI TV (mono)
+https://fs.uplink.kz/abai_tv/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Республиканские" tvg-logo="http://uplink.kz/Icons/",ABAI TV (ts)
+https://fs.uplink.kz/abai_tv/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",МИР (base)
+http://fs.uplink.kz/mir/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",МИР (mono)
+https://fs.uplink.kz/mir/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",МИР (ts)
+https://fs.uplink.kz/mir/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",Первый канал Евразия (base)
+http://fs.uplink.kz/perviy_kanal_evrasia/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",Первый канал Евразия (mono)
+https://fs.uplink.kz/perviy_kanal_evrasia/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",Первый канал Евразия (ts)
+https://fs.uplink.kz/perviy_kanal_evrasia/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",Первый канал СНГ (base)
+http://fs.uplink.kz/perviy_kanal_sng/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",Первый канал СНГ (mono)
+https://fs.uplink.kz/perviy_kanal_sng/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",Первый канал СНГ (ts)
+https://fs.uplink.kz/perviy_kanal_sng/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",Россия 24 (base)
+http://fs.uplink.kz/rossia_24/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",Россия 24 (mono)
+https://fs.uplink.kz/rossia_24/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",Россия 24 (ts)
+https://fs.uplink.kz/rossia_24/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",Россия К (base)
+http://fs.uplink.kz/rossia_k/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",Россия К (mono)
+https://fs.uplink.kz/rossia_k/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",Россия К (ts)
+https://fs.uplink.kz/rossia_k/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",РТР Планета (base)
+http://fs.uplink.kz/rtr_planeta/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",РТР Планета (mono)
+https://fs.uplink.kz/rtr_planeta/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",РТР Планета (ts)
+https://fs.uplink.kz/rtr_planeta/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",НТВ Мир (base)
+http://fs.uplink.kz/ntv_mir/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",НТВ Мир (mono)
+https://fs.uplink.kz/ntv_mir/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Информационные" tvg-logo="http://uplink.kz/Icons/",НТВ Мир (ts)
+https://fs.uplink.kz/ntv_mir/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",Алау (base)
+http://fs.uplink.kz/alau/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",Алау (mono)
+https://fs.uplink.kz/alau/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",Алау (ts)
+https://fs.uplink.kz/alau/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",QOSTANAI (base)
+http://fs.uplink.kz/qostanai/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",QOSTANAI (mono)
+https://fs.uplink.kz/qostanai/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",QOSTANAI (ts)
+https://fs.uplink.kz/qostanai/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",Валента HD (base)
+http://fs.uplink.kz/valenta_tv/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",Валента HD (mono)
+https://fs.uplink.kz/valenta_tv/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",Валента HD (ts)
+https://fs.uplink.kz/valenta_tv/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",Костанай-online (base)
+http://fs.uplink.kz/kostanay_online/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",Костанай-online (mono)
+https://fs.uplink.kz/kostanay_online/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",Костанай-online (ts)
+https://fs.uplink.kz/kostanay_online/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",ТехПоддержка (base)
+http://fs.uplink.kz/tehpodderzhka/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",ТехПоддержка (mono)
+https://fs.uplink.kz/tehpodderzhka/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Местные" tvg-logo="http://uplink.kz/Icons/",ТехПоддержка (ts)
+https://fs.uplink.kz/tehpodderzhka/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Музыкальные" tvg-logo="http://uplink.kz/Icons/",Шансон (base)
+http://fs.uplink.kz/shanson/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Музыкальные" tvg-logo="http://uplink.kz/Icons/",Шансон (mono)
+https://fs.uplink.kz/shanson/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Музыкальные" tvg-logo="http://uplink.kz/Icons/",Шансон (ts)
+https://fs.uplink.kz/shanson/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Музыкальные" tvg-logo="http://uplink.kz/Icons/",Музыка Первого (base)
+http://fs.uplink.kz/muzyka_pervogo/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Музыкальные" tvg-logo="http://uplink.kz/Icons/",Музыка Первого (mono)
+https://fs.uplink.kz/muzyka_pervogo/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Музыкальные" tvg-logo="http://uplink.kz/Icons/",Музыка Первого (ts)
+https://fs.uplink.kz/muzyka_pervogo/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",QAZSPORT HD (base)
+http://fs.uplink.kz/qazsport_hd/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",QAZSPORT HD (mono)
+https://fs.uplink.kz/qazsport_hd/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",QAZSPORT HD (ts)
+https://fs.uplink.kz/qazsport_hd/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Матч! Планета (base)
+http://fs.uplink.kz/match_planeta/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Матч! Планета (mono)
+https://fs.uplink.kz/match_planeta/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Матч! Планета (ts)
+https://fs.uplink.kz/match_planeta/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",KHL Prime HD (base)
+http://fs.uplink.kz/khl_prime/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",KHL Prime HD (mono)
+https://fs.uplink.kz/khl_prime/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",KHL Prime HD (ts)
+https://fs.uplink.kz/khl_prime/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",viju +sport (base)
+http://fs.uplink.kz/viasat_sport/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",viju +sport (mono)
+https://fs.uplink.kz/viasat_sport/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",viju +sport (ts)
+https://fs.uplink.kz/viasat_sport/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Setanta Sports 1 HD (base)
+http://fs.uplink.kz/setanta_sports_1_hd/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Setanta Sports 1 HD (mono)
+https://fs.uplink.kz/setanta_sports_1_hd/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Setanta Sports 1 HD (ts)
+https://fs.uplink.kz/setanta_sports_1_hd/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Setanta Sports 2 HD (base)
+http://fs.uplink.kz/setanta_sports_2_hd/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Setanta Sports 2 HD (mono)
+https://fs.uplink.kz/setanta_sports_2_hd/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Setanta Sports 2 HD (ts)
+https://fs.uplink.kz/setanta_sports_2_hd/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Точка отрыва (base)
+http://fs.uplink.kz/tochka_otriva/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Точка отрыва (mono)
+https://fs.uplink.kz/tochka_otriva/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Точка отрыва (ts)
+https://fs.uplink.kz/tochka_otriva/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Sport+ HD (base)
+http://fs.uplink.kz/sport+/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Sport+ HD (mono)
+https://fs.uplink.kz/sport+/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Спортивные" tvg-logo="http://uplink.kz/Icons/",Sport+ HD (ts)
+https://fs.uplink.kz/sport+/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",Da Vinci (base)
+http://fs.uplink.kz/da_vinci/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",Da Vinci (mono)
+https://fs.uplink.kz/da_vinci/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",Da Vinci (ts)
+https://fs.uplink.kz/da_vinci/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",Мульт (base)
+http://fs.uplink.kz/mult/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",Мульт (mono)
+https://fs.uplink.kz/mult/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",Мульт (ts)
+https://fs.uplink.kz/mult/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",Карусель (base)
+http://fs.uplink.kz/karusel/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",Карусель (mono)
+https://fs.uplink.kz/karusel/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",Карусель (ts)
+https://fs.uplink.kz/karusel/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",О! (base)
+http://fs.uplink.kz/o/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",О! (mono)
+https://fs.uplink.kz/o/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",О! (ts)
+https://fs.uplink.kz/o/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",Мультиландия (base)
+http://fs.uplink.kz/multilandia/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",Мультиландия (mono)
+https://fs.uplink.kz/multilandia/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",Мультиландия (ts)
+https://fs.uplink.kz/multilandia/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",В гостях у сказки (base)
+http://fs.uplink.kz/v_gostyah_u_skazki/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",В гостях у сказки (mono)
+https://fs.uplink.kz/v_gostyah_u_skazki/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Детские" tvg-logo="http://uplink.kz/Icons/",В гостях у сказки (ts)
+https://fs.uplink.kz/v_gostyah_u_skazki/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Кинопремьера HD (base)
+http://fs.uplink.kz/kinopremiera_hd/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Кинопремьера HD (mono)
+https://fs.uplink.kz/kinopremiera_hd/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Кинопремьера HD (ts)
+https://fs.uplink.kz/kinopremiera_hd/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Киномикс (base)
+http://fs.uplink.kz/kinomix/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Киномикс (mono)
+https://fs.uplink.kz/kinomix/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Киномикс (ts)
+https://fs.uplink.kz/kinomix/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Кинокомедия (base)
+http://fs.uplink.kz/kinokomedia/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Кинокомедия (mono)
+https://fs.uplink.kz/kinokomedia/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Кинокомедия (ts)
+https://fs.uplink.kz/kinokomedia/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Киносвидание (base)
+http://fs.uplink.kz/kinosvidanie/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Киносвидание (mono)
+https://fs.uplink.kz/kinosvidanie/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Киносвидание (ts)
+https://fs.uplink.kz/kinosvidanie/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Кинохит (base)
+http://fs.uplink.kz/kinohit/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Кинохит (mono)
+https://fs.uplink.kz/kinohit/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Кинохит (ts)
+https://fs.uplink.kz/kinohit/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Мужское кино (base)
+http://fs.uplink.kz/muzhskoe_kino/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Мужское кино (mono)
+https://fs.uplink.kz/muzhskoe_kino/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Мужское кино (ts)
+https://fs.uplink.kz/muzhskoe_kino/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Наше новое кино (base)
+http://fs.uplink.kz/nashe_novoe_kino/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Наше новое кино (mono)
+https://fs.uplink.kz/nashe_novoe_kino/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Наше новое кино (ts)
+https://fs.uplink.kz/nashe_novoe_kino/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Киносемья (base)
+http://fs.uplink.kz/kinosemya/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Киносемья (mono)
+https://fs.uplink.kz/kinosemya/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Киносемья (ts)
+https://fs.uplink.kz/kinosemya/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Киносерия (base)
+http://fs.uplink.kz/kinoseria/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Киносерия (mono)
+https://fs.uplink.kz/kinoseria/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Киносерия (ts)
+https://fs.uplink.kz/kinoseria/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Родное кино (base)
+http://fs.uplink.kz/rodnoe_kino/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Родное кино (mono)
+https://fs.uplink.kz/rodnoe_kino/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Родное кино (ts)
+https://fs.uplink.kz/rodnoe_kino/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Дом Кино (base)
+http://fs.uplink.kz/dom_kino/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Дом Кино (mono)
+https://fs.uplink.kz/dom_kino/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Дом Кино (ts)
+https://fs.uplink.kz/dom_kino/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Дом Кино Премиум (base)
+http://fs.uplink.kz/dom_kino_premium/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Дом Кино Премиум (mono)
+https://fs.uplink.kz/dom_kino_premium/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Дом Кино Премиум (ts)
+https://fs.uplink.kz/dom_kino_premium/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Мосфильм (base)
+http://fs.uplink.kz/mosfilm/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Мосфильм (mono)
+https://fs.uplink.kz/mosfilm/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Мосфильм (ts)
+https://fs.uplink.kz/mosfilm/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Победа (base)
+http://fs.uplink.kz/pobeda/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Победа (mono)
+https://fs.uplink.kz/pobeda/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Победа (ts)
+https://fs.uplink.kz/pobeda/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",viju TV1000 (base)
+http://fs.uplink.kz/tv1000/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",viju TV1000 (mono)
+https://fs.uplink.kz/tv1000/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",viju TV1000 (ts)
+https://fs.uplink.kz/tv1000/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",viju TV1000 action (base)
+http://fs.uplink.kz/tv1000_action/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",viju TV1000 action (mono)
+https://fs.uplink.kz/tv1000_action/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",viju TV1000 action (ts)
+https://fs.uplink.kz/tv1000_action/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",viju TV1000 русское (base)
+http://fs.uplink.kz/tv1000_russkoe_kino/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",viju TV1000 русское (mono)
+https://fs.uplink.kz/tv1000_russkoe_kino/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",viju TV1000 русское (ts)
+https://fs.uplink.kz/tv1000_russkoe_kino/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Русский иллюзион (base)
+http://fs.uplink.kz/russkiy_illusion/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Русский иллюзион (mono)
+https://fs.uplink.kz/russkiy_illusion/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Русский иллюзион (ts)
+https://fs.uplink.kz/russkiy_illusion/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Иллюзион+ (base)
+http://fs.uplink.kz/illusion+/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Иллюзион+ (mono)
+https://fs.uplink.kz/illusion+/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Иллюзион+ (ts)
+https://fs.uplink.kz/illusion+/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Amedia Premium HD (base)
+http://fs.uplink.kz/amedia_premium_hd/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Amedia Premium HD (mono)
+https://fs.uplink.kz/amedia_premium_hd/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Amedia Premium HD (ts)
+https://fs.uplink.kz/amedia_premium_hd/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Еврокино (base)
+http://fs.uplink.kz/eurokino/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Еврокино (mono)
+https://fs.uplink.kz/eurokino/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Еврокино (ts)
+https://fs.uplink.kz/eurokino/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",TVXXI (base)
+http://fs.uplink.kz/tvxxi/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",TVXXI (mono)
+https://fs.uplink.kz/tvxxi/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",TVXXI (ts)
+https://fs.uplink.kz/tvxxi/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Индия (base)
+http://fs.uplink.kz/india/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Индия (mono)
+https://fs.uplink.kz/india/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Фильмы/сериалы" tvg-logo="http://uplink.kz/Icons/",Индия (ts)
+https://fs.uplink.kz/india/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",КВН ТВ (base)
+http://fs.uplink.kz/kvn/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",КВН ТВ (mono)
+https://fs.uplink.kz/kvn/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",КВН ТВ (ts)
+https://fs.uplink.kz/kvn/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",Перец (base)
+http://fs.uplink.kz/perec/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",Перец (mono)
+https://fs.uplink.kz/perec/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",Перец (ts)
+https://fs.uplink.kz/perec/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",ТНТ-Казахстан (base)
+http://fs.uplink.kz/tnt-kaz/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",ТНТ-Казахстан (mono)
+https://fs.uplink.kz/tnt-kaz/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",ТНТ-Казахстан (ts)
+https://fs.uplink.kz/tnt-kaz/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",ТНТ4 (base)
+http://fs.uplink.kz/tnt4/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",ТНТ4 (mono)
+https://fs.uplink.kz/tnt4/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",ТНТ4 (ts)
+https://fs.uplink.kz/tnt4/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",РЕН (base)
+http://fs.uplink.kz/ren/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",РЕН (mono)
+https://fs.uplink.kz/ren/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",РЕН (ts)
+https://fs.uplink.kz/ren/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",Домашний (base)
+http://fs.uplink.kz/domashniy/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",Домашний (mono)
+https://fs.uplink.kz/domashniy/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Юмористические" tvg-logo="http://uplink.kz/Icons/",Домашний (ts)
+https://fs.uplink.kz/domashniy/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",viju History (base)
+http://fs.uplink.kz/viasat_history/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",viju History (mono)
+https://fs.uplink.kz/viasat_history/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",viju History (ts)
+https://fs.uplink.kz/viasat_history/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",viju Explore (base)
+http://fs.uplink.kz/viasat_explore/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",viju Explore (mono)
+https://fs.uplink.kz/viasat_explore/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",viju Explore (ts)
+https://fs.uplink.kz/viasat_explore/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Поехали! (base)
+http://fs.uplink.kz/poehali/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Поехали! (mono)
+https://fs.uplink.kz/poehali/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Поехали! (ts)
+https://fs.uplink.kz/poehali/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Моя Планета (base)
+http://fs.uplink.kz/moya_planeta/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Моя Планета (mono)
+https://fs.uplink.kz/moya_planeta/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Моя Планета (ts)
+https://fs.uplink.kz/moya_planeta/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Охота и рыбалка (base)
+http://fs.uplink.kz/ohota_i_ribalka/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Охота и рыбалка (mono)
+https://fs.uplink.kz/ohota_i_ribalka/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Охота и рыбалка (ts)
+https://fs.uplink.kz/ohota_i_ribalka/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Оружие (base)
+http://fs.uplink.kz/oruzhie/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Оружие (mono)
+https://fs.uplink.kz/oruzhie/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Оружие (ts)
+https://fs.uplink.kz/oruzhie/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Живи! (base)
+http://fs.uplink.kz/zhivi/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Живи! (mono)
+https://fs.uplink.kz/zhivi/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Живи! (ts)
+https://fs.uplink.kz/zhivi/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Бобер (base)
+http://fs.uplink.kz/bober/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Бобер (mono)
+https://fs.uplink.kz/bober/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Бобер (ts)
+https://fs.uplink.kz/bober/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Вопросы и ответы (base)
+http://fs.uplink.kz/voprosy_i_otvety/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Вопросы и ответы (mono)
+https://fs.uplink.kz/voprosy_i_otvety/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Вопросы и ответы (ts)
+https://fs.uplink.kz/voprosy_i_otvety/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Телекафе (base)
+http://fs.uplink.kz/telecafe/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Телекафе (mono)
+https://fs.uplink.kz/telecafe/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Телекафе (ts)
+https://fs.uplink.kz/telecafe/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Авто24 (base)
+http://fs.uplink.kz/avto24/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Авто24 (mono)
+https://fs.uplink.kz/avto24/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Авто24 (ts)
+https://fs.uplink.kz/avto24/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Время (base)
+http://fs.uplink.kz/vremya/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Время (mono)
+https://fs.uplink.kz/vremya/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Время (ts)
+https://fs.uplink.kz/vremya/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Ностальгия (base)
+http://fs.uplink.kz/nostalgia/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Ностальгия (mono)
+https://fs.uplink.kz/nostalgia/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Ностальгия (ts)
+https://fs.uplink.kz/nostalgia/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Совершенно Секретно (base)
+http://fs.uplink.kz/sovershenno_secretno/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Совершенно Секретно (mono)
+https://fs.uplink.kz/sovershenno_secretno/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Совершенно Секретно (ts)
+https://fs.uplink.kz/sovershenno_secretno/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Психология21 (base)
+http://fs.uplink.kz/psihologia_21/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Психология21 (mono)
+https://fs.uplink.kz/psihologia_21/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Психология21 (ts)
+https://fs.uplink.kz/psihologia_21/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Домашние животные (base)
+http://fs.uplink.kz/domashnie_zhivotnie/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Домашние животные (mono)
+https://fs.uplink.kz/domashnie_zhivotnie/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Домашние животные (ts)
+https://fs.uplink.kz/domashnie_zhivotnie/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Зоопарк (base)
+http://fs.uplink.kz/zoopark/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Зоопарк (mono)
+https://fs.uplink.kz/zoopark/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",Зоопарк (ts)
+https://fs.uplink.kz/zoopark/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",viju Nature (base)
+http://fs.uplink.kz/viasat_nature/video.m3u8
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",viju Nature (mono)
+https://fs.uplink.kz/viasat_nature/mono.m3u8?token=onlinetv
+#EXTINF:-1 deinterlace=7 group-title="Познавательные/Хобби" tvg-logo="http://uplink.kz/Icons/",viju Nature (ts)
+https://fs.uplink.kz/viasat_nature/tracks-v1a1/mono.ts.m3u8?token=onlinetv
+
+# ВНИМАНИЕ: у канала 'Большая Пятница' слаг в живом плейлисте читается неоднозначно (дважды 'perec');
+# проверить перебором: pyatnica, pyatnitsa, friday, pyatnica_int
