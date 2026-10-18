@@ -1,0 +1,206 @@
+#EXTM3U
+# === Казахстанские ===
+#EXTINF:-1,24KZ
+https://fs.uplink.kz/24KZ/mono.m3u8?token=onlinetv
+#EXTINF:-1,31 канал
+https://fs.uplink.kz/31kanal/mono.m3u8?token=onlinetv
+#EXTINF:-1,7 канал
+https://fs.uplink.kz/7_kanal/mono.m3u8?token=onlinetv
+#EXTINF:-1,Abai TV
+https://fs.uplink.kz/abai_tv/mono.m3u8?token=onlinetv
+#EXTINF:-1,Almaty TV
+https://fs.uplink.kz/almaty/mono.m3u8?token=onlinetv
+#EXTINF:-1,Astana TV
+https://fs.uplink.kz/astana/mono.m3u8?token=onlinetv
+#EXTINF:-1,Atameken Business
+https://fs.uplink.kz/atameken/mono.m3u8?token=onlinetv
+#EXTINF:-1,Balapan
+https://fs.uplink.kz/balapan/mono.m3u8?token=onlinetv
+#EXTINF:-1,Хабар
+https://fs.uplink.kz/habar/mono.m3u8?token=onlinetv
+#EXTINF:-1,Jibek Joly
+https://fs.uplink.kz/jibek_joly/mono.m3u8?token=onlinetv
+#EXTINF:-1,КТК
+https://fs.uplink.kz/ktk/mono.m3u8?token=onlinetv
+#EXTINF:-1,НТК
+https://fs.uplink.kz/ntk/mono.m3u8?token=onlinetv
+#EXTINF:-1,Новое ТВ
+https://fs.uplink.kz/novoe_tv/mono.m3u8?token=onlinetv
+#EXTINF:-1,Первый канал Евразия
+https://fs.uplink.kz/perviy_kanal_evrasia/mono.m3u8?token=onlinetv
+#EXTINF:-1,Qazaqstan
+https://fs.uplink.kz/qazaqstan/mono.m3u8?token=onlinetv
+#EXTINF:-1,QazSport
+https://fs.uplink.kz/qazsport_hd/mono.m3u8?token=onlinetv
+#EXTINF:-1,Sport+ Qazaqstan
+https://fs.uplink.kz/sport+/mono.m3u8?token=onlinetv
+#EXTINF:-1,Turan TV
+https://fs.uplink.kz/turan_tv/mono.m3u8?token=onlinetv
+
+# === Кино / Сериалы ===
+#EXTINF:-1,Amedia Premium HD
+https://fs.uplink.kz/amedia_premium_hd/mono.m3u8?token=onlinetv
+#EXTINF:-1,Дом кино
+https://fs.uplink.kz/dom_kino/mono.m3u8?token=onlinetv
+#EXTINF:-1,Дом кино Premium
+https://fs.uplink.kz/dom_kino_premium/mono.m3u8?token=onlinetv
+#EXTINF:-1,Кинобоевик
+https://fs.uplink.kz/kinoboevik/mono.m3u8?token=onlinetv
+#EXTINF:-1,Кинохит
+https://fs.uplink.kz/kinohit/mono.m3u8?token=onlinetv
+#EXTINF:-1,Кинокомедия
+https://fs.uplink.kz/kinokomedia/mono.m3u8?token=onlinetv
+#EXTINF:-1,Киномикс
+https://fs.uplink.kz/kinomix/mono.m3u8?token=onlinetv
+#EXTINF:-1,Кинопремьера HD
+https://fs.uplink.kz/kinopremiera_hd/mono.m3u8?token=onlinetv
+#EXTINF:-1,Киносемья
+https://fs.uplink.kz/kinosemya/mono.m3u8?token=onlinetv
+#EXTINF:-1,Киносерия
+https://fs.uplink.kz/kinoseria/mono.m3u8?token=onlinetv
+#EXTINF:-1,Киносвидание
+https://fs.uplink.kz/kinosvidanie/mono.m3u8?token=onlinetv
+#EXTINF:-1,Киноужас
+https://fs.uplink.kz/kinouzhas/mono.m3u8?token=onlinetv
+#EXTINF:-1,Мировое кино
+https://fs.uplink.kz/mirovoe_kino/mono.m3u8?token=onlinetv
+#EXTINF:-1,Мужское кино
+https://fs.uplink.kz/muzhskoe_kino/mono.m3u8?token=onlinetv
+#EXTINF:-1,Наше новое кино
+https://fs.uplink.kz/nashe_novoe_kino/mono.m3u8?token=onlinetv
+#EXTINF:-1,Start Air
+https://fs.uplink.kz/start_air/mono.m3u8?token=onlinetv
+#EXTINF:-1,Start World
+https://fs.uplink.kz/start_world/mono.m3u8?token=onlinetv
+#EXTINF:-1,viju TV1000
+https://fs.uplink.kz/viju_tv1000/mono.m3u8?token=onlinetv
+#EXTINF:-1,viju TV1000 Action
+https://fs.uplink.kz/viju_tv1000_action/mono.m3u8?token=onlinetv
+#EXTINF:-1,viju TV1000 Русское
+https://fs.uplink.kz/viju_tv1000_russkoe/mono.m3u8?token=onlinetv
+#EXTINF:-1,Дорама
+https://fs.uplink.kz/dorama/mono.m3u8?token=onlinetv
+#EXTINF:-1,Индийское кино
+https://fs.uplink.kz/indiyskoe_kino/mono.m3u8?token=onlinetv
+#EXTINF:-1,Индия
+https://fs.uplink.kz/india/mono.m3u8?token=onlinetv
+#EXTINF:-1,Еврокино
+https://fs.uplink.kz/eurokino/mono.m3u8?token=onlinetv
+#EXTINF:-1,Мосфильм
+https://fs.uplink.kz/mosfilm/mono.m3u8?token=onlinetv
+#EXTINF:-1,TVXXI
+https://fs.uplink.kz/tvxxi/mono.m3u8?token=onlinetv
+
+# === Детские ===
+#EXTINF:-1,Карусель
+https://fs.uplink.kz/karusel/mono.m3u8?token=onlinetv
+#EXTINF:-1,Мульт
+https://fs.uplink.kz/mult/mono.m3u8?token=onlinetv
+#EXTINF:-1,Мультиландия
+https://fs.uplink.kz/multilandia/mono.m3u8?token=onlinetv
+#EXTINF:-1,Лапки Live
+https://fs.uplink.kz/lapki_live/mono.m3u8?token=onlinetv
+#EXTINF:-1,Da Vinci
+https://fs.uplink.kz/da_vinci/mono.m3u8?token=onlinetv
+#EXTINF:-1,СТС Kids
+https://fs.uplink.kz/sts_kids/mono.m3u8?token=onlinetv
+#EXTINF:-1,В гостях у сказки
+https://fs.uplink.kz/v_gostyah_u_skazki/mono.m3u8?token=onlinetv
+#EXTINF:-1,Baby Time
+https://fs.uplink.kz/baby_time/mono.m3u8?token=onlinetv
+
+# === Спорт ===
+#EXTINF:-1,KHL
+https://fs.uplink.kz/telekanal_khl/mono.m3u8?token=onlinetv
+#EXTINF:-1,KHL Prime
+https://fs.uplink.kz/khl_prime/mono.m3u8?token=onlinetv
+#EXTINF:-1,Match!
+https://fs.uplink.kz/match/mono.m3u8?token=onlinetv
+#EXTINF:-1,Match! Планета
+https://fs.uplink.kz/match_planeta/mono.m3u8?token=onlinetv
+#EXTINF:-1,MMA
+https://fs.uplink.kz/mma/mono.m3u8?token=onlinetv
+#EXTINF:-1,Extreme Sports
+https://fs.uplink.kz/extreme_sports/mono.m3u8?token=onlinetv
+#EXTINF:-1,viju+ Sport
+https://fs.uplink.kz/viju_sport/mono.m3u8?token=onlinetv
+#EXTINF:-1,Setanta Sports 1 HD
+https://fs.uplink.kz/setanta_sports_1_hd/mono.m3u8?token=onlinetv
+
+# === Познавательные / Природа ===
+#EXTINF:-1,Моя Планета
+https://fs.uplink.kz/moya_planeta/mono.m3u8?token=onlinetv
+#EXTINF:-1,Большая Планета
+https://fs.uplink.kz/big_planet/mono.m3u8?token=onlinetv
+#EXTINF:-1,viju Explore
+https://fs.uplink.kz/viju_explore/mono.m3u8?token=onlinetv
+#EXTINF:-1,viju History
+https://fs.uplink.kz/viju_history/mono.m3u8?token=onlinetv
+#EXTINF:-1,viju Nature
+https://fs.uplink.kz/viju_nature/mono.m3u8?token=onlinetv
+#EXTINF:-1,Nat Geo
+https://fs.uplink.kz/nat_geo/mono.m3u8?token=onlinetv
+#EXTINF:-1,Nat Geo Wild
+https://fs.uplink.kz/nat_geo_wild/mono.m3u8?token=onlinetv
+#EXTINF:-1,Зоопарк
+https://fs.uplink.kz/zoopark/mono.m3u8?token=onlinetv
+#EXTINF:-1,Домашние животные
+https://fs.uplink.kz/domashnie_zhivotnie/mono.m3u8?token=onlinetv
+#EXTINF:-1,История
+https://fs.uplink.kz/istoriya/mono.m3u8?token=onlinetv
+#EXTINF:-1,365 дней
+https://fs.uplink.kz/365_dney/mono.m3u8?token=onlinetv
+
+# === Развлекательные / Музыка / Прочее ===
+#EXTINF:-1,5 канал
+https://fs.uplink.kz/5_kanal/mono.m3u8?token=onlinetv
+#EXTINF:-1,СТС
+https://fs.uplink.kz/sts/mono.m3u8?token=onlinetv
+#EXTINF:-1,ТНТ4
+https://fs.uplink.kz/tnt4/mono.m3u8?token=onlinetv
+#EXTINF:-1,Домашний
+https://fs.uplink.kz/domashniy/mono.m3u8?token=onlinetv
+#EXTINF:-1,Большая Пятница
+https://fs.uplink.kz/bolshaya_pyatnica/mono.m3u8?token=onlinetv
+#EXTINF:-1,ТНВ Планета
+https://fs.uplink.kz/tnv/mono.m3u8?token=onlinetv
+#EXTINF:-1,Первый канал СНГ
+https://fs.uplink.kz/perviy_kanal_sng/mono.m3u8?token=onlinetv
+#EXTINF:-1,Мир
+https://fs.uplink.kz/mir/mono.m3u8?token=onlinetv
+#EXTINF:-1,Звезда
+https://fs.uplink.kz/zvezda/mono.m3u8?token=onlinetv
+#EXTINF:-1,КВН ТВ
+https://fs.uplink.kz/kvn_tv/mono.m3u8?token=onlinetv
+#EXTINF:-1,Europa Plus
+https://fs.uplink.kz/europa_plus/mono.m3u8?token=onlinetv
+#EXTINF:-1,Шансон
+https://fs.uplink.kz/shanson/mono.m3u8?token=onlinetv
+#EXTINF:-1,Жара
+https://fs.uplink.kz/zhara/mono.m3u8?token=onlinetv
+#EXTINF:-1,Муз-ТВ
+https://fs.uplink.kz/muz_tv/mono.m3u8?token=onlinetv
+#EXTINF:-1,Телекафе
+https://fs.uplink.kz/telecafe/mono.m3u8?token=onlinetv
+#EXTINF:-1,Время
+https://fs.uplink.kz/vremya/mono.m3u8?token=onlinetv
+#EXTINF:-1,ТВ Центр
+https://fs.uplink.kz/tvc/mono.m3u8?token=onlinetv
+#EXTINF:-1,Авто24
+https://fs.uplink.kz/avto24/mono.m3u8?token=onlinetv
+#EXTINF:-1,Техно 24
+https://fs.uplink.kz/tehno_24/mono.m3u8?token=onlinetv
+#EXTINF:-1,Точка отрыва
+https://fs.uplink.kz/tochka_letiva/mono.m3u8?token=onlinetv
+#EXTINF:-1,Охота и рыбалка
+https://fs.uplink.kz/ohota_i_ribalka/mono.m3u8?token=onlinetv
+#EXTINF:-1,Москва 24
+https://fs.uplink.kz/moskva24/mono.m3u8?token=onlinetv
+#EXTINF:-1,Бобёр
+https://fs.uplink.kz/bober/mono.m3u8?token=onlinetv
+#EXTINF:-1,Живи
+https://fs.uplink.kz/zhivi/mono.m3u8?token=onlinetv
+#EXTINF:-1,Bridge Classic
+https://fs.uplink.kz/bridge_classic/mono.m3u8?token=onlinetv
+#EXTINF:-1,U
+https://fs.uplink.kz/u/mono.m3u8?token=onlinetv
