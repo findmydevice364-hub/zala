@@ -1,0 +1,56 @@
+
+name: git_bot_for_stable.py
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 1 * * *" # Ежедневно в 03:00 по Калининграду (UTC+2)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: git-bot-for-stable
+  cancel-in-progress: false
+
+jobs:
+  run-bot:
+    name: Run git_bot_for_stable.py
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+
+      - name: Run bot
+        run: python -u git_bot_for_stable.py
+
+      - name: Commit and push changes
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if ! git diff --cached --quiet; then
+            git commit -m "Update files via git_bot_for_stable.py"
+            git push
+          else
+            echo "No changes to commit."
+          fi
