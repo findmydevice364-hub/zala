@@ -3,13 +3,15 @@
 """
 git_bot_for_stable.py (Universal Multi-threaded + Full Logic + RTRS multiplex + themes)
 - Многопоточная загрузка всех доноров
-- Многопоточная проверка живости (HEAD + Range)
+- Многопоточная проверка живости (HEAD + Range fallback)
 - Фильтр только 18+
-- Без дедупликации
+- Без дедупликации (добавляем все валидные)
 - RTRS_stable.m3u8:
     • РТРС SD / РТРС HD (1-20) с вариантами 1.SD / 1.SD.1 / 1.HD / 1.HD.1 ...
-    • остальные каналы → тематические группы (Новости, Музыка, Детские, Кино и т.д.)
-- stable.m3u тоже обрабатывается
+    • остальные каналы → тематические группы:
+        Новости, Музыка, Детские, Кино, Познавательные, Развлекательные, Научные, Прочее
+- Обрабатываются: IPTVmir.m3u8, legacy/IPTVstable.m3u8, stable.m3u, RTRS_stable.m3u8
+- Поддержка SKIP_PUSH для GitHub Actions
 """
 
 import os
@@ -22,12 +24,13 @@ import sys
 import concurrent.futures
 from collections import defaultdict
 
-# ---------- Источники ----------
+# ---------- Конфигурация источников ----------
 SOURCE_URL = "https://raw.githubusercontent.com/Phoenix89S/IpTV_playlist_2026Ru/main/ngenix_found_1.m3u"
 SECOND_SOURCE_URL = "https://raw.githubusercontent.com/Free-TV/IPTV/refs/heads/master/playlists/playlist_russia.m3u8"
 THIRD_SOURCE_URL = "https://raw.githubusercontent.com/Phoenix89S/Mir-IpTV-Ru-/main/Super_RTRS_2026.m3u"
 TEST_CHANNELS_URL = "https://raw.githubusercontent.com/Phoenix89S/IpTV_playlist_2026Ru/gh-pages/test_channels.m3u"
 
+# Переопределение через env
 SECOND_SOURCE_URL = os.environ.get("SECOND_SOURCE_URL", SECOND_SOURCE_URL)
 SKIP_PUSH = os.environ.get("SKIP_PUSH", "true").lower() in ("1", "true", "yes")
 TARGET_PUSH_BRANCH = os.environ.get("TARGET_PUSH_BRANCH", "gh-pages-2")
@@ -38,16 +41,20 @@ TARGET_STABLE_LEGACY = "legacy/IPTVstable.m3u8"
 TARGET_STABLE = "stable.m3u"
 TARGET_RTRS_STABLE = "RTRS_stable.m3u8"
 
-# Только 18+
+# Резервные raw (оставлены на будущее)
+TARGET_MIR_RAW = "https://raw.githubusercontent.com/Phoenix89S/IPTVru/gh-pages/IPTVmir.m3u8"
+TARGET_STABLE_LEGACY_RAW = "https://raw.githubusercontent.com/Phoenix89S/IPTVru/gh-pages/legacy/IPTVstable.m3u8"
+
+# 🚫 Только 18+
 BLACKLIST = {
     "playboy", "erox", "blue hustler", "barely legal",
     "adult", "private", "penthouse", "senstv", "o-la-la",
     "xxx", "18+", "porn", "hustler"
 }
 
-# РТРС 1-20 (SD + HD)
+# Строгая сетка РТРС (первые два мультиплекса)
 RTRS_CHANNELS_MAP = {
-    # SD
+    # ----- РТРС SD -----
     "1.sd первый канал":       ("РТРС SD", "1.SD Первый канал", 1),
     "2.sd россия 1":           ("РТРС SD", "2.SD Россия 1", 2),
     "3.sd матч тв":            ("РТРС SD", "3.SD Матч ТВ", 3),
@@ -68,7 +75,8 @@ RTRS_CHANNELS_MAP = {
     "18.sd мир":               ("РТРС SD", "18.SD Мир", 18),
     "19.sd тнт":               ("РТРС SD", "19.SD ТНТ", 19),
     "20.sd муз-тв":            ("РТРС SD", "20.SD Муз-ТВ", 20),
-    # HD
+
+    # ----- РТРС HD -----
     "1.hd первый канал hd":    ("РТРС HD", "1.HD Первый канал HD", 101),
     "2.hd россия 1 hd":        ("РТРС HD", "2.HD Россия 1 HD", 102),
     "3.hd матч тв hd":         ("РТРС HD", "3.HD Матч ТВ HD", 103),
@@ -91,11 +99,11 @@ RTRS_CHANNELS_MAP = {
     "20.hd муз-тв hd":         ("РТРС HD", "20.HD Муз-ТВ HD", 120),
 }
 
-# Тематические группы (порядок важен)
+# Тематические группы для остальных каналов (порядок важен)
 CATEGORY_RULES = [
     ("Новости", [
-        "новост", "news", "россия 24", "рбк", "rbc", "известия", "жизнь", 
-        "москва 24", "миротворец", "rt", "russia today", "bbc", "cnn", 
+        "новост", "news", "россия 24", "рбк", "rbc", "известия", "жизнь",
+        "москва 24", "миротворец", "rt", "russia today", "bbc", "cnn",
         "euronews", "tv rain", "дождь", "current time", "наст. время"
     ]),
     ("Музыка", [
@@ -123,60 +131,72 @@ CATEGORY_RULES = [
     ]),
 ]
 
-# ---------- Утилиты ----------
+# ---------- Утилиты сети и Git ----------
 def run(cmd, cwd=None, check=True):
     try:
-        return subprocess.run(cmd, cwd=cwd, check=check, capture_output=True, text=True)
+        res = subprocess.run(cmd, cwd=cwd, check=check, capture_output=True, text=True)
+        return res
     except subprocess.CalledProcessError as e:
-        print(f"Команда {' '.join(cmd)} ошибка: {e}\n{e.stderr}")
+        print(f"Команда {' '.join(cmd)} завершилась с ошибкой: {e}\nstderr:\n{e.stderr}")
         raise
 
 def git_is_clean():
-    return run(["git", "status", "--porcelain"]).stdout.strip() == ""
+    res = run(["git", "status", "--porcelain"], check=True)
+    return res.stdout.strip() == ""
 
 def ensure_on_branch(branch="gh-pages"):
-    run(["git", "fetch", "origin"])
-    run(["git", "checkout", branch])
-    run(["git", "pull", "origin", branch])
+    run(["git", "fetch", "origin"], check=True)
+    run(["git", "checkout", branch], check=True)
+    run(["git", "pull", "origin", branch], check=True)
 
 def fetch_url(url, timeout=12):
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; IPTVBot/4.0)"})
+        req = urllib.request.Request(
+            url,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; IPTVBot/4.0)"}
+        )
         with urllib.request.urlopen(req, timeout=timeout) as r:
-            raw = r.read()
+            raw_data = r.read()
             for enc in ("utf-8", "cp1251", "latin-1"):
                 try:
-                    return raw.decode(enc)
+                    return raw_data.decode(enc)
                 except UnicodeDecodeError:
                     continue
-            return raw.decode("utf-8", errors="ignore")
+            return raw_data.decode("utf-8", errors="ignore")
     except Exception as e:
         print(f"Ошибка загрузки {url}: {e}")
         return ""
 
 def check_stream_alive(url, timeout=5):
+    """Многопоточная быстрая проверка доступности потока (HEAD + fallback Range)"""
     if not url or not url.startswith("http"):
         return False
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "VLC/3.0.16 LibVLC/3.0.16"}, method="HEAD")
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            return resp.status < 400
+        req = urllib.request.Request(
+            url,
+            headers={"User-Agent": "VLC/3.0.16 LibVLC/3.0.16"},
+            method="HEAD"
+        )
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            return response.status < 400
     except Exception:
         try:
             req = urllib.request.Request(
                 url,
                 headers={"User-Agent": "VLC/3.0.16 LibVLC/3.0.16", "Range": "bytes=0-512"}
             )
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                return resp.status < 400
+            with urllib.request.urlopen(req, timeout=timeout) as response:
+                return response.status < 400
         except Exception:
             return False
 
+# ---------- Парсинг M3U ----------
 def parse_m3u_content(content):
     lines = content.splitlines()
     entries = []
     current_meta = None
     tvg_re = re.compile(r'tvg-id="([^"]+)"', re.IGNORECASE)
+
     for line in lines:
         s = line.strip()
         if not s:
@@ -190,10 +210,20 @@ def parse_m3u_content(content):
                 name = parts[1].strip() if len(parts) > 1 else ""
                 m = tvg_re.search(current_meta)
                 key = m.group(1).strip().lower() if m else url.strip().lower()
-                entries.append({"extinf": current_meta, "url": url, "key": key, "name": name})
+                entries.append({
+                    "extinf": current_meta,
+                    "url": url,
+                    "key": key,
+                    "name": name
+                })
                 current_meta = None
             else:
-                entries.append({"extinf": "", "url": url, "key": url.strip().lower(), "name": ""})
+                entries.append({
+                    "extinf": "",
+                    "url": url,
+                    "key": url.strip().lower(),
+                    "name": ""
+                })
     return entries
 
 def is_blacklisted(title):
@@ -204,6 +234,7 @@ def has_digit_index_in_path(url):
     return bool(re.search(r"/\d+/", url))
 
 def match_rtrs(name):
+    """Возвращает (group, base_name, order) или None"""
     clean = (name or "").strip().lower()
     for pattern, (group, base_name, order) in RTRS_CHANNELS_MAP.items():
         if pattern in clean:
@@ -220,6 +251,7 @@ def detect_category(name):
     return "Прочее"
 
 def smart_format_entry(name, extinf, default_group="Стабильные ТВ"):
+    """Применяет РТРС-сетку или ставит group-title по умолчанию"""
     matched = match_rtrs(name)
     if matched:
         group_title, formatted_name, _ = matched
@@ -236,10 +268,12 @@ def smart_format_entry(name, extinf, default_group="Стабильные ТВ"):
 
     if not extinf:
         return f'#EXTINF:-1 group-title="{default_group}",{name}', default_group
+
     if "group-title=" in extinf:
         return extinf, default_group
-    meta, ch_name = extinf.split(",", 1) if "," in extinf else (extinf, name)
-    return f'{meta} group-title="{default_group}",{ch_name}', default_group
+    else:
+        meta, ch_name = extinf.split(",", 1) if "," in extinf else (extinf, name)
+        return f'{meta} group-title="{default_group}",{ch_name}', default_group
 
 def backup_file(path):
     if os.path.exists(path):
@@ -249,46 +283,68 @@ def backup_file(path):
         print(f"Создан backup: {bak}")
 
 def process_single_stream_check(e):
-    if check_stream_alive(e.get("url", "")):
+    """Воркер health-check"""
+    url = e.get("url", "")
+    if check_stream_alive(url):
         return e
     return None
 
-# ---------- Обычное добавление (без дедупа) ----------
+# ---------- Обычное добавление (без дедупликации) ----------
 def append_all_valid(target_path, donor_entries):
+    """
+    Без дедупликации: добавляем ВСЕ прошедшие фильтр + health-check записи.
+    Если файла нет — создаём с #EXTM3U.
+    """
     if not donor_entries:
         return 0
-    print(f"Многопоточная проверка {len(donor_entries)} потоков → {target_path}")
-    valid = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=24) as ex:
-        for res in ex.map(process_single_stream_check, donor_entries):
+
+    print(f"Многопоточная проверка работоспособности {len(donor_entries)} потоков для {target_path}...")
+    valid_candidates = []
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=24) as executor:
+        results = executor.map(process_single_stream_check, donor_entries)
+        for res in results:
             if res:
-                valid.append(res)
-    if not valid:
+                valid_candidates.append(res)
+
+    if not valid_candidates:
         return 0
 
     to_append = []
-    for e in valid:
-        formatted, _ = smart_format_entry(e.get("name", ""), e.get("extinf", ""))
-        to_append.append((formatted, e.get("url", "")))
+    for e in valid_candidates:
+        name = e.get("name", "")
+        formatted_extinf, _ = smart_format_entry(name, e.get("extinf", ""))
+        to_append.append((formatted_extinf, e.get("url", "")))
 
     file_exists = os.path.exists(target_path)
     if file_exists:
         backup_file(target_path)
+
     os.makedirs(os.path.dirname(target_path) or ".", exist_ok=True)
 
     with open(target_path, "a", encoding="utf-8") as f:
         if not file_exists:
             f.write("#EXTM3U\n")
-        f.write(f"\n# ===== AUTO-UPDATED ({time.strftime('%Y-%m-%d %H:%M:%S')}) =====\n")
+        f.write("\n")
+        f.write(f"# ===== AUTO-UPDATED STABLE STREAMS ({time.strftime('%Y-%m-%d %H:%M:%S')}) =====\n")
         for extinf, url in to_append:
             f.write(extinf.rstrip() + "\n")
             f.write(url.rstrip() + "\n")
+
     return len(to_append)
 
-# ---------- RTRS_stable.m3u8 (мультиплексы + тематика) ----------
+# ---------- Специальная логика RTRS_stable.m3u8 ----------
 def build_rtrs_stable(donor_entries, target_path=TARGET_RTRS_STABLE):
-    print(f"Формирование {target_path}...")
+    """
+    Собирает:
+    1. Только каналы первых двух мультиплексов (РТРС SD + РТРС HD)
+       с индексацией вариантов: 1.SD, 1.SD.1, 1.HD, 1.HD.1 ...
+    2. Все остальные живые каналы → тематические группы
+       (Новости, Музыка, Детские, Кино, Познавательные, Развлекательные, Научные, Прочее)
+    """
+    print(f"Формирование {target_path} (РТРС мультиплексы + тематика)...")
 
+    # Разделяем на РТРС и остальные
     rtrs_candidates = []
     other_candidates = []
 
@@ -302,16 +358,16 @@ def build_rtrs_stable(donor_entries, target_path=TARGET_RTRS_STABLE):
             other_candidates.append(e)
 
     print(f"РТРС-кандидатов: {len(rtrs_candidates)}, остальных: {len(other_candidates)}")
-    print("Проверка живости...")
+    print("Многопоточная проверка живости...")
 
     valid_rtrs = []
     valid_other = []
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=24) as ex:
-        for res in ex.map(process_single_stream_check, rtrs_candidates):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=24) as executor:
+        for res in executor.map(process_single_stream_check, rtrs_candidates):
             if res:
                 valid_rtrs.append(res)
-        for res in ex.map(process_single_stream_check, other_candidates):
+        for res in executor.map(process_single_stream_check, other_candidates):
             if res:
                 valid_other.append(res)
 
@@ -323,7 +379,7 @@ def build_rtrs_stable(donor_entries, target_path=TARGET_RTRS_STABLE):
 
     total = 0
 
-    # ===== Блок 1: РТРС SD + HD =====
+    # ===== Блок 1: РТРС SD + HD (с вариантами .1 .2 ...) =====
     if valid_rtrs:
         slots = defaultdict(list)
         for e in valid_rtrs:
@@ -342,6 +398,8 @@ def build_rtrs_stable(donor_entries, target_path=TARGET_RTRS_STABLE):
                 if idx == 0:
                     display_name = base_name
                 else:
+                    # Работает одинаково для SD и HD:
+                    # 1.SD → 1.SD.1, 1.HD → 1.HD.1 и т.д.
                     prefix = base_name.split(" ", 1)[0]
                     rest = base_name[len(prefix):].lstrip()
                     display_name = f"{prefix}.{idx} {rest}"
@@ -359,8 +417,14 @@ def build_rtrs_stable(donor_entries, target_path=TARGET_RTRS_STABLE):
             by_category[cat].append(e)
 
         category_order = [
-            "Новости", "Музыка", "Детские", "Кино",
-            "Познавательные", "Развлекательные", "Научные", "Прочее"
+            "Новости",
+            "Музыка",
+            "Детские",
+            "Кино",
+            "Познавательные",
+            "Развлекательные",
+            "Научные",
+            "Прочее"
         ]
 
         lines.append("# ===== Тематические группы =====")
@@ -381,6 +445,7 @@ def build_rtrs_stable(donor_entries, target_path=TARGET_RTRS_STABLE):
                 total += 1
             lines.append("")
 
+    # Пишем файл целиком
     if os.path.exists(target_path):
         backup_file(target_path)
 
@@ -392,44 +457,54 @@ def build_rtrs_stable(donor_entries, target_path=TARGET_RTRS_STABLE):
 
 # ---------- Загрузка источников ----------
 def fetch_source_worker(source_tuple):
+    """Воркер для параллельной загрузки и первичного парсинга источников"""
     name, url, apply_filter = source_tuple
     if not url:
         return name, []
-    print(f"Загрузка {name}...")
-    raw = fetch_url(url)
-    if not raw:
+    print(f"Параллельная загрузка {name}: {url}")
+    raw_data = fetch_url(url)
+    if not raw_data:
+        print(f"Источник {name} недоступен или пуст.")
         return name, []
-    entries = parse_m3u_content(raw)
-    filtered = []
-    for e in entries:
-        if apply_filter and (is_blacklisted(e.get("name", "")) or has_digit_index_in_path(e.get("url", ""))):
-            continue
-        e["source"] = name
-        filtered.append(e)
-    print(f"  {name}: {len(filtered)} записей")
-    return name, filtered
 
-# ---------- main ----------
+    entries = parse_m3u_content(raw_data)
+    filtered_entries = []
+    for e in entries:
+        ch_name = e.get("name", "")
+        ch_url = e.get("url", "")
+
+        if apply_filter:
+            if is_blacklisted(ch_name) or has_digit_index_in_path(ch_url):
+                continue
+
+        e["source"] = name
+        filtered_entries.append(e)
+
+    print(f"Из {name} успешно распарсено в пул: {len(filtered_entries)} записей")
+    return name, filtered_entries
+
+# ---------- Основной поток ----------
 def main():
     if not shutil.which("git"):
-        print("Git не найден")
+        print("Git не найден в PATH. Установите git и повторите.")
         sys.exit(1)
+
     if not git_is_clean():
-        print("Рабочее дерево не чистое")
+        print("Рабочее дерево git не чистое. Очистите или закоммитьте изменения перед запуском.")
         sys.exit(1)
 
     branch_name = f"fix/restore-playlists-{time.strftime('%Y%m%d_%H%M%S')}"
 
     if not SKIP_PUSH:
-        print(f"Создаём ветку {branch_name}")
+        print(f"Создаём ветку: {branch_name}")
         try:
             ensure_on_branch("gh-pages")
-            run(["git", "checkout", "-b", branch_name])
+            run(["git", "checkout", "-b", branch_name], check=True)
         except Exception as e:
-            print(f"Ошибка ветки: {e}")
+            print(f"Не удалось создать ветку: {e}")
             sys.exit(1)
     else:
-        print("SKIP_PUSH=true")
+        print("SKIP_PUSH=true — работаем в текущем рабочем дереве для workflow.")
 
     sources = [
         ("SOURCE_URL", SOURCE_URL, False),
@@ -439,60 +514,68 @@ def main():
     ]
 
     donor_entries = []
-    print("Многопоточная загрузка доноров...")
-    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
-        futures = {ex.submit(fetch_source_worker, s): s[0] for s in sources}
-        for fut in concurrent.futures.as_completed(futures):
+
+    print("Запуск многопоточного скачивания всех донорских источников...")
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        future_to_source = {executor.submit(fetch_source_worker, src): src[0] for src in sources}
+        for future in concurrent.futures.as_completed(future_to_source):
+            src_name = future_to_source[future]
             try:
-                _, entries = fut.result()
-                donor_entries.extend(entries)
-            except Exception as e:
-                print(f"Ошибка источника: {e}")
+                name, entries = future.result()
+                if entries:
+                    donor_entries.extend(entries)
+            except Exception as exc:
+                print(f"Источник {src_name} вызвал исключение при загрузке: {exc}")
 
     if not donor_entries:
-        print("Нет записей")
+        print("Нет донорских записей для обработки.")
         sys.exit(0)
 
-    print(f"Всего после фильтра 18+: {len(donor_entries)}")
+    print(f"Всего кандидатов после первичной фильтрации: {len(donor_entries)}")
 
     modified = []
     added_total = 0
 
+    # 1. Обычные плейлисты (полная логика без дедупа)
     for target in (TARGET_MIR, TARGET_STABLE_LEGACY, TARGET_STABLE):
         added = append_all_valid(target, donor_entries)
         if added:
-            print(f"→ {target}: +{added}")
+            print(f"В {target} добавлено рабочих потоков: {added}")
             modified.append(target)
             added_total += added
+        else:
+            print(f"В {target} новых рабочих потоков не обнаружено.")
 
-    rtrs_added = build_rtrs_stable(donor_entries)
+    # 2. Специальный RTRS_stable.m3u8
+    rtrs_added = build_rtrs_stable(donor_entries, TARGET_RTRS_STABLE)
     if rtrs_added:
         modified.append(TARGET_RTRS_STABLE)
         added_total += rtrs_added
 
     if not modified:
-        print("Изменений нет")
+        print("Изменений нет. Новые рабочие потоки не прошли проверку.")
         if not SKIP_PUSH:
             try:
-                run(["git", "checkout", "gh-pages"])
-                run(["git", "branch", "-D", branch_name])
+                run(["git", "checkout", "gh-pages"], check=True)
+                run(["git", "branch", "-D", branch_name], check=True)
             except Exception:
                 pass
         sys.exit(0)
 
     if SKIP_PUSH:
-        print(f"\nГотово! Всего потоков: {added_total}")
-        print("Modified:", modified)
+        print(f"Готово! Автоматически добавлено/обновлено рабочих потоков: {added_total}.")
+        print("Modified files:", modified)
         sys.exit(0)
 
+    # Коммит + пуш
     try:
-        run(["git", "add"] + modified)
-        msg = f"chore: IPTV + RTRS multiplex + themes ({time.strftime('%Y-%m-%d %H:%M:%S')})"
-        run(["git", "commit", "-m", msg])
-        run(["git", "push", "-u", "origin", branch_name])
-        print(f"Запушено в {branch_name}")
+        run(["git", "add"] + modified, check=True)
+        commit_msg = f"chore: multi-threaded auto-update IPTV streams & RTRS grid + themes ({time.strftime('%Y-%m-%d %H:%M:%S')})"
+        run(["git", "commit", "-m", commit_msg], check=True)
+        run(["git", "push", "-u", "origin", branch_name], check=True)
+        print(f"Успешно запушено в ветку: {branch_name}")
     except Exception as e:
-        print(f"Ошибка: {e}")
+        print(f"Ошибка при коммите/пуше: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
