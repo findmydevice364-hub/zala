@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 # coding: utf-8
 """
-git_bot_for_stable.py (Full Extended Version)
-- читает локальные целевые файлы (gh-pages checkout) или создаёт их с нуля (#EXTM3U)
-- загружает все 4 донора, проверяет их на "живость" (health-check)
-- раскладывает базовые каналы по строгой сетке РТРС SD и HD с нумерацией 1-20
-- фильтрует мусор и категории 18+
-- добавляет новые рабочие потоки в конец целевых файлов с бэкапами
-- поддерживает SKIP_PUSH для интеграции с GitHub Actions Workflow
+git_bot_for_stable.py (Universal Multi-threaded + Full Logic)
+- Многопоточная загрузка всех доноров
+- Многопоточная проверка живости потоков
+- Фильтр только 18+ (минимальный blacklist)
+- РТРС SD/HD сетка 1-20
+- Без дедупликации по уже существующим записям (добавляем всё валидное)
+- Поддержка SKIP_PUSH для GitHub Actions
+- Создаёт #EXTM3U если файла нет
 """
 
 import os
@@ -17,6 +18,7 @@ import urllib.request
 import time
 import shutil
 import sys
+import concurrent.futures
 
 # ---------- Конфигурация источников ----------
 SOURCE_URL = "https://raw.githubusercontent.com/Phoenix89S/IpTV_playlist_2026Ru/main/ngenix_found_1.m3u"
@@ -24,7 +26,7 @@ SECOND_SOURCE_URL = "https://raw.githubusercontent.com/Free-TV/IPTV/refs/heads/m
 THIRD_SOURCE_URL = "https://raw.githubusercontent.com/Phoenix89S/Mir-IpTV-Ru-/main/Super_RTRS_2026.m3u"
 TEST_CHANNELS_URL = "https://raw.githubusercontent.com/Phoenix89S/IpTV_playlist_2026Ru/gh-pages/test_channels.m3u"
 
-# Переопределение через переменные окружения (для GitHub Actions)
+# Переопределение через env (для workflow)
 SECOND_SOURCE_URL = os.environ.get("SECOND_SOURCE_URL", SECOND_SOURCE_URL)
 SKIP_PUSH = os.environ.get("SKIP_PUSH", "true").lower() in ("1", "true", "yes")
 TARGET_PUSH_BRANCH = os.environ.get("TARGET_PUSH_BRANCH", "gh-pages-2")
@@ -37,15 +39,16 @@ TARGET_STABLE = "legacy/IPTVstable.m3u8"
 TARGET_MIR_RAW = "https://raw.githubusercontent.com/Phoenix89S/IPTVru/gh-pages/IPTVmir.m3u8"
 TARGET_STABLE_RAW = "https://raw.githubusercontent.com/Phoenix89S/IPTVru/gh-pages/legacy/IPTVstable.m3u8"
 
-# 🚫 ЧЁРНЫЙ СПИСОК (Только 18+ и нежелательный спам)
+# 🚫 Только 18+ и явный adult-спам (минимальный фильтр, чтобы не резать каналы)
 BLACKLIST = {
-    "playboy", "erox", "blue hustler", "barely legal", 
-    "adult", "private", "penthouse", "senstv", "o-la-la"
+    "playboy", "erox", "blue hustler", "barely legal",
+    "adult", "private", "penthouse", "senstv", "o-la-la",
+    "xxx", "18+", "porn", "hustler"
 }
 
-# Шаблоны для строгой привязки федеральных каналов РТРС (1-20) в две общие папки
+# Строгая сетка РТРС SD / HD (1–20)
 RTRS_CHANNELS_MAP = {
-    # РТРС SD (1-20)
+    # РТРС SD
     "1.sd первый канал": ("РТРС SD", "1.SD Первый канал"),
     "2.sd россия 1": ("РТРС SD", "2.SD Россия 1"),
     "3.sd матч тв": ("РТРС SD", "3.SD Матч ТВ"),
@@ -66,8 +69,8 @@ RTRS_CHANNELS_MAP = {
     "18.sd мир": ("РТРС SD", "18.SD Мир"),
     "19.sd тнт": ("РТРС SD", "19.SD ТНТ"),
     "20.sd муз-тв": ("РТРС SD", "20.SD Муз-ТВ"),
-    
-    # РТРС HD (1-20)
+
+    # РТРС HD
     "1.hd первый канал hd": ("РТРС HD", "1.HD Первый канал HD"),
     "2.hd россия 1 hd": ("РТРС HD", "2.HD Россия 1 HD"),
     "3.hd матч тв hd": ("РТРС HD", "3.HD Матч ТВ HD"),
@@ -87,10 +90,10 @@ RTRS_CHANNELS_MAP = {
     "17.hd звезда hd": ("РТРС HD", "17.HD Звезда HD"),
     "18.hd мир hd": ("РТРС HD", "18.HD Мир HD"),
     "19.hd тнт hd": ("РТРС HD", "19.HD ТНТ HD"),
-    "20.hd муз-тв hd": ("РТРС HD", "20.HD Муз-ТВ HD")
+    "20.hd муз-тв hd": ("РТРС HD", "20.HD Муз-ТВ HD"),
 }
 
-# ---------- Утилиты сети и Git ----------
+# ---------- Утилиты ----------
 def run(cmd, cwd=None, check=True):
     try:
         res = subprocess.run(cmd, cwd=cwd, check=check, capture_output=True, text=True)
@@ -111,28 +114,28 @@ def ensure_on_branch(branch="gh-pages"):
 def fetch_url(url, timeout=12):
     try:
         req = urllib.request.Request(
-            url, 
+            url,
             headers={"User-Agent": "Mozilla/5.0 (compatible; IPTVBot/4.0)"}
         )
         with urllib.request.urlopen(req, timeout=timeout) as r:
             raw_data = r.read()
-            for enc in ('utf-8', 'cp1251', 'latin-1'):
+            for enc in ("utf-8", "cp1251", "latin-1"):
                 try:
                     return raw_data.decode(enc)
                 except UnicodeDecodeError:
                     continue
-            return raw_data.decode('utf-8', errors='ignore')
+            return raw_data.decode("utf-8", errors="ignore")
     except Exception as e:
         print(f"Ошибка загрузки {url}: {e}")
         return ""
 
 def check_stream_alive(url, timeout=5):
-    """Быстрая проверка доступности потока (живой/мертвый)"""
+    """Быстрая проверка живости потока (HEAD + fallback Range)"""
     if not url or not url.startswith("http"):
         return False
     try:
         req = urllib.request.Request(
-            url, 
+            url,
             headers={"User-Agent": "VLC/3.0.16 LibVLC/3.0.16"},
             method="HEAD"
         )
@@ -141,7 +144,7 @@ def check_stream_alive(url, timeout=5):
     except Exception:
         try:
             req = urllib.request.Request(
-                url, 
+                url,
                 headers={"User-Agent": "VLC/3.0.16 LibVLC/3.0.16", "Range": "bytes=0-512"}
             )
             with urllib.request.urlopen(req, timeout=timeout) as response:
@@ -155,7 +158,7 @@ def parse_m3u_content(content):
     entries = []
     current_meta = None
     tvg_re = re.compile(r'tvg-id="([^"]+)"', re.IGNORECASE)
-    
+
     for line in lines:
         s = line.strip()
         if not s:
@@ -169,113 +172,104 @@ def parse_m3u_content(content):
                 name = parts[1].strip() if len(parts) > 1 else ""
                 m = tvg_re.search(current_meta)
                 key = m.group(1).strip().lower() if m else url.strip().lower()
-                entries.append({'extinf': current_meta, 'url': url, 'key': key, 'name': name})
+                entries.append({
+                    "extinf": current_meta,
+                    "url": url,
+                    "key": key,
+                    "name": name
+                })
                 current_meta = None
             else:
-                entries.append({'extinf': '', 'url': url, 'key': url.strip().lower(), 'name': ''})
+                entries.append({
+                    "extinf": "",
+                    "url": url,
+                    "key": url.strip().lower(),
+                    "name": ""
+                })
     return entries
-
-def read_local_or_raw(path, raw_fallback=None):
-    if os.path.exists(path):
-        with open(path, "r", encoding="utf-8", errors="ignore") as f:
-            return f.read()
-    if raw_fallback:
-        print(f"Локальный файл {path} не найден — пробуем raw {raw_fallback}")
-        return fetch_url(raw_fallback)
-    return ""
 
 def is_blacklisted(title):
     t = (title or "").strip().lower()
     return any(bad in t for bad in BLACKLIST)
 
 def has_digit_index_in_path(url):
-    return bool(re.search(r'/\d+/', url))
-
-def collect_existing_keys(path, raw_fallback=None):
-    content = read_local_or_raw(path, raw_fallback=raw_fallback)
-    if not content:
-        return set()
-    entries = parse_m3u_content(content)
-    keys = set()
-    for e in entries:
-        if e.get('key'):
-            keys.add(e['key'])
-        if e.get('url'):
-            keys.add(e['url'].strip().lower())
-    return keys
+    return bool(re.search(r"/\d+/", url))
 
 def smart_format_entry(name, extinf, default_group="Стабильные ТВ"):
+    """Применяет РТРС-сетку или ставит group-title по умолчанию"""
     clean_name_lower = name.strip().lower()
-    
+
     for pattern, (group_title, formatted_name) in RTRS_CHANNELS_MAP.items():
         if pattern in clean_name_lower:
-            if 'group-title=' in extinf:
+            if "group-title=" in extinf:
                 new_extinf = re.sub(r'group-title="[^"]*"', f'group-title="{group_title}"', extinf)
             else:
-                meta = extinf.split(',')[0]
+                meta = extinf.split(",")[0] if extinf else "#EXTINF:-1"
                 new_extinf = f'{meta} group-title="{group_title}"'
-            
-            if ',' in new_extinf:
-                new_extinf = new_extinf.split(',')[0] + f',{formatted_name}'
+
+            if "," in new_extinf:
+                new_extinf = new_extinf.split(",")[0] + f",{formatted_name}"
             else:
-                new_extinf = f'{new_extinf},{formatted_name}'
+                new_extinf = f"{new_extinf},{formatted_name}"
             return new_extinf, group_title
 
     if not extinf:
         return f'#EXTINF:-1 group-title="{default_group}",{name}', default_group
-    
-    if 'group-title=' in extinf:
+
+    if "group-title=" in extinf:
         return extinf, default_group
     else:
-        meta, ch_name = extinf.split(',', 1) if ',' in extinf else (extinf, name)
+        meta, ch_name = extinf.split(",", 1) if "," in extinf else (extinf, name)
         return f'{meta} group-title="{default_group}",{ch_name}', default_group
 
 def backup_file(path):
     if os.path.exists(path):
-        ts = time.strftime('%Y%m%d_%H%M%S')
+        ts = time.strftime("%Y%m%d_%H%M%S")
         bak = f"{path}.bak_{ts}"
         shutil.copy2(path, bak)
         print(f"Создан backup: {bak}")
 
-def append_group_if_new(target_path, donor_entries, raw_fallback=None):
+def process_single_stream_check(e):
+    """Воркер health-check"""
+    url = e.get("url", "")
+    if check_stream_alive(url):
+        return e
+    return None
+
+def append_all_valid(target_path, donor_entries, raw_fallback=None):
+    """
+    Без дедупликации: добавляем ВСЕ прошедшие фильтр + health-check записи.
+    Если файла нет — создаём с #EXTM3U.
+    """
     if not donor_entries:
         return 0
 
-    file_exists = os.path.exists(target_path)
-    existing_keys = collect_existing_keys(target_path, raw_fallback=raw_fallback)
-    to_append = []
-    
-    print(f"Проверка работоспособности и уникальности потоков для {target_path}...")
-    for e in donor_entries:
-        key = e.get('key') or e.get('url') or e.get('extinf')
-        url = e.get('url') or ""
-        norm_url = url.strip().lower()
-        name = e.get('name', '')
-        
-        if key in existing_keys or norm_url in existing_keys:
-            continue
-            
-        if not check_stream_alive(url):
-            continue  
+    print(f"Многопоточная проверка работоспособности {len(donor_entries)} потоков для {target_path}...")
+    valid_candidates = []
 
-        formatted_extinf, _ = smart_format_entry(name, e.get('extinf'))
-        
-        to_append.append((formatted_extinf, url))
-        existing_keys.add(key)
-        existing_keys.add(norm_url)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=24) as executor:
+        results = executor.map(process_single_stream_check, donor_entries)
+        for res in results:
+            if res:
+                valid_candidates.append(res)
 
-    if not to_append:
+    if not valid_candidates:
         return 0
 
+    to_append = []
+    for e in valid_candidates:
+        name = e.get("name", "")
+        formatted_extinf, _ = smart_format_entry(name, e.get("extinf", ""))
+        to_append.append((formatted_extinf, e.get("url", "")))
+
+    file_exists = os.path.exists(target_path)
     if file_exists:
         backup_file(target_path)
 
     os.makedirs(os.path.dirname(target_path) or ".", exist_ok=True)
-    
-    is_brand_new = not os.path.exists(target_path)
 
     with open(target_path, "a", encoding="utf-8") as f:
-        if is_brand_new:
+        if not file_exists:
             f.write("#EXTM3U\n")
         f.write("\n")
         f.write(f"# ===== AUTO-UPDATED STABLE STREAMS ({time.strftime('%Y-%m-%d %H:%M:%S')}) =====\n")
@@ -284,6 +278,33 @@ def append_group_if_new(target_path, donor_entries, raw_fallback=None):
             f.write(url.rstrip() + "\n")
 
     return len(to_append)
+
+def fetch_source_worker(source_tuple):
+    """Параллельная загрузка + первичный фильтр"""
+    name, url, apply_filter = source_tuple
+    if not url:
+        return name, []
+    print(f"Параллельная загрузка {name}: {url}")
+    raw_data = fetch_url(url)
+    if not raw_data:
+        print(f"Источник {name} недоступен или пуст.")
+        return name, []
+
+    entries = parse_m3u_content(raw_data)
+    filtered_entries = []
+    for e in entries:
+        ch_name = e.get("name", "")
+        ch_url = e.get("url", "")
+
+        if apply_filter:
+            if is_blacklisted(ch_name) or has_digit_index_in_path(ch_url):
+                continue
+
+        e["source"] = name
+        filtered_entries.append(e)
+
+    print(f"Из {name} успешно распарсено в пул: {len(filtered_entries)} записей")
+    return name, filtered_entries
 
 # ---------- Основной поток ----------
 def main():
@@ -308,55 +329,48 @@ def main():
     else:
         print("SKIP_PUSH=true — работаем в текущем рабочем дереве для workflow.")
 
-    donor_entries = []
     sources = [
-        ("SOURCE_URL", SOURCE_URL, False),
-        ("SECOND_SOURCE_URL", SECOND_SOURCE_URL, True),
+        ("SOURCE_URL", SOURCE_URL, False),          # без фильтра
+        ("SECOND_SOURCE_URL", SECOND_SOURCE_URL, True),  # фильтр 18+ + digit
         ("THIRD_SOURCE_URL", THIRD_SOURCE_URL, True),
-        ("TEST_CHANNELS_URL", TEST_CHANNELS_URL, False)
+        ("TEST_CHANNELS_URL", TEST_CHANNELS_URL, False),
     ]
 
-    for name, url, apply_filter in sources:
-        if not url:
-            continue
-        print(f"Загрузка {name}: {url}")
-        raw_data = fetch_url(url)
-        if raw_data:
-            entries = parse_m3u_content(raw_data)
-            valid_count = 0
-            for e in entries:
-                ch_name = e.get('name', '')
-                ch_url = e.get('url', '')
-                
-                if apply_filter:
-                    if is_blacklisted(ch_name) or has_digit_index_in_path(ch_url):
-                        continue
-                
-                e['source'] = name
-                valid_count += 1
-                donor_entries.append(e)
-            print(f"Из {name} добавлено в пул: {valid_count} записей")
-        else:
-            print(f"Источник {name} недоступен или пуст.")
+    donor_entries = []
+
+    print("Запуск многопоточного скачивания всех донорских источников...")
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        future_to_source = {executor.submit(fetch_source_worker, src): src[0] for src in sources}
+        for future in concurrent.futures.as_completed(future_to_source):
+            src_name = future_to_source[future]
+            try:
+                name, entries = future.result()
+                if entries:
+                    donor_entries.extend(entries)
+            except Exception as exc:
+                print(f"Источник {src_name} вызвал исключение: {exc}")
 
     if not donor_entries:
         print("Нет донорских записей для обработки.")
         sys.exit(0)
 
+    print(f"Всего кандидатов после первичной фильтрации: {len(donor_entries)}")
+
     modified = []
     added_total = 0
 
     for target, raw_fb in [(TARGET_MIR, TARGET_MIR_RAW), (TARGET_STABLE, TARGET_STABLE_RAW)]:
-        added = append_group_if_new(target, donor_entries, raw_fallback=raw_fb)
+        # raw_fb оставлен на будущее, сейчас не используется (т.к. без дедупа)
+        added = append_all_valid(target, donor_entries)
         if added:
-            print(f"В {target} добавлено новых рабочих потоков: {added}")
+            print(f"В {target} добавлено рабочих потоков: {added}")
             modified.append(target)
             added_total += added
         else:
             print(f"В {target} новых рабочих потоков не обнаружено.")
 
     if not modified:
-        print("Изменений нет. Новые рабочие потоки не прошли проверку или уже существуют.")
+        print("Изменений нет. Новые рабочие потоки не прошли проверку.")
         if not SKIP_PUSH:
             try:
                 run(["git", "checkout", "gh-pages"], check=True)
@@ -366,12 +380,13 @@ def main():
         sys.exit(0)
 
     if SKIP_PUSH:
-        print(f"Готово! Автоматически добавлено рабочих потоков: {added_total}. Файлы готовы для отправки через workflow.")
+        print(f"Готово! Добавлено рабочих потоков: {added_total}. Файлы готовы для workflow.")
+        print("Modified files:", modified)
         sys.exit(0)
 
     try:
         run(["git", "add"] + modified, check=True)
-        commit_msg = f"chore: auto-update IPTV streams & RTRS grid ({time.strftime('%Y-%m-%d %H:%M:%S')})"
+        commit_msg = f"chore: multi-threaded auto-update IPTV streams & RTRS grid ({time.strftime('%Y-%m-%d %H:%M:%S')})"
         run(["git", "commit", "-m", commit_msg], check=True)
         run(["git", "push", "-u", "origin", branch_name], check=True)
         print(f"Успешно запушено в ветку: {branch_name}")
