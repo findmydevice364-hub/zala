@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 # coding: utf-8
 """
@@ -29,6 +30,8 @@ Universal Multi-threaded Full Logic Version
 - Бэкапы перед изменением
 - Полная git-логика (ветка / коммит / пуш)
 """
+#Phoenix89S_Lab© findmydevice364-hub_lab
+#Ver3.0
 
 import os
 import re
