@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # coding: utf-8
 """
-git_bot_for_stable.py (Advanced Multi-Source & RTRS Smart Grid)
-- читает локальные целевые файлы (gh-pages checkout)
-- загружает несколько доноров, проверяет их на "живость" (health-check)
-- раскладывает базовые каналы по строгой сетке РТРС 1/2 (SD и HD) с нумерацией 1-20
-- фильтрует мусор и 18+
-- добавляет новые рабочие потоки в конец целевых файлов
+git_bot_for_stable.py (Full Extended Version)
+- читает локальные целевые файлы (gh-pages checkout) или создаёт их с нуля (#EXTM3U)
+- загружает все 4 донора, проверяет их на "живость" (health-check)
+- раскладывает базовые каналы по строгой сетке РТРС SD и HD с нумерацией 1-20
+- фильтрует мусор и категории 18+
+- добавляет новые рабочие потоки в конец целевых файлов с бэкапами
 - поддерживает SKIP_PUSH для интеграции с GitHub Actions Workflow
 """
 
@@ -43,52 +43,51 @@ BLACKLIST = {
     "adult", "private", "penthouse", "senstv", "o-la-la"
 }
 
-# Шаблоны для строгой привязки федеральных каналов РТРС (1-20)
+# Шаблоны для строгой привязки федеральных каналов РТРС (1-20) в две общие папки
 RTRS_CHANNELS_MAP = {
-    # РТРС 1 (SD)
-    "1.sd первый канал": ("РТРС 1", "1.SD Первый канал"),
-    "2.sd россия 1": ("РТРС 1", "2.SD Россия 1"),
-    "3.sd матч тв": ("РТРС 1", "3.SD Матч ТВ"),
-    "4.sd нтв": ("РТРС 1", "4.SD НТВ"),
-    "5.sd пятый канал": ("РТРС 1", "5.SD Пятый канал"),
-    "6.sd россия к": ("РТРС 1", "6.SD Россия К"),
-    "7.sd россия 24": ("РТРС 1", "7.SD Россия 24"),
-    "8.sd карусель": ("РТРС 1", "8.SD Карусель"),
-    "9.sd отр": ("РТРС 1", "9.SD ОТР"),
-    "10.sd тв центр": ("РТРС 1", "10.SD ТВ Центр"),
-    # РТРС 2 (SD)
-    "11.sd рен тв": ("РТРС 2", "11.SD РЕН ТВ"),
-    "12.sd спас": ("РТРС 2", "12.SD Спас"),
-    "13.sd стс": ("РТРС 2", "13.SD СТС"),
-    "14.sd домашний": ("РТРС 2", "14.SD Домашний"),
-    "15.sd тв-3": ("РТРС 2", "15.SD ТВ-3"),
-    "16.sd пятница!": ("РТРС 2", "16.SD Пятница!"),
-    "17.sd звезда": ("РТРС 2", "17.SD Звезда"),
-    "18.sd мир": ("РТРС 2", "18.SD Мир"),
-    "19.sd тнт": ("РТРС 2", "19.SD ТНТ"),
-    "20.sd муз-тв": ("РТРС 2", "20.SD Муз-ТВ"),
-    # РТРС 1 HD
-    "1.hd первый канал hd": ("РТРС 1 HD", "1.HD Первый канал HD"),
-    "2.hd россия 1 hd": ("РТРС 1 HD", "2.HD Россия 1 HD"),
-    "3.hd матч тв hd": ("РТРС 1 HD", "3.HD Матч ТВ HD"),
-    "4.hd нтв hd": ("РТРС 1 HD", "4.HD НТВ HD"),
-    "5.hd пятый канал hd": ("РТРС 1 HD", "5.HD Пятый канал HD"),
-    "6.hd россия к hd": ("РТРС 1 HD", "6.HD Россия К HD"),
-    "7.hd россия 24 hd": ("РТРС 1 HD", "7.HD Россия 24 HD"),
-    "8.hd карусель hd": ("РТРС 1 HD", "8.HD Карусель HD"),
-    "9.hd отр hd": ("РТРС 1 HD", "9.HD ОТР HD"),
-    "10.hd тв центр hd": ("РТРС 1 HD", "10.HD ТВ Центр HD"),
-    # РТРС 2 HD
-    "11.hd рен тв hd": ("РТРС 2 HD", "11.HD РЕН ТВ HD"),
-    "12.hd спас hd": ("РТРС 2 HD", "12.HD Спас HD"),
-    "13.hd стс hd": ("РТРС 2 HD", "13.HD СТС HD"),
-    "14.hd домашний hd": ("РТРС 2 HD", "14.HD Домашний HD"),
-    "15.hd тв-3 hd": ("РТРС 2 HD", "15.HD ТВ-3 HD"),
-    "16.hd пятница! hd": ("РТРС 2 HD", "16.HD Пятница! HD"),
-    "17.hd звезда hd": ("РТРС 2 HD", "17.HD Звезда HD"),
-    "18.hd мир hd": ("РТРС 2 HD", "18.HD Мир HD"),
-    "19.hd тнт hd": ("РТРС 2 HD", "19.HD ТНТ HD"),
-    "20.hd муз-тв hd": ("РТРС 2 HD", "20.HD Муз-ТВ HD")
+    # РТРС SD (1-20)
+    "1.sd первый канал": ("РТРС SD", "1.SD Первый канал"),
+    "2.sd россия 1": ("РТРС SD", "2.SD Россия 1"),
+    "3.sd матч тв": ("РТРС SD", "3.SD Матч ТВ"),
+    "4.sd нтв": ("РТРС SD", "4.SD НТВ"),
+    "5.sd пятый канал": ("РТРС SD", "5.SD Пятый канал"),
+    "6.sd россия к": ("РТРС SD", "6.SD Россия К"),
+    "7.sd россия 24": ("РТРС SD", "7.SD Россия 24"),
+    "8.sd карусель": ("РТРС SD", "8.SD Карусель"),
+    "9.sd отр": ("РТРС SD", "9.SD ОТР"),
+    "10.sd тв центр": ("РТРС SD", "10.SD ТВ Центр"),
+    "11.sd рен тв": ("РТРС SD", "11.SD РЕН ТВ"),
+    "12.sd спас": ("РТРС SD", "12.SD Спас"),
+    "13.sd стс": ("РТРС SD", "13.SD СТС"),
+    "14.sd домашний": ("РТРС SD", "14.SD Домашний"),
+    "15.sd тв-3": ("РТРС SD", "15.SD ТВ-3"),
+    "16.sd пятница!": ("РТРС SD", "16.SD Пятница!"),
+    "17.sd звезда": ("РТРС SD", "17.SD Звезда"),
+    "18.sd мир": ("РТРС SD", "18.SD Мир"),
+    "19.sd тнт": ("РТРС SD", "19.SD ТНТ"),
+    "20.sd муз-тв": ("РТРС SD", "20.SD Муз-ТВ"),
+    
+    # РТРС HD (1-20)
+    "1.hd первый канал hd": ("РТРС HD", "1.HD Первый канал HD"),
+    "2.hd россия 1 hd": ("РТРС HD", "2.HD Россия 1 HD"),
+    "3.hd матч тв hd": ("РТРС HD", "3.HD Матч ТВ HD"),
+    "4.hd нтв hd": ("РТРС HD", "4.HD НТВ HD"),
+    "5.hd пятый канал hd": ("РТРС HD", "5.HD Пятый канал HD"),
+    "6.hd россия к hd": ("РТРС HD", "6.HD Россия К HD"),
+    "7.hd россия 24 hd": ("РТРС HD", "7.HD Россия 24 HD"),
+    "8.hd карусель hd": ("РТРС HD", "8.HD Карусель HD"),
+    "9.hd отр hd": ("РТРС HD", "9.HD ОТР HD"),
+    "10.hd тв центр hd": ("РТРС HD", "10.HD ТВ Центр HD"),
+    "11.hd рен тв hd": ("РТРС HD", "11.HD РЕН ТВ HD"),
+    "12.hd спас hd": ("РТРС HD", "12.HD Спас HD"),
+    "13.hd стс hd": ("РТРС HD", "13.HD СТС HD"),
+    "14.hd домашний hd": ("РТРС HD", "14.HD Домашний HD"),
+    "15.hd тв-3 hd": ("РТРС HD", "15.HD ТВ-3 HD"),
+    "16.hd пятница! hd": ("РТРС HD", "16.HD Пятница! HD"),
+    "17.hd звезда hd": ("РТРС HD", "17.HD Звезда HD"),
+    "18.hd мир hd": ("РТРС HD", "18.HD Мир HD"),
+    "19.hd тнт hd": ("РТРС HD", "19.HD ТНТ HD"),
+    "20.hd муз-тв hd": ("РТРС HD", "20.HD Муз-ТВ HD")
 }
 
 # ---------- Утилиты сети и Git ----------
@@ -140,7 +139,6 @@ def check_stream_alive(url, timeout=5):
         with urllib.request.urlopen(req, timeout=timeout) as response:
             return response.status < 400
     except Exception:
-        # Если HEAD не поддержан сервером, пробуем открыть кусочек через GET
         try:
             req = urllib.request.Request(
                 url, 
@@ -207,27 +205,22 @@ def collect_existing_keys(path, raw_fallback=None):
     return keys
 
 def smart_format_entry(name, extinf, default_group="Стабильные ТВ"):
-    """Определяет, попадает ли канал под жесткую сетку РТРС (1-20), либо оставляет свою группу"""
     clean_name_lower = name.strip().lower()
     
-    # Проверяем, есть ли канал в нашей фиксированной карте РТРС
     for pattern, (group_title, formatted_name) in RTRS_CHANNELS_MAP.items():
         if pattern in clean_name_lower:
-            # Пересобираем extinf с нужной группой и красивым именем
             if 'group-title=' in extinf:
                 new_extinf = re.sub(r'group-title="[^"]*"', f'group-title="{group_title}"', extinf)
             else:
                 meta = extinf.split(',')[0]
                 new_extinf = f'{meta} group-title="{group_title}"'
             
-            # Меняем название на правильное отформатированное
             if ',' in new_extinf:
                 new_extinf = new_extinf.split(',')[0] + f',{formatted_name}'
             else:
                 new_extinf = f'{new_extinf},{formatted_name}'
             return new_extinf, group_title
 
-    # Если это обычный канал (не входит в топ-20 эфирных), оставляем его в стандартной группе
     if not extinf:
         return f'#EXTINF:-1 group-title="{default_group}",{name}', default_group
     
@@ -248,6 +241,7 @@ def append_group_if_new(target_path, donor_entries, raw_fallback=None):
     if not donor_entries:
         return 0
 
+    file_exists = os.path.exists(target_path)
     existing_keys = collect_existing_keys(target_path, raw_fallback=raw_fallback)
     to_append = []
     
@@ -261,11 +255,9 @@ def append_group_if_new(target_path, donor_entries, raw_fallback=None):
         if key in existing_keys or norm_url in existing_keys:
             continue
             
-        # Проверка на "живость" потока
         if not check_stream_alive(url):
-            continue  # Мертвые потоки не добавляем!
+            continue  
 
-        # Форматируем имя и группу (РТРС 1/2 SD/HD или Стабильные ТВ)
         formatted_extinf, _ = smart_format_entry(name, e.get('extinf'))
         
         to_append.append((formatted_extinf, url))
@@ -275,10 +267,16 @@ def append_group_if_new(target_path, donor_entries, raw_fallback=None):
     if not to_append:
         return 0
 
-    backup_file(target_path)
+    if file_exists:
+        backup_file(target_path)
 
     os.makedirs(os.path.dirname(target_path) or ".", exist_ok=True)
+    
+    is_brand_new = not os.path.exists(target_path)
+
     with open(target_path, "a", encoding="utf-8") as f:
+        if is_brand_new:
+            f.write("#EXTM3U\n")
         f.write("\n")
         f.write(f"# ===== AUTO-UPDATED STABLE STREAMS ({time.strftime('%Y-%m-%d %H:%M:%S')}) =====\n")
         for extinf, url in to_append:
@@ -318,7 +316,6 @@ def main():
         ("TEST_CHANNELS_URL", TEST_CHANNELS_URL, False)
     ]
 
-    # Сбор со всех источников
     for name, url, apply_filter in sources:
         if not url:
             continue
@@ -331,7 +328,6 @@ def main():
                 ch_name = e.get('name', '')
                 ch_url = e.get('url', '')
                 
-                # Фильтрация (blacklist + цифровые мусорные индексы в путях)
                 if apply_filter:
                     if is_blacklisted(ch_name) or has_digit_index_in_path(ch_url):
                         continue
@@ -350,7 +346,6 @@ def main():
     modified = []
     added_total = 0
 
-    # Обновление целевых файлов с проверкой работоспособности
     for target, raw_fb in [(TARGET_MIR, TARGET_MIR_RAW), (TARGET_STABLE, TARGET_STABLE_RAW)]:
         added = append_group_if_new(target, donor_entries, raw_fallback=raw_fb)
         if added:
@@ -374,7 +369,6 @@ def main():
         print(f"Готово! Автоматически добавлено рабочих потоков: {added_total}. Файлы готовы для отправки через workflow.")
         sys.exit(0)
 
-    # Коммит и пуш (если SKIP_PUSH = false)
     try:
         run(["git", "add"] + modified, check=True)
         commit_msg = f"chore: auto-update IPTV streams & RTRS grid ({time.strftime('%Y-%m-%d %H:%M:%S')})"
