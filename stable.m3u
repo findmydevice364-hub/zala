@@ -1,4 +1,17 @@
 #EXTM3U
+# ===== BUILD METADATA BEGIN =====
+# ==============================================================================
+# Target File:      stable.m3u
+# Playlist Schema:  v3.0 (Strict RTRS + Multi-source pools)
+# Generated At:     2026-11-04 22:19:40
+# ------------------------------------------------------------------------------
+# Builder Engine:   git_bot_for_stable.py
+# Builder Version:  3.0.0-beta.2.1 (versionCode: 30.2.0.1)
+# Build ID:         P3021-B6-3ad57b6
+# Pipeline Stats:   Candidates: 1379 | Written Valid: 5
+# Validation:       HEAD -> GET -> ffprobe | Deduplication: disabled
+# ==============================================================================
+# ===== BUILD METADATA END =====
 
 # ===== AUTO-UPDATED STABLE STREAMS (2026-11-04 18:52:30) =====
 #EXTINF:-1 tvg-id="1" group-title="Стабильные ТВ",Первый канал HD
@@ -16429,3 +16442,14 @@ https://xykt-fix.github.io/cinerama_edge01/hls/BOLLYWOOD_RU/Movie009.m3u8
 https://cdn-euronews.akamaized.net/live/eds/euronews-ru/25071/index.m3u8
 #EXTINF:-1 tvg-id="mir-kazakhstan" tvg-logo="https://i.imgur.com/AqWaJT8.png" group-title="Дополнительные Эфирные ТВ Плюс",89.2 Mir Kazakhstan (576p)
 http://tvcdn01.esilnet.kz/tv/mir/index.m3u8
+# ===== AUTO-UPDATED STABLE STREAMS (2026-11-04 22:19:40) =====
+#EXTINF:-1 tvg-id="domashny" tvg-logo="http://epg.it99.org/img/14.png" group-title="РТРС SD",14.SD Домашний
+http://5.188.221.43:8080/play/domashniy
+#EXTINF:-1 tvg-id="evrokino" tvg-logo="https://iptvx.one/picons/eurokino.png" group-title="Эфирные ТВ плюс",69.17.1 Еврокино
+http://176.118.197.101/Evrokino/index.m3u8
+#EXTINF:-1 tvg-name="Киномикс" tvg-id="Kinomiks.ru" tvg-chno="25" group-title="Экстра ТВ плюс",Киномикс
+http://93.170.254.17/Kinomiks/index.m3u8
+#EXTINF:-1 group-title="Эфирные ТВ плюс",110.1 Perviy Gorodskoy Odessa
+http://91.194.79.46:8081/stream1/channel1/playlist.m3u8
+#EXTINF:-1 group-title="Дополнительные Эфирные ТВ", 110 КТК (360p) [Not 24/7]
+http://89.218.30.37/ktklive/live.hq/playlist.m3u8
