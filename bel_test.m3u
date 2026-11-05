@@ -1,0 +1,37 @@
+#EXTM3U
+#EXTINF:-1, Беларусь 24 | Auto
+https://ngtrk.dc.beltelecom.by/ngtrk/smil:belarus24.smil/playlist.m3u8
+#EXTINF:-1, Белгород 24 HD
+https://belnovosti.cdn.easyhoster.ru:8443/stream.m3u8
+#EXTINF:-1, Мир Белогорья
+http://stream.tvbelgorod.ru:8080/mirbelogorya/tracks-v1a1/mono.m3u8
+#EXTINF:-1, БелРос
+http://live.mediacdn.ru/sr1/tro/playlist.m3u8
+#EXTINF:-1, Барановичи FM
+http://radio.100fm.by:8000/100fm128
+#EXTINF:-1, Alyaxen Radiostation
+https://listen7.myradio24.com/alyaxen
+#EXTINF:-1, HIPHOPBY
+https://listen2.myradio24.com/8000
+#EXTINF:-1, Love Is Radio
+https://listen1.myradio24.com/3355
+#EXTINF:-1, WGFM-1
+https://sv.wargaming.fm/1/128
+#EXTINF:-1, WGFM-2
+https://sv.wargaming.fm/2/128
+#EXTINF:-1, WGFM-Rock
+https://sv.wargaming.fm/4/128
+#EXTINF:-1, WGFM-Trance
+https://sv.wargaming.fm/3/128
+#EXTINF:-1, Новое Радио Fresh
+https://live.novoeradio.by:444/live/novoeradio_fresh_aac128/icecast.audio
+#EXTINF:-1, Новое радио MegaMix
+https://live.novoeradio.by:444/live/novoeradio_megamix_aac128/icecast.audio
+#EXTINF:-1, Прайм Радио
+https://listen7.myradio24.com/praims
+#EXTINF:-1, Радио Uvaga.by
+http://up.uvaga.by:8100/uvaga128
+#EXTINF:-1, Радио Эксперимент(Cлавянское)
+https://rde.stream.laut.fm/rde
+#EXTINF:-1, Радио Эксперимент(Мировое)
+https://rde2.stream.laut.fm/rde2
