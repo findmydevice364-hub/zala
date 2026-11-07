@@ -10,6 +10,8 @@
 
 ##  [url_playlist.txt](https://github.com/asinsckievgeni/zala/blob/main/url_playlist.txt)
 
+##
+[скоро увидите]
 Ссылки на плейлист и программу передач.
 > ⚠️ Ссылки скопировать и вставить в IPTV плеер.
 
