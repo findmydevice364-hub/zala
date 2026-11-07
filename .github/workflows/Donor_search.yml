@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   donor-search:
-    name: Run scanner and commit generated results
+    name: Run scanner, preserve results, upload artifacts and push
     runs-on: ubuntu-latest
     timeout-minutes: 360
 
@@ -69,7 +69,7 @@ jobs:
           test -s "${SCANNER_PATH}"
           python -m py_compile "${SCANNER_PATH}"
 
-          echo "Scanner downloaded and syntax validation passed."
+          echo "Scanner syntax validation passed."
           echo "Scanner path: ${SCANNER_PATH}"
 
       - name: Run scanner and create results
@@ -108,64 +108,130 @@ jobs:
 
           echo "Scanner completed successfully."
 
-      - name: Inspect generated repository changes
-        id: changes
+      # Публикуем только после успешного завершения сканера.
+      # Сначала сохраняем снимок всех найденных выходных файлов.
+      - name: Inventory generated results
+        id: inventory
         if: success()
         shell: bash
         run: |
           set -euo pipefail
-
           cd "${GITHUB_WORKSPACE}"
 
-          echo "Repository changes after scanner execution:"
-          git status --short --untracked-files=all
+          mkdir -p "${RUNNER_TEMP}/donor-publish-manifest"
 
-          if [[ -n "$(git status --porcelain --untracked-files=all)" ]]; then
-            echo "changed=true" >> "${GITHUB_OUTPUT}"
-          else
-            echo "changed=false" >> "${GITHUB_OUTPUT}"
-            echo "No repository files were created or modified."
+          MANIFEST="${RUNNER_TEMP}/donor-publish-manifest/files.txt"
+          : > "${MANIFEST}"
+
+          # Все файлы в каталоге data/.
+          if [[ -d data ]]; then
+            find data -type f -print >> "${MANIFEST}"
           fi
 
-      - name: Commit and push generated results
-        if: success() && steps.changes.outputs.changed == 'true'
+          # Выходные файлы в корне репозитория.
+          find . -maxdepth 1 -type f \( \
+            -iname '*.m3u' -o \
+            -iname '*.m3u8' -o \
+            -iname '*.m3u4' -o \
+            -iname '*.m3uplus' -o \
+            -iname '*.json' -o \
+            -iname '*.txt' -o \
+            -iname '*.csv' -o \
+            -iname '*.sqlite' -o \
+            -iname '*.db' \
+          \) -print >> "${MANIFEST}"
+
+          # Также включаем такие результаты во вложенных каталогах.
+          find . -mindepth 2 -type f \( \
+            -iname '*.m3u' -o \
+            -iname '*.m3u8' -o \
+            -iname '*.m3u4' -o \
+            -iname '*.m3uplus' -o \
+            -iname '*.json' -o \
+            -iname '*.txt' -o \
+            -iname '*.csv' -o \
+            -iname '*.sqlite' -o \
+            -iname '*.db' \
+          \) \
+            -not -path './.git/*' \
+            -print >> "${MANIFEST}"
+
+          # Удаляем дубликаты путей и сохраняем список.
+          sort -u "${MANIFEST}" -o "${MANIFEST}"
+
+          count="$(grep -c . "${MANIFEST}" || true)"
+          echo "count=${count}" >> "${GITHUB_OUTPUT}"
+
+          echo "Discovered ${count} result files."
+          cat "${MANIFEST}"
+
+      - name: Commit and push results without staging deletions
+        id: publish
+        if: success() && steps.inventory.outputs.count != '0'
         shell: bash
         env:
           TARGET_BRANCH: ${{ inputs.target_branch }}
         run: |
           set -euo pipefail
-
           cd "${GITHUB_WORKSPACE}"
 
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Stage files created or modified by the scanner.
-          # The downloaded scanner and execution log are outside the repository.
-          git add -A
+          MANIFEST="${RUNNER_TEMP}/donor-publish-manifest/files.txt"
+
+          # Не используем git add -A:
+          # отсутствующие файлы не должны удаляться из ветки.
+          staged_count=0
+
+          while IFS= read -r file; do
+            [[ -n "${file}" ]] || continue
+
+            # Удалённые или исчезнувшие файлы пропускаем.
+            [[ -f "${file}" ]] || continue
+
+            # Добавляем существующие результаты, в том числе
+            # если они были исключены правилами .gitignore.
+            git add -f -- "${file}"
+            staged_count=$((staged_count + 1))
+          done < "${MANIFEST}"
+
+          echo "Existing result paths staged: ${staged_count}"
 
           if git diff --cached --quiet; then
-            echo "No staged changes to commit."
+            echo "No new changes to publish."
+            echo "pushed=false" >> "${GITHUB_OUTPUT}"
             exit 0
           fi
 
-          echo "Files included in the results commit:"
+          echo "Files to publish:"
           git diff --cached --stat
 
-          git commit -m "chore: publish donor scanner alpha results [skip ci]"
+          git commit \
+            -m "chore: publish donor scanner results [skip ci]"
+
+          # Синхронизируем целевую ветку и проверяем,
+          # что публикация не перезаписывает чужие изменения.
+          git fetch origin "${TARGET_BRANCH}"
+
+          git rebase "origin/${TARGET_BRANCH}"
 
           git push origin "HEAD:${TARGET_BRANCH}"
 
-          echo "Generated results were pushed to ${TARGET_BRANCH}."
+          echo "pushed=true" >> "${GITHUB_OUTPUT}"
+          echo "Results pushed to ${TARGET_BRANCH}."
 
-      - name: Upload alpha diagnostics
+      # Артефакты GitHub Actions сохраняются отдельно от Git-коммита.
+      # Загрузка выполняется и при ошибке сканера для диагностики.
+      - name: Upload alpha diagnostics and generated artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: donor-search-alpha-diagnostics
           path: |
             ${{ runner.temp }}/donor_search_run.log
-            data/
+            data/**
             *.m3u
             *.m3u8
             *.m3u4
@@ -175,5 +241,14 @@ jobs:
             *.csv
             *.sqlite
             *.db
-          if-no-files-found: ignore
+            **/*.m3u
+            **/*.m3u8
+            **/*.m3u4
+            **/*.m3uplus
+            **/*.json
+            **/*.txt
+            **/*.csv
+            **/*.sqlite
+            **/*.db
+          if-no-files-found: warn
           retention-days: 14
