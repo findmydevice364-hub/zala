@@ -1,0 +1,333 @@
+2026-11-07 13:07:49,696 | INFO | MainThread | Effective concurrency: discovery=8 parsing=35 stream_checks=40
+2026-11-07 13:07:49,702 | INFO | MainThread | Phoenix Hub — Unified Playlist Hunter 1.0.0
+2026-11-07 13:07:49,703 | INFO | MainThread | Concurrency configuration: search=8 parsing=35 stream_check=40
+2026-11-07 13:07:49,703 | INFO | MainThread | Output directory: /home/runner/work/zala/zala/data
+2026-11-07 13:07:49,703 | INFO | MainThread | Donor path: /home/runner/work/zala/zala/data/Donor.m3u
+2026-11-07 13:07:49,703 | INFO | MainThread | Private network access: False
+2026-11-07 13:07:49,703 | INFO | MainThread | Unverified donor policy: True
+2026-11-07 13:07:49,704 | INFO | MainThread | Attempting ffprobe bootstrap from https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+2026-11-07 13:07:52,644 | INFO | MainThread | ffprobe installed: /home/runner/work/zala/zala/data/tools/ffprobe
+2026-11-07 13:07:52,652 | INFO | MainThread | Discovery provider configured returned 2 candidates
+2026-11-07 13:07:52,830 | WARNING | gist-discovery_0 | Gist page 1 failed: HTTP_ERROR:403
+2026-11-07 13:07:52,867 | WARNING | gist-discovery_1 | Gist page 2 failed: HTTP_ERROR:403
+2026-11-07 13:07:52,869 | INFO | MainThread | Discovery provider github-gist returned 0 candidates
+2026-11-07 13:07:55,276 | WARNING | github-search_3 | GitHub code search failed for query 'russia iptv m3u': HTTP_ERROR:429
+2026-11-07 13:07:55,293 | WARNING | github-search_5 | GitHub code search failed for query 'extension:m3u8 iptv': HTTP_ERROR:429
+2026-11-07 13:07:55,317 | WARNING | github-search_2 | GitHub code search failed for query 'm3u8 tv channels': HTTP_ERROR:429
+2026-11-07 13:07:55,453 | WARNING | github-search_4 | GitHub code search failed for query 'country:RU extension:m3u': HTTP_ERROR:429
+2026-11-07 13:07:55,479 | WARNING | github-search_0 | GitHub code search failed for query 'iptv m3u': HTTP_ERROR:429
+2026-11-07 13:07:55,526 | WARNING | github-search_1 | GitHub code search failed for query 'iptv playlist': HTTP_ERROR:429
+2026-11-07 13:07:55,526 | INFO | MainThread | Discovery provider github returned 0 candidates
+2026-11-07 13:07:55,526 | INFO | MainThread | Total unique sources discovered: 2
+2026-11-07 13:07:55,673 | INFO | MainThread | Source https://iptv-org.github.io/iptv/countries/ua.m3u: status=PARSED entries=198 elapsed=0.14s
+2026-11-07 13:07:55,680 | INFO | MainThread | Source https://iptv-org.github.io/iptv/countries/ru.m3u: status=PARSED entries=505 elapsed=0.15s
+2026-11-07 13:07:55,681 | INFO | MainThread | Fetching nested playlist candidates: 250
+2026-11-07 13:07:55,940 | INFO | MainThread | Source http://88.99.215.227/FilmUADrama/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.25s
+2026-11-07 13:07:55,974 | INFO | MainThread | Source http://85.238.112.40:8810/hls_sec/239.33.16.32-.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.29s
+2026-11-07 13:07:55,974 | INFO | MainThread | Source http://85.238.112.40:8810/hls_sec/239.33.75.33-.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.29s
+2026-11-07 13:07:55,978 | INFO | MainThread | Source http://85.238.112.69:8811/hls_sec/239.0.4.18-.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.29s
+2026-11-07 13:07:55,982 | INFO | MainThread | Source http://85.238.112.40:8810/hls_sec/online/list-renome.m3u8: status=PARSED entries=1 elapsed=0.30s
+2026-11-07 13:07:55,983 | INFO | MainThread | Source http://195.189.60.253/118/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:07:55,992 | INFO | MainThread | Source http://91.194.79.46:8081/stream2/channel2/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:07:56,037 | INFO | MainThread | Source http://5.188.159.128:8070/megogo_sport/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.35s
+2026-11-07 13:07:56,048 | INFO | MainThread | Source http://31.131.139.253:9002/oplot_hd/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.36s
+2026-11-07 13:07:56,060 | INFO | MainThread | Source http://31.131.139.253:9002/novoros/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.38s
+2026-11-07 13:07:56,064 | INFO | MainThread | Source http://45.132.87.69:8080/cartoon_network/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.38s
+2026-11-07 13:07:56,224 | INFO | MainThread | Source http://777905.live.tvstitch.com/stream.m3u8?channel=431&m=aHR0cHM6Ly9obHMtY2RuMS5keXZ5YXBwLmNvbS9sdXgtdHYvdmlkZW8ubTN1OD90b2tlbj1leUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKamFHRnVibVZzWDJsa0lqbzBNekVzSW1Ob1lXNXVaV3hmYm1GdFpTSTZJa3hWV0NCVVZpSXNJbWx3SWpvaU1UYzRMakV6Tmk0ME1pNHlNakFpTENKamIzVnVkSEo1SWpvaVZXdHlZV2x1WlNJc0luVnpaWEpmYVdRaU9tNTFiR3dzSW5WelpYSmZjR2h2Ym1VaU9tNTFiR3dzSW5WelpYSmZjbTlzWlhNaU9sdGRMQ0p3Y205bWFXeGxYMmxrSWpwdWRXeHNMQ0p6WlhOemFXOXVYMmxrSWpvaU56ZGpabVUzTkdJdE1USmtaQzAwTTJSbExXSmtNVGt0WVRKaFptUmtabUUwT0RWaElpd2laVzUyYVhKdmJtMWxiblFpT2lKd2NtOWtkV04wYVc5dUlpd2ljR3hoZEdadmNtMGlPaUpFWlhOcmRHOXdJaXdpZFhObGNsOWhaMlZ1ZENJNklrMXZlbWxzYkdGY0x6VXVNQ0FvVjJsdVpHOTNjeUJPVkNBeE1DNHdPeUJYYVc0Mk5Ec2dlRFkwS1NCQmNIQnNaVmRsWWt0cGRGd3ZOVE0zTGpNMklDaExTRlJOVEN3Z2JHbHJaU0JIWldOcmJ5a2dRMmh5YjIxbFhDOHhOVEl1TUM0d0xqQWdVMkZtWVhKcFhDODFNemN1TXpZaUxDSmxlSEFpT2pFM09EZ3hOekk0TnpOOS5GV2NmZDBhOV93dEVONmozWS1GaFNFYzFjbV9uamh1VVZmWjhiZzVLcG84: status=PARSED entries=3 elapsed=0.54s
+2026-11-07 13:07:56,260 | INFO | MainThread | Source http://cdn10.live-tv.od.ua:8081/7tvod/7tvod-abr/7tvod/7tvod/playlist.m3u8: status=FETCH_FAILED entries=0 elapsed=0.57s
+2026-11-07 13:07:56,268 | INFO | MainThread | Source http://cdn10.live-tv.od.ua:8081/sk1zt/sk1zt720p/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.58s
+2026-11-07 13:07:56,293 | INFO | MainThread | Source http://cdn10.live-tv.od.ua:8081/sferarv/sferarv-abr/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.60s
+2026-11-07 13:07:56,295 | INFO | MainThread | Source http://cdn10.live-tv.od.ua:8081/itvrv/abr/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.61s
+2026-11-07 13:07:56,364 | INFO | MainThread | Source http://775065.live.tvstitch.com/playlist.m3u8?master=311&source=aHR0cHM6Ly9obHMtY2RuMi5keXZ5YXBwLmNvbS9rb25rdXJlbnQtdWtyYWluYS90cmFja3MtdjFhMS9tb25vLnRzLm0zdTg%2FdG9rZW49ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmphR0Z1Ym1Wc1gybGtJam96TVRFc0ltTm9ZVzV1Wld4ZmJtRnRaU0k2SWx4MU1EUXhZVngxTURRelpWeDFNRFF6WkZ4MU1EUXpZVngxTURRME0xeDFNRFEwTUZ4MU1EUXpOVngxTURRelpGeDFNRFEwTWlCY2RUQTBNak5jZFRBME0yRmNkVEEwTkRCY2RUQTBNekJjZFRBME5UZGNkVEEwTTJSY2RUQTBNekFpTENKcGNDSTZJakUzT0M0eE16WXVOREl1TWpJd0lpd2lZMjkxYm5SeWVTSTZJbFZyY21GcGJtVWlMQ0oxYzJWeVgybGtJam8zTkRBM0xDSjFjMlZ5WDNCb2IyNWxJam9pS3pNNE1Ea3pNRGsyTnpReU15SXNJblZ6WlhKZmNtOXNaWE1pT2xzaVkyeHBaVzUwSWwwc0luQnliMlpwYkdWZmFXUWlPalkwTnpFc0luTmxjM05wYjI1ZmFXUWlPaUprTURBNU5tSm1PQzB5TTJVMUxUUmxaVFl0WW1Vek5TMW1PREE0TXpsbFpqbGtPRFFpTENKbGJuWnBjbTl1YldWdWRDSTZJbkJ5YjJSMVkzUnBiMjRpTENKd2JHRjBabTl5YlNJNklrUmxjMnQwYjNBaUxDSjFjMlZ5WDJGblpXNTBJam9pVFc5NmFXeHNZVnd2TlM0d0lDaFhhVzVrYjNkeklFNVVJREV3TGpBN0lGZHBialkwT3lCNE5qUXBJRUZ3Y0d4bFYyVmlTMmwwWEM4MU16Y3VNellnS0V0SVZFMU1MQ0JzYVd0bElFZGxZMnR2S1NCRGFISnZiV1ZjTHpFMU1pNHdMakF1TUNCVFlXWmhjbWxjTHpVek55NHpOaUlzSW1WNGNDSTZNVGM0T0RNek5qTXdOSDAuOGgzdDlhSkFPUjh0djhvX0NZWjlDbHVuaTVvZ2NiRVFVcC1SbThlcUMwNA%3D%3D: status=PARSED entries=7 elapsed=0.68s
+2026-11-07 13:07:56,408 | INFO | MainThread | Source http://777905.live.tvstitch.com/playlist.m3u8?master=599&source=aHR0cDovLzE3Ni4xMjIuMTAzLjI0MTo3MDAwL2NoNDUvdHJhY2tzLXYyYTEvbW9uby5tM3U4P2xpdmU9MSZpcD0xNzguMTM2LjQyLjIyMCZpZD05NDg4NjUmc2VjcmV0PW4xdTd1aTA2JnNzbD0xJjIxeW89MCZlPTE3OTA2MDExNzAmc3Q9VS12czVHQmhOdF9WQXJ4bHVYVzR2dw%3D%3D: status=PARSED entries=13 elapsed=0.72s
+2026-11-07 13:07:56,409 | INFO | MainThread | Source http://777905.live.tvstitch.com/playlist.m3u8?master=1103&source=aHR0cDovLzE3Ni4xMjIuMTI1LjIzOjcwMDAvY2g0My90cmFja3MtdjFhMS9tb25vLm0zdTg%2FbGl2ZT0xJmlwPTU3LjEyOC4yMzYuMjIzJmlkPTk0ODg2NSZzZWNyZXQ9bjF1N3VpMDYmc3NsPTEmMjF5bz0wJmU9MTc5MDc1NTE0NiZzdD02SC1HSlEtemw4X1NCQjMzRjVLTUpn: status=PARSED entries=13 elapsed=0.72s
+2026-11-07 13:07:56,410 | INFO | MainThread | Source http://777905.live.tvstitch.com/playlist.m3u8?master=78&source=aHR0cDovLzE3Ni4xMjIuMTAzLjI0MTo3MDAwL2NoODYvdHJhY2tzLXYxYTEvbW9uby5tM3U4P2xpdmU9MSZpcD0xNzguMTM2LjQyLjIyMCZpZD05NDg4NjUmc2VjcmV0PW4xdTd1aTA2JnNzbD0xJjIxeW89MCZlPTE3OTA3NTM0ODYmc3Q9MVprUlhpb2xfODRPc2RMR2R0VDNzQQ%3D%3D: status=PARSED entries=13 elapsed=0.72s
+2026-11-07 13:07:56,411 | INFO | MainThread | Source http://777905.live.tvstitch.com/playlist.m3u8?master=102&source=aHR0cDovLzE3Ni4xMjIuMTAzLjI0MTo3MDAwL2NoNDgvdHJhY2tzLXYxYTEvbW9uby5tM3U4P2xpdmU9MSZpcD0xNzguMTM2LjQyLjIyMCZpZD05NDg4NjUmc2VjcmV0PW4xdTd1aTA2JnNzbD0xJjIxeW89MCZlPTE3OTA1OTk5NDcmc3Q9N3ROblpCZy02WTBka1RuekRIZjU0QQ%3D%3D: status=PARSED entries=13 elapsed=0.73s
+2026-11-07 13:07:56,414 | INFO | MainThread | Source http://777905.live.tvstitch.com/playlist.m3u8?master=77&source=aHR0cDovLzE3Ni4xMjIuMTAzLjI0MTo3MDAwL2NoODQvdHJhY2tzLXYxYTEvbW9uby5tM3U4P2xpdmU9MSZpcD0xNzguMTM2LjQyLjIyMCZpZD05NDg4NjUmc2VjcmV0PW4xdTd1aTA2JnNzbD0xJjIxeW89MCZlPTE3OTA3NTMxMTAmc3Q9dTZrbUNadl9LWlpqMllkWVJRbDVBdw%3D%3D: status=PARSED entries=13 elapsed=0.73s
+2026-11-07 13:07:56,416 | INFO | MainThread | Source http://777905.live.tvstitch.com/playlist.m3u8?master=568&source=aHR0cDovLzE3Ni4xMjIuMTAzLjI0MTo3MDAwL2NoMzQvdHJhY2tzLXYxYTEvbW9uby5tM3U4P2xpdmU9MSZpcD0xNzguMTM2LjQyLjIyMCZpZD05NDg4NjUmc2VjcmV0PW4xdTd1aTA2JnNzbD0xJjIxeW89MCZlPTE3OTA3NTI2Mzgmc3Q9RHdRc3AyN2l6V3J1dllqUEZ5aS1yUQ%3D%3D: status=PARSED entries=13 elapsed=0.73s
+2026-11-07 13:07:56,417 | INFO | MainThread | Source http://777905.live.tvstitch.com/playlist.m3u8?master=539&source=aHR0cDovLzE3Ni4xMjIuMTAzLjI0MTo3MDAwL2NoNDAvdHJhY2tzLXYyYTEvbW9uby5tM3U4P2xpdmU9MSZpcD0xNzguMTM2LjQyLjIyMCZpZD05NDg4NjUmc2VjcmV0PW4xdTd1aTA2JnNzbD0xJjIxeW89MCZlPTE3OTA3NTI3NDUmc3Q9cVZaQ3Vpd2l3UzEwLW1tMzEwMktDZw%3D%3D: status=PARSED entries=13 elapsed=0.73s
+2026-11-07 13:07:56,443 | INFO | MainThread | Source http://777905.live.tvstitch.com/playlist.m3u8?master=567&source=aHR0cDovLzE3Ni4xMjIuMTAzLjUxOjcwMDAvY2gzMy90cmFja3MtdjJhMS9tb25vLm0zdTg%2FbGl2ZT0xJmlwPTE3OC4xMzYuNDIuMjIwJmlkPTk0ODg2NSZzZWNyZXQ9bjF1N3VpMDYmc3NsPTEmMjF5bz0wJmU9MTc5MDc1MjM2MiZzdD12bmp2elZKY2JtUndKMkFzY1l0UWpR: status=PARSED entries=13 elapsed=0.76s
+2026-11-07 13:07:56,451 | INFO | MainThread | Source http://777905.live.tvstitch.com/playlist.m3u8?master=180&source=aHR0cDovLzE3Ni4xMjIuMTAzLjUxOjcwMDAvY2g2NS90cmFja3MtdjJhMS9tb25vLm0zdTg%2FbGl2ZT0xJmlwPTE3OC4xMzYuNDIuMjIwJmlkPTk0ODg2NSZzZWNyZXQ9bjF1N3VpMDYmc3NsPTEmMjF5bz0wJmU9MTc5MDcxMDcwMCZzdD1MXzZYc2M4elNra3RCaWYyVzU1dWF3: status=PARSED entries=13 elapsed=0.77s
+2026-11-07 13:07:56,454 | INFO | MainThread | Source http://777905.live.tvstitch.com/playlist.m3u8?master=249&source=aHR0cDovLzE3Ni4xMjIuMTAzLjI0MTo3MDAwL2NoNDQvdHJhY2tzLXYxYTEvbW9uby5tM3U4P2xpdmU9MSZpcD0xNzguMTM2LjQyLjIyMCZpZD05NDg4NjUmc2VjcmV0PW4xdTd1aTA2JnNzbD0xJjIxeW89MCZlPTE3OTA1OTk4Mzcmc3Q9UzRPS1VZemNocmREQWhnSTJkTDJ5QQ%3D%3D: status=PARSED entries=13 elapsed=0.77s
+2026-11-07 13:07:56,516 | INFO | MainThread | Source http://777905.live.tvstitch.com/playlist.m3u8?master=57&source=aHR0cHM6Ly9obHMtY2RuMS5keXZ5YXBwLmNvbS9NdXNpYy1Cb3gvdHJhY2tzLXYxYTEvbW9uby50cy5tM3U4P3Rva2VuPWV5SmhiR2NpT2lKSVV6STFOaUlzSW5SNWNDSTZJa3BYVkNKOS5leUpqYUdGdWJtVnNYMmxrSWpvMU55d2lZMmhoYm01bGJGOXVZVzFsSWpvaVRYVnphV01nUW05NElpd2lhWEFpT2lJeE56Z3VNVE0yTGpReUxqSXlNQ0lzSW1OdmRXNTBjbmtpT2lKVmEzSmhhVzVsSWl3aWRYTmxjbDlwWkNJNk56UXdOeXdpZFhObGNsOXdhRzl1WlNJNklpc3pPREE1TXpBNU5qYzBNak1pTENKMWMyVnlYM0p2YkdWeklqcGJJbU5zYVdWdWRDSmRMQ0p3Y205bWFXeGxYMmxrSWpvMk5EY3hMQ0p6WlhOemFXOXVYMmxrSWpvaVpEQXdPVFppWmpndE1qTmxOUzAwWldVMkxXSmxNelV0Wmpnd09ETTVaV1k1WkRnMElpd2laVzUyYVhKdmJtMWxiblFpT2lKd2NtOWtkV04wYVc5dUlpd2ljR3hoZEdadmNtMGlPaUpFWlhOcmRHOXdJaXdpZFhObGNsOWhaMlZ1ZENJNklrMXZlbWxzYkdGY0x6VXVNQ0FvVjJsdVpHOTNjeUJPVkNBeE1DNHdPeUJYYVc0Mk5Ec2dlRFkwS1NCQmNIQnNaVmRsWWt0cGRGd3ZOVE0zTGpNMklDaExTRlJOVEN3Z2JHbHJaU0JIWldOcmJ5a2dRMmh5YjIxbFhDOHhOVEl1TUM0d0xqQWdVMkZtWVhKcFhDODFNemN1TXpZaUxDSmxlSEFpT2pFM09EZ3hPRFV4TmpkOS5nYUo1WGRxTjJ3djY2SnFxYldnX0dGUzY3V3lZVEVOc0JQa3VpcU1sNTVN: status=PARSED entries=7 elapsed=0.83s
+2026-11-07 13:07:56,526 | INFO | MainThread | Source http://cdn1.live-tv.od.ua:8081/31chod/31chod-abr/31chod/31chod/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.84s
+2026-11-07 13:07:56,529 | INFO | MainThread | Source http://cdn1.live-tv.od.ua:8081/bbb/bbbtv-abr/playlist.m3u8: status=FETCH_FAILED entries=0 elapsed=0.84s
+2026-11-07 13:07:56,774 | INFO | MainThread | Source http://stream.mcquack.net/174/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.36s
+2026-11-07 13:07:56,778 | INFO | MainThread | Source http://stream.mcquack.net/156/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.37s
+2026-11-07 13:07:56,784 | INFO | MainThread | Source http://stream.mcquack.net/147/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.38s
+2026-11-07 13:07:56,790 | INFO | MainThread | Source http://stream.mcquack.net/173/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.37s
+2026-11-07 13:07:56,790 | INFO | MainThread | Source http://stream.mcquack.net/158/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.38s
+2026-11-07 13:07:56,791 | INFO | MainThread | Source http://stream.mcquack.net/167/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.38s
+2026-11-07 13:07:56,791 | INFO | MainThread | Source http://stream.mcquack.net/157/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.38s
+2026-11-07 13:07:56,810 | INFO | MainThread | Source http://stream.mcquack.net/219/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.36s
+2026-11-07 13:07:56,813 | INFO | MainThread | Source http://stream.mcquack.net/244/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.36s
+2026-11-07 13:07:56,827 | INFO | MainThread | Source http://stream.mcquack.net/212/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.38s
+2026-11-07 13:07:56,828 | INFO | MainThread | Source http://stream.mcquack.net/246/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:56,829 | INFO | MainThread | Source http://dtv.vol.net.ua/Hollywood-HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.85s
+2026-11-07 13:07:56,829 | INFO | MainThread | Source http://dtv.vol.net.ua/Viasat-Explore/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.77s
+2026-11-07 13:07:56,830 | INFO | MainThread | Source http://dtv.vol.net.ua/Viasat_Kino_Action_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.57s
+2026-11-07 13:07:56,839 | INFO | MainThread | Source http://stream.mcquack.net/258/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:56,840 | INFO | MainThread | Source http://dtv.vol.net.ua/MEGA_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.86s
+2026-11-07 13:07:56,841 | INFO | MainThread | Source http://dtv.vol.net.ua/History_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.87s
+2026-11-07 13:07:56,843 | INFO | MainThread | Source http://dtv.vol.net.ua/UPL-TV/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.78s
+2026-11-07 13:07:56,843 | INFO | MainThread | Source http://dtv.vol.net.ua/Viasat_Kino/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.62s
+2026-11-07 13:07:56,844 | INFO | MainThread | Source http://dtv.vol.net.ua/super_plus/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.58s
+2026-11-07 13:07:56,844 | INFO | MainThread | Source http://stream.mcquack.net/257/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:56,846 | INFO | MainThread | Source http://dtv.vol.net.ua/ProKino/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.80s
+2026-11-07 13:07:56,847 | INFO | MainThread | Source http://dtv.vol.net.ua/OnePlanet/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.81s
+2026-11-07 13:07:56,848 | INFO | MainThread | Source http://dtv.vol.net.ua/Cine_plus_Kids_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.91s
+2026-11-07 13:07:56,849 | INFO | MainThread | Source http://dtv.vol.net.ua/Nat-Geo-Wild_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.86s
+2026-11-07 13:07:56,849 | INFO | MainThread | Source http://dtv.vol.net.ua/M1-HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.87s
+2026-11-07 13:07:56,849 | INFO | MainThread | Source http://dtv.vol.net.ua/H2-HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.88s
+2026-11-07 13:07:56,991 | INFO | MainThread | Source http://hls.cdn.ua/tva.ua_live/livestream/chunklist_w396178779.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.63s
+2026-11-07 13:07:57,102 | INFO | MainThread | Source http://stream.mcquack.net/270/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,103 | INFO | MainThread | Source http://stream.mcquack.net/281/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,104 | INFO | MainThread | Source http://stream.mcquack.net/259/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.33s
+2026-11-07 13:07:57,105 | INFO | MainThread | Source http://stream.mcquack.net/262/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,118 | INFO | MainThread | Source http://stream.mcquack.net/261/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.33s
+2026-11-07 13:07:57,121 | INFO | MainThread | Source http://stream.mcquack.net/283/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,122 | INFO | MainThread | Source http://stream.mcquack.net/285/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,127 | INFO | MainThread | Source http://stream.mcquack.net/271/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.34s
+2026-11-07 13:07:57,129 | INFO | MainThread | Source http://stream.mcquack.net/260/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.35s
+2026-11-07 13:07:57,136 | INFO | MainThread | Source http://stream.mcquack.net/288/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,142 | INFO | MainThread | Source http://stream.mcquack.net/323/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,142 | INFO | MainThread | Source http://stream.mcquack.net/291/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,144 | INFO | MainThread | Source http://stream.mcquack.net/287/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,151 | INFO | MainThread | Source http://stream.mcquack.net/324/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,152 | INFO | MainThread | Source http://stream.mcquack.net/322/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,153 | INFO | MainThread | Source http://stream.mcquack.net/341/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,155 | INFO | MainThread | Source http://stream.mcquack.net/330/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,161 | INFO | MainThread | Source http://stream.mcquack.net/340/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,161 | INFO | MainThread | Source http://stream.mcquack.net/358/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,161 | INFO | MainThread | Source http://stream.mcquack.net/327/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,165 | INFO | MainThread | Source http://stream.mcquack.net/339/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,165 | INFO | MainThread | Source http://stream.mcquack.net/326/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,166 | INFO | MainThread | Source http://stream.mcquack.net/368/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,171 | INFO | MainThread | Source http://stream.mcquack.net/357/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,174 | INFO | MainThread | Source http://stream.mcquack.net/329/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.33s
+2026-11-07 13:07:57,175 | INFO | MainThread | Source http://stream.mcquack.net/338/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.33s
+2026-11-07 13:07:57,180 | INFO | MainThread | Source http://stream.mcquack.net/346/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.33s
+2026-11-07 13:07:57,339 | INFO | MainThread | Source http://stream.mcquack.net/383/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.35s
+2026-11-07 13:07:57,389 | INFO | MainThread | Source http://stream.mcquack.net/390/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.29s
+2026-11-07 13:07:57,402 | INFO | MainThread | Source http://stream.mcquack.net/392/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:07:57,403 | INFO | MainThread | Source http://stream.mcquack.net/391/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:07:57,403 | INFO | MainThread | Source http://stream.mcquack.net/393/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:07:57,429 | INFO | MainThread | Source http://stream.mcquack.net/399/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:07:57,429 | INFO | MainThread | Source http://stream.mcquack.net/403/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.29s
+2026-11-07 13:07:57,430 | INFO | MainThread | Source http://stream.mcquack.net/394/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,430 | INFO | MainThread | Source http://stream.mcquack.net/398/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:07:57,431 | INFO | MainThread | Source http://stream.mcquack.net/395/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,432 | INFO | MainThread | Source http://stream.mcquack.net/404/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.29s
+2026-11-07 13:07:57,432 | INFO | MainThread | Source http://stream.mcquack.net/396/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,437 | INFO | MainThread | Source http://stream.mcquack.net/401/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:07:57,452 | INFO | MainThread | Source http://stream.mcquack.net/402/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,482 | INFO | MainThread | Source http://stream.mcquack.net/456/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,482 | INFO | MainThread | Source http://stream.mcquack.net/442/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,485 | INFO | MainThread | Source http://stream.mcquack.net/405/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.33s
+2026-11-07 13:07:57,488 | INFO | MainThread | Source http://stream.mcquack.net/436/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.33s
+2026-11-07 13:07:57,489 | INFO | MainThread | Source http://stream.mcquack.net/435/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.34s
+2026-11-07 13:07:57,489 | INFO | MainThread | Source http://stream.mcquack.net/444/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.33s
+2026-11-07 13:07:57,490 | INFO | MainThread | Source http://stream.mcquack.net/457/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,492 | INFO | MainThread | Source http://stream.mcquack.net/445/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.33s
+2026-11-07 13:07:57,493 | INFO | MainThread | Source http://stream.mcquack.net/463/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,496 | INFO | MainThread | Source http://stream.mcquack.net/464/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:07:57,497 | INFO | MainThread | Source http://stream.mcquack.net/449/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.33s
+2026-11-07 13:07:57,497 | INFO | MainThread | Source http://stream.mcquack.net/406/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.35s
+2026-11-07 13:07:57,503 | INFO | MainThread | Source http://stream.mcquack.net/446/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.34s
+2026-11-07 13:07:57,505 | INFO | MainThread | Source http://stream.mcquack.net/458/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.33s
+2026-11-07 13:07:57,651 | INFO | MainThread | Source http://stream.mcquack.net/465/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,684 | INFO | MainThread | Source http://stream.mcquack.net/466/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:07:57,707 | INFO | MainThread | Source http://stream.mcquack.net/490/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:07:57,708 | INFO | MainThread | Source http://stream.mcquack.net/487/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,714 | INFO | MainThread | Source http://stream.mcquack.net/485/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:07:57,728 | INFO | MainThread | Source http://stream.mcquack.net/73/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:07:58,035 | INFO | MainThread | Source http://vcdn1.produck.company:1935/out/dtv/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.61s
+2026-11-07 13:07:58,039 | INFO | MainThread | Source https://cdn3.wowza.com/1/WjduMm1tYnlwNXQx/M01NV3Uz/hls/live/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.54s
+2026-11-07 13:07:58,088 | INFO | MainThread | Source https://dash2.antik.sk/live/test_dacha_tv_atktv/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.44s
+2026-11-07 13:07:58,092 | INFO | MainThread | Source https://dash2.antik.sk/live/1plus1_marathon/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.59s
+2026-11-07 13:07:58,092 | INFO | MainThread | Source https://dash2.antik.sk/live/test_film_life_atktv/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.41s
+2026-11-07 13:07:58,098 | INFO | MainThread | Source https://dash2.antik.sk/live/test_tridsatsest_hd_atktv/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.38s
+2026-11-07 13:07:58,101 | INFO | MainThread | Source https://dash2.antik.sk/live/test_kuskus_tv_atktv/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.39s
+2026-11-07 13:07:58,110 | INFO | MainThread | Source https://dash2.antik.sk/live/test_rybalka_tv_atktv/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.40s
+2026-11-07 13:07:58,114 | INFO | MainThread | Source https://cdn10.live-tv.cloud/riood/tisod-abr/riood/tisod720/playlist.m3u8: status=FETCH_FAILED entries=0 elapsed=0.62s
+2026-11-07 13:07:58,115 | INFO | MainThread | Source https://cdn15.live-tv.cloud/ua_infinitas_tv/rada-abr/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.62s
+2026-11-07 13:07:58,118 | INFO | MainThread | Source https://cdn15.live-tv.cloud/ua_infinitas_tv/inter-abr/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.63s
+2026-11-07 13:07:58,120 | INFO | MainThread | Source https://cdn15.live-tv.cloud/ua_infinitas_tv/islandiya-abr/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.63s
+2026-11-07 13:07:58,121 | INFO | MainThread | Source https://cdn15.live-tv.cloud/ua_infinitas_tv/news24-abr/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.62s
+2026-11-07 13:07:58,122 | INFO | MainThread | Source https://cdn15.live-tv.cloud/ua_infinitas_tv/hrpl-abr/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.63s
+2026-11-07 13:07:58,124 | INFO | MainThread | Source https://cdn15.live-tv.cloud/ua_infinitas_tv/muzvar-abr/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.63s
+2026-11-07 13:07:58,128 | INFO | MainThread | Source https://cdn15.live-tv.cloud/ua_infinitas_tv/nashemus-abr/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.63s
+2026-11-07 13:07:58,140 | INFO | MainThread | Source http://ftp.orbita.dn.ua/hls/orbita.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.84s
+2026-11-07 13:07:58,140 | INFO | MainThread | Source https://cdn1.live-tv.cloud/rivne1/rivne1-abr/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.65s
+2026-11-07 13:07:58,144 | INFO | MainThread | Source https://cdn10.live-tv.cloud/izod/izod-abr-lq/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.66s
+2026-11-07 13:07:58,293 | INFO | MainThread | Source http://svarozhichi.cdn-03.cosmonova.net.ua/mobile-app/main/svarozhichi/master.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.86s
+2026-11-07 13:07:58,298 | INFO | MainThread | Source https://dash4.antik.sk/live/test_uatv/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.57s
+2026-11-07 13:07:58,589 | INFO | MainThread | Source https://api-tv.ipnet.ua/api/v1/manifest/2118742505.m3u8: status=PARSED entries=1 elapsed=1.16s
+2026-11-07 13:07:58,597 | INFO | MainThread | Source https://api-tv.ipnet.ua/api/v1/manifest/2118742594.m3u8: status=PARSED entries=1 elapsed=1.16s
+2026-11-07 13:07:58,598 | INFO | MainThread | Source https://api-tv.ipnet.ua/api/v1/manifest/2118742632.m3u8: status=PARSED entries=1 elapsed=1.16s
+2026-11-07 13:07:58,601 | INFO | MainThread | Source https://api-tv.ipnet.ua/api/v1/manifest/1293296300.m3u8: status=PARSED entries=1 elapsed=1.17s
+2026-11-07 13:07:58,601 | INFO | MainThread | Source https://api-tv.ipnet.ua/api/v1/manifest/2118742680.m3u8: status=PARSED entries=1 elapsed=1.15s
+2026-11-07 13:07:58,603 | INFO | MainThread | Source https://kie2.cdn.i-ua.tv/hlsme/iuatv.m3u8: status=FETCH_FAILED entries=0 elapsed=0.48s
+2026-11-07 13:07:58,629 | INFO | MainThread | Source https://rfe-ingest.akamaized.net/hls/live/2033043/tvmc05/master.m3u8: status=PARSED entries=10 elapsed=0.33s
+2026-11-07 13:07:58,956 | INFO | MainThread | Source https://peqk71plnjy.a.trbcdn.net/livemaster/w4kz7pki62_nts_tv/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.82s
+2026-11-07 13:07:59,036 | INFO | MainThread | Source https://avers.pp.ua/hls/efir.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.55s
+2026-11-07 13:07:59,094 | INFO | MainThread | Source https://ext.cdn.nashnet.tv/228.0.0.172/index.m3u8: status=PARSED entries=30 elapsed=1.00s
+2026-11-07 13:07:59,096 | INFO | MainThread | Source https://ext.cdn.nashnet.tv/228.0.0.136/index.m3u8: status=PARSED entries=30 elapsed=1.06s
+2026-11-07 13:07:59,101 | INFO | MainThread | Source https://ext.cdn.nashnet.tv/228.0.0.148/index.m3u8: status=PARSED entries=30 elapsed=1.01s
+2026-11-07 13:07:59,102 | INFO | MainThread | Source https://ext.cdn.nashnet.tv/228.0.2.214/index.m3u8: status=PARSED entries=30 elapsed=0.99s
+2026-11-07 13:07:59,104 | INFO | MainThread | Source https://ext.cdn.nashnet.tv/228.0.1.60/index.m3u8: status=PARSED entries=30 elapsed=1.00s
+2026-11-07 13:07:59,110 | INFO | MainThread | Source https://ext.cdn.nashnet.tv/228.0.0.50/index.m3u8: status=PARSED entries=30 elapsed=1.01s
+2026-11-07 13:07:59,111 | INFO | MainThread | Source https://ext.cdn.nashnet.tv/228.0.0.165/index.m3u8: status=PARSED entries=30 elapsed=1.02s
+2026-11-07 13:07:59,119 | INFO | MainThread | Source https://ext.cdn.nashnet.tv/228.0.0.138/index.m3u8: status=PARSED entries=30 elapsed=1.08s
+2026-11-07 13:07:59,127 | INFO | MainThread | Source https://ext.cdn.nashnet.tv/228.0.2.165/index.m3u8: status=PARSED entries=30 elapsed=1.02s
+2026-11-07 13:07:59,239 | INFO | MainThread | Source https://stream.irt.ua/memfs/8fac7cbb-3356-4a03-bb77-4439b727ebd2.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.64s
+2026-11-07 13:07:59,263 | INFO | MainThread | Source https://stream.rai.ua/rai/stream.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.63s
+2026-11-07 13:07:59,456 | INFO | MainThread | Source https://stream.otv.ua/memfs/028e5947-073f-4b4e-a47f-70e59ca3ee36.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.85s
+2026-11-07 13:07:59,526 | INFO | MainThread | Source https://s70378.cdn.ngenix.net/filmbox/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.94s
+2026-11-07 13:07:59,560 | INFO | MainThread | Source https://tv.mediacp.eu:8081/happyradio/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.44s
+2026-11-07 13:07:59,696 | INFO | MainThread | Source https://hls.simon.ua/live-HD/live/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.58s
+2026-11-07 13:07:59,753 | INFO | MainThread | Source http://176.118.197.101/1HD/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.49s
+2026-11-07 13:07:59,788 | INFO | MainThread | Source https://vs2126.vcdn.biz/c27a63fda28be51f87a7d0046de1f4b8_megogo/live/hls/b/700_2490/u_sid/0/o/71044361/rsid/393818da-edd4-44bd-b2db-4ebf226abd3d/u_uid/0/u_vod/1/u_device/cms_webandroid/u_devicekey/_site_mobile/lip/5.63.189.224*asn/u_did/web_0voqy4czLIxD4iwJZ0z0GctEMa9GIH7A/type.live/playlist.m3u8: status=FETCH_FAILED entries=0 elapsed=0.55s
+2026-11-07 13:08:00,044 | INFO | MainThread | Source http://176.118.197.101/Bollywood_HD/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.52s
+2026-11-07 13:08:00,074 | INFO | MainThread | Source http://176.118.197.101/Che/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.51s
+2026-11-07 13:08:00,119 | INFO | MainThread | Source https://stream.ntktv.ua/s/ntk/ntk.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.52s
+2026-11-07 13:08:00,211 | INFO | MainThread | Source http://176.118.197.101/Evrokino/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.52s
+2026-11-07 13:08:00,250 | INFO | MainThread | Source http://176.118.197.101/Illuzion+/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.50s
+2026-11-07 13:08:00,470 | INFO | MainThread | Source https://streamvideol1.luxnet.ua/news24/smil:news24.stream.smil/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.37s
+2026-11-07 13:08:00,492 | INFO | MainThread | Source https://tv7plus.com/hls/tv7_site.m3u8: status=FETCH_FAILED entries=0 elapsed=1.36s
+2026-11-07 13:08:00,557 | INFO | MainThread | Source http://176.118.197.101/Komediya/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.51s
+2026-11-07 13:08:00,596 | INFO | MainThread | Source http://176.118.197.101/MirSeriala/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.52s
+2026-11-07 13:08:00,619 | INFO | MainThread | Source http://176.118.197.101/Nostalgiya/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.50s
+2026-11-07 13:08:00,727 | INFO | MainThread | Source http://176.118.197.101/RBK/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.52s
+2026-11-07 13:08:00,738 | INFO | MainThread | Source http://176.118.197.101/2x2/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.28s
+2026-11-07 13:08:00,765 | INFO | MainThread | Source http://176.118.197.101/Retro/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.52s
+2026-11-07 13:08:00,855 | INFO | MainThread | Source https://streaming.televizor-24-tochka.ru/live/24.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.76s
+2026-11-07 13:08:00,855 | INFO | MainThread | Source https://streaming.televizor-24-tochka.ru/live/25.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.76s
+2026-11-07 13:08:00,855 | INFO | MainThread | Source https://streaming.televizor-24-tochka.ru/live/29.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.75s
+2026-11-07 13:08:00,855 | INFO | MainThread | Source https://streaming.televizor-24-tochka.ru/live/27.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.75s
+2026-11-07 13:08:00,891 | INFO | MainThread | Source http://178.124.179.122:8080/KVN-TV/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:08:00,924 | INFO | MainThread | Source http://178.124.179.122:8080/Setanta1/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:08:00,997 | INFO | MainThread | Source http://176.118.197.101/START_AIR/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.51s
+2026-11-07 13:08:01,043 | INFO | MainThread | Source http://176.118.197.101/TNT4/index.m3u8: status=FETCH_FAILED entries=0 elapsed=0.49s
+2026-11-07 13:08:01,054 | INFO | MainThread | Source http://176.118.197.101/KinoTvHD/playlist.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.27s
+2026-11-07 13:08:01,105 | INFO | MainThread | Source http://178.134.1.158:8081/BRIDGE/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.37s
+2026-11-07 13:08:01,125 | INFO | MainThread | Source http://178.134.1.158:8081/BRIDGEROCK/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.36s
+2026-11-07 13:08:01,218 | INFO | MainThread | Source http://178.134.1.158:8081/TVXXI/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.36s
+2026-11-07 13:08:01,218 | INFO | MainThread | Source http://178.134.1.158:8081/red/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.36s
+2026-11-07 13:08:01,221 | INFO | MainThread | Source http://178.134.1.158:8081/ntvhit/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.37s
+2026-11-07 13:08:01,248 | INFO | MainThread | Source http://178.134.1.158:8081/t24/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.36s
+2026-11-07 13:08:01,285 | INFO | MainThread | Source http://178.134.1.158:8081/vkus/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.36s
+2026-11-07 13:08:01,319 | INFO | MainThread | Source http://185.23.80.23:8080/DumaTV/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:08:01,373 | INFO | MainThread | Source http://185.23.80.23:8080/MATCH_PREMIER/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.33s
+2026-11-07 13:08:01,403 | INFO | MainThread | Source http://185.23.80.23:8080/NANO_HD/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.35s
+2026-11-07 13:08:01,409 | INFO | MainThread | Source http://185.23.80.23:8080/NeizvestnayaRossia/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.30s
+2026-11-07 13:08:01,447 | INFO | MainThread | Source http://185.23.80.23:8080/TVBRICS/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.32s
+2026-11-07 13:08:01,525 | INFO | MainThread | Source http://185.37.150.46/Karusel/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.31s
+2026-11-07 13:08:01,591 | INFO | MainThread | Source http://185.57.68.33/40/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.37s
+2026-11-07 13:08:01,644 | INFO | MainThread | Source http://31.131.141.195:8000/play/a006/index.m3u8: status=PARSED entries=1 elapsed=0.36s
+2026-11-07 13:08:01,668 | INFO | MainThread | Source http://188.113.190.12/329/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.45s
+2026-11-07 13:08:01,677 | INFO | MainThread | Source http://194.143.148.28:8080/Mir24/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.43s
+2026-11-07 13:08:01,792 | INFO | MainThread | Source http://178.124.179.122:8080/TB-3/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.06s
+2026-11-07 13:08:01,808 | INFO | MainThread | Source http://178.134.1.158:8081/babytime/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=0.95s
+2026-11-07 13:08:02,317 | INFO | MainThread | Source http://176.118.197.101/RossiyaHD/index.m3u8: status=EMPTY_PLAYLIST entries=0 elapsed=1.85s
+2026-11-07 13:08:02,339 | INFO | MainThread | Source https://langate.tv/promin/live_720/index.m3u8: status=FETCH_FAILED entries=0 elapsed=4.22s
+2026-11-07 13:08:02,342 | INFO | MainThread | Source https://live1.1tvcrimea.ru/1tvcrimea.m3u8: status=FETCH_FAILED entries=0 elapsed=4.22s
+2026-11-07 13:08:02,347 | INFO | MainThread | Source https://live1.1tvcrimea.ru/milletlive.m3u8: status=FETCH_FAILED entries=0 elapsed=4.22s
+2026-11-07 13:08:02,813 | INFO | MainThread | Source https://stream.ztv.zp.ua/hls/live.m3u8: status=FETCH_FAILED entries=0 elapsed=3.78s
+2026-11-07 13:08:03,074 | INFO | MainThread | Source https://sevas.1tvcrimea.ru/legendarniy24.m3u8: status=FETCH_FAILED entries=0 elapsed=4.48s
+2026-11-07 13:08:03,110 | INFO | MainThread | Source https://simf.1tvcrimea.ru/simferopol24.m3u8: status=FETCH_FAILED entries=0 elapsed=4.51s
+2026-11-07 13:08:03,733 | INFO | MainThread | Source https://stream.uagit.tv/gittv.m3u8: status=FETCH_FAILED entries=0 elapsed=4.78s
+2026-11-07 13:08:42,587 | INFO | MainThread | Source http://46.46.112.223/live/livestream1.m3u8: status=FETCH_FAILED entries=0 elapsed=46.90s
+2026-11-07 13:08:42,603 | INFO | MainThread | Source http://46.175.163.130/ks_plus/index.m3u8: status=FETCH_FAILED entries=0 elapsed=46.92s
+2026-11-07 13:08:42,606 | INFO | MainThread | Source http://194.50.51.34/playlist.m3u8: status=FETCH_FAILED entries=0 elapsed=46.92s
+2026-11-07 13:08:42,748 | INFO | MainThread | Source http://93.78.206.172:8080/stream3/stream.m3u8: status=FETCH_FAILED entries=0 elapsed=47.06s
+2026-11-07 13:08:42,753 | INFO | MainThread | Source http://176.110.1.30:1935/live/donbasonline/playlist.m3u8: status=FETCH_FAILED entries=0 elapsed=47.07s
+2026-11-07 13:08:44,499 | INFO | MainThread | Source http://edge3.iptv.macc.com.ua/life/magnolia_3/index.m3u8: status=FETCH_FAILED entries=0 elapsed=48.21s
+2026-11-07 13:08:45,423 | INFO | MainThread | Source https://cdn.1tvcrimea.ru/24tvcrimea.m3u8: status=FETCH_FAILED entries=0 elapsed=47.94s
+2026-11-07 13:08:45,554 | INFO | MainThread | Source https://hls.xtvmedia.pp.ua:8443/hls/trk1tv.m3u8: status=FETCH_FAILED entries=0 elapsed=47.44s
+2026-11-07 13:08:45,947 | INFO | MainThread | Source https://11tv-dp.cdn-04.cosmonova.net.ua/hls/11tv-dp_ua_hi/index.m3u8: status=FETCH_FAILED entries=0 elapsed=48.52s
+2026-11-07 13:08:46,029 | INFO | MainThread | Source https://pravdatytkievshina.cdn-02.cosmonova.net.ua/hls/pravdatytkievshina_ua.m3u8: status=FETCH_FAILED entries=0 elapsed=47.88s
+2026-11-07 13:08:46,037 | INFO | MainThread | Source https://pravdatytkyiv.cdn-01.cosmonova.net.ua/hls/pradva-tut-ildana_ua_hi/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.74s
+2026-11-07 13:08:46,037 | INFO | MainThread | Source https://live-nstu.cdn-03.cosmonova.net.ua/mobile-app/main/nstu-kyiv/master.m3u8: status=FETCH_FAILED entries=0 elapsed=47.92s
+2026-11-07 13:08:46,420 | INFO | MainThread | Source https://ott.columbus.te.ua/ternopil1/index.m3u8: status=FETCH_FAILED entries=0 elapsed=48.28s
+2026-11-07 13:08:47,103 | INFO | MainThread | Source https://televsesvit.cdn-04.cosmonova.net.ua/hls/televsesvit_ua_hi/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.99s
+2026-11-07 13:08:47,352 | INFO | MainThread | Source https://tuso.cdn-01.cosmonova.net.ua/hls/tuso_ua.m3u8: status=FETCH_FAILED entries=0 elapsed=48.24s
+2026-11-07 13:08:48,328 | INFO | MainThread | Source http://31.148.48.15/7TV/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.01s
+2026-11-07 13:08:48,539 | INFO | MainThread | Source http://31.148.48.15/Boks_TV/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.01s
+2026-11-07 13:08:48,571 | INFO | MainThread | Source http://31.148.48.15/Amedia_Premium_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.16s
+2026-11-07 13:08:48,684 | INFO | MainThread | Source http://31.148.48.15/A1/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.31s
+2026-11-07 13:08:48,685 | INFO | MainThread | Source http://31.148.48.15/A2/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.28s
+2026-11-07 13:08:48,712 | INFO | MainThread | Source http://31.148.48.15/Avto_Plus/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.27s
+2026-11-07 13:08:48,723 | INFO | MainThread | Source http://31.148.48.15/Dom_Kino_Premium_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.05s
+2026-11-07 13:08:48,748 | INFO | MainThread | Source http://31.148.48.15/Detskiy/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.10s
+2026-11-07 13:08:48,753 | INFO | MainThread | Source http://31.148.48.15/English_club_TV_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=46.96s
+2026-11-07 13:08:48,822 | INFO | MainThread | Source http://31.148.48.15/Europa_Plus_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.01s
+2026-11-07 13:08:48,824 | INFO | MainThread | Source http://31.148.48.15/Bridge_TV_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.23s
+2026-11-07 13:08:48,903 | INFO | MainThread | Source http://31.148.48.15/Doktor/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.24s
+2026-11-07 13:08:49,354 | INFO | MainThread | Source http://31.148.48.15/KHL_TV/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.01s
+2026-11-07 13:08:49,374 | INFO | MainThread | Source http://31.148.48.15/Fan/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.06s
+2026-11-07 13:08:49,435 | INFO | MainThread | Source http://31.148.48.15/Feniks_plus_kino/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.10s
+2026-11-07 13:08:49,670 | INFO | MainThread | Source http://31.148.48.15/Karusel_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.32s
+2026-11-07 13:08:49,855 | INFO | MainThread | Source http://31.148.48.15/Kineko/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.04s
+2026-11-07 13:08:50,166 | INFO | MainThread | Source http://31.148.48.15/Kino_TV_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.06s
+2026-11-07 13:08:50,322 | INFO | MainThread | Source http://31.148.48.15/Kineko_HD/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.25s
+2026-11-07 13:08:50,935 | INFO | MainThread | Source http://31.148.48.15/Kto_est_kto/index.m3u8: status=FETCH_FAILED entries=0 elapsed=47.20s
+2026-11-07 13:08:54,044 | INFO | MainThread | Stream checks: 100/1004 completed
+2026-11-07 13:09:00,070 | INFO | MainThread | Stream checks: 200/1004 completed
+2026-11-07 13:09:22,217 | INFO | MainThread | Stream checks: 300/1004 completed
+2026-11-07 13:10:35,852 | INFO | MainThread | Stream checks: 400/1004 completed
+2026-11-07 13:10:45,918 | INFO | MainThread | Stream checks: 500/1004 completed
+2026-11-07 13:11:43,216 | INFO | MainThread | Stream checks: 600/1004 completed
+2026-11-07 13:12:20,161 | INFO | MainThread | Stream checks: 700/1004 completed
+2026-11-07 13:12:26,700 | INFO | MainThread | Stream checks: 800/1004 completed
+2026-11-07 13:12:30,916 | INFO | MainThread | Stream checks: 900/1004 completed
+2026-11-07 13:13:37,051 | INFO | MainThread | Stream checks: 1000/1004 completed
+2026-11-07 13:13:47,658 | INFO | MainThread | Stream checks: 1004/1004 completed
+2026-11-07 13:13:47,821 | INFO | MainThread | Pipeline finished: status=SUCCESS run_id=20261107T130749Z
+{
+  "run_id": "20261107T130749Z",
+  "application": "Phoenix Hub — Unified Playlist Hunter",
+  "version": "1.0.0",
+  "started_at": "2026-11-07T13:07:49.702171+00:00",
+  "status": "SUCCESS",
+  "concurrency": {
+    "search_workers": 8,
+    "parsing_workers": 35,
+    "stream_check_workers": 40,
+    "http_max_connections": 100
+  },
+  "ffprobe_path": "/home/runner/work/zala/zala/data/tools/ffprobe",
+  "sources_discovered": 2,
+  "sources_fetched": 252,
+  "sources_parsed": 32,
+  "source_failures": 67,
+  "records_parsed_before_dedup": 1137,
+  "records_parsed": 1137,
+  "records_after_dedup": 1004,
+  "records_checked": 1004,
+  "stream_status_counts": {
+    "HTTP_OK_FFPROBE_FAILED": 753,
+    "HTTP_FAILED": 206,
+    "PLAYABLE": 20,
+    "BLOCKED": 25
+  },
+  "donor_count": 979,
+  "donor_filter_counts": {
+    "probe_failed_kept": 753,
+    "http_failed_kept_by_policy": 206,
+    "playable": 20,
+    "http_failed_excluded": 25
+  },
+  "skala_report_path": "/home/runner/work/zala/zala/data/skala/skala_20261107_131347.json",
+  "results_json_path": "/home/runner/work/zala/zala/data/hunter_results.json",
+  "receiver_outbox_path": "/home/runner/work/zala/zala/data/receiver_outbox/receiver_payload_20261107T130749Z.json",
+  "skala": {
+    "before_count": 0,
+    "added_count": 979,
+    "removed_count": 0,
+    "changed_count": 0,
+    "after_count": 979
+  },
+  "finished_at": "2026-11-07T13:13:47.820118+00:00",
+  "error": ""
+}
