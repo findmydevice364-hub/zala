@@ -1,0 +1,179 @@
+
+name: Donor Search — Phoenix Hub Alpha
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        description: "Branch for generated results"
+        required: true
+        default: "main"
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: donor-search-alpha-${{ inputs.target_branch }}
+  cancel-in-progress: false
+
+jobs:
+  donor-search:
+    name: Run scanner and commit generated results
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout target branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.target_branch }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -m pip install --upgrade pip
+
+          if [[ -f requirements.txt ]]; then
+            python -m pip install -r requirements.txt
+          fi
+
+      - name: Download and validate current scanner
+        shell: bash
+        env:
+          SCANNER_URL: https://raw.githubusercontent.com/findmydevice364-hub/zala/main/Donor_search.py
+        run: |
+          set -euo pipefail
+
+          SCANNER_PATH="${RUNNER_TEMP}/Donor_search.py"
+
+          curl \
+            --fail \
+            --location \
+            --silent \
+            --show-error \
+            --retry 3 \
+            --retry-delay 2 \
+            "${SCANNER_URL}" \
+            --output "${SCANNER_PATH}"
+
+          test -s "${SCANNER_PATH}"
+          python -m py_compile "${SCANNER_PATH}"
+
+          echo "Scanner downloaded and syntax validation passed."
+          echo "Scanner path: ${SCANNER_PATH}"
+
+      - name: Run scanner and create results
+        id: scanner
+        shell: bash
+        env:
+          PYTHONUNBUFFERED: "1"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SEARCH_WORKERS: "8"
+          PARSING_WORKERS: "35"
+          STREAM_CHECK_WORKERS: "40"
+          PHOENIX_LAUNCH_MODE: "github_actions_alpha"
+          PHOENIX_SCAN_ACTIVE: "1"
+          SCANNER_PATH: ${{ runner.temp }}/Donor_search.py
+          SCANNER_LOG: ${{ runner.temp }}/donor_search_run.log
+        run: |
+          set -uo pipefail
+
+          echo "Starting Donor_search.py."
+          echo "Working directory: ${GITHUB_WORKSPACE}"
+          echo "Search workers: ${SEARCH_WORKERS}"
+          echo "Parsing workers: ${PARSING_WORKERS}"
+          echo "Stream-check workers: ${STREAM_CHECK_WORKERS}"
+
+          cd "${GITHUB_WORKSPACE}"
+
+          python "${SCANNER_PATH}" 2>&1 | tee "${SCANNER_LOG}"
+          scanner_exit_code=${PIPESTATUS[0]}
+
+          echo "exit_code=${scanner_exit_code}" >> "${GITHUB_OUTPUT}"
+
+          if [[ "${scanner_exit_code}" -ne 0 ]]; then
+            echo "Scanner failed with exit code ${scanner_exit_code}."
+            exit "${scanner_exit_code}"
+          fi
+
+          echo "Scanner completed successfully."
+
+      - name: Inspect generated repository changes
+        id: changes
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cd "${GITHUB_WORKSPACE}"
+
+          echo "Repository changes after scanner execution:"
+          git status --short --untracked-files=all
+
+          if [[ -n "$(git status --porcelain --untracked-files=all)" ]]; then
+            echo "changed=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            echo "No repository files were created or modified."
+          fi
+
+      - name: Commit and push generated results
+        if: success() && steps.changes.outputs.changed == 'true'
+        shell: bash
+        env:
+          TARGET_BRANCH: ${{ inputs.target_branch }}
+        run: |
+          set -euo pipefail
+
+          cd "${GITHUB_WORKSPACE}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stage files created or modified by the scanner.
+          # The downloaded scanner and execution log are outside the repository.
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No staged changes to commit."
+            exit 0
+          fi
+
+          echo "Files included in the results commit:"
+          git diff --cached --stat
+
+          git commit -m "chore: publish donor scanner alpha results [skip ci]"
+
+          git push origin "HEAD:${TARGET_BRANCH}"
+
+          echo "Generated results were pushed to ${TARGET_BRANCH}."
+
+      - name: Upload alpha diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: donor-search-alpha-diagnostics
+          path: |
+            ${{ runner.temp }}/donor_search_run.log
+            data/
+            *.m3u
+            *.m3u8
+            *.m3u4
+            *.m3uplus
+            *.json
+            *.txt
+            *.csv
+            *.sqlite
+            *.db
+          if-no-files-found: ignore
+          retention-days: 14
