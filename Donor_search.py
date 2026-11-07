@@ -45,9 +45,11 @@
 #
 # Параллелизм:          Поиск >= 8; разбор >= 35; проверка потоков >= 40.
 #
-# Дедупликация:         Неагрессивная. Совпадение названий само по себе
-#                       не является основанием для удаления каналов.
-#                       Альтернативные ссылки и различия метаданных сохраняются.
+# Дедупликация:         Уровень 3 — точное совпадение исходного URL потока.
+#                       Один и тот же URL (символ в символ) остаётся один раз,
+#                       даже если EXTINF / group-title / tvg-logo различаются.
+#                       Любое отличие URL хотя бы на один символ сохраняет запись.
+#                       Метаданные первой найденной записи не смешиваются с другими.
 #
 # Текущий режим:        АВТОНОМНАЯ АЛЬФА-СБОРКА
 #
@@ -103,8 +105,9 @@ Phoenix Hub — Unified Playlist Hunter / SKALA
    Поиск публичных источников через GitHub Search API, GitHub Gists
    и заданный список исходных URL.
 4. PlaylistParser:
-   Разбор M3U/M3U8, сохранение EXTINF-метаданных, обнаружение вложенных
-   плейлистов, извлечение URL и безопасная дедупликация.
+   Разбор M3U/M3U8 с сохранением исходного URL и EXTINF. Уровень 3 удаляет
+   повторные записи только при точном совпадении URL; различия метаданных
+   при совпавшем URL не создают вторую запись.
 5. StreamChecker:
    Проверка URL с использованием HEAD, GET Range и необязательного ffprobe.
 6. HunterStore:
@@ -974,11 +977,23 @@ class PlaylistRecord:
 
     @property
     def normalized_url(self) -> str:
+        """Return the normalized URL used only for network checks and cache keys."""
         return normalize_url(self.url)
 
     @property
     def identity(self) -> str:
-        return self.normalized_url or self.url.strip()
+        """Return the original URL string used for level-3 playlist deduplication.
+
+        Do not lowercase, normalize ports, reorder query parameters, remove
+        fragments, or otherwise rewrite this value. The parser removes only
+        surrounding line whitespace before storing the URL.
+        """
+        return self.url
+
+    @property
+    def probe_key(self) -> str:
+        """Return the normalized URL key used to avoid duplicate network probes."""
+        return self.normalized_url
 
     def to_dict(self) -> dict[str, Any]:
         return dataclasses.asdict(self)
@@ -1058,6 +1073,8 @@ def parse_m3u(
             pending_metadata = {}
             continue
 
+        # Validate the URL, but preserve the exact source spelling for level-3
+        # deduplication and final M3U output. Normalization is reserved for probes.
         normalized = normalize_url(line)
         if not normalized:
             current_extinf = ""
@@ -1065,12 +1082,13 @@ def parse_m3u(
             pending_metadata = {}
             continue
 
+        original_url = line
         metadata = dict(pending_metadata)
         attributes = metadata.get("attributes", {})
 
         record = PlaylistRecord(
             name=current_name or attributes.get("tvg-name") or "Unknown channel",
-            url=normalized,
+            url=original_url,
             extinf=current_extinf,
             group_title=str(metadata.get("group_title", "")),
             tvg_id=str(metadata.get("tvg_id", "")),
@@ -1417,7 +1435,13 @@ class SourceDiscovery:
         ]
 
     def discover(self) -> list[SourceCandidate]:
-        """Run providers concurrently and return unique source candidates."""
+        """Discover source documents, aggregate provenance, and sort deterministically.
+
+        Source-document URLs are normalized for fetch-level deduplication. Unlike
+        channel entries, multiple discoveries of the same source document are
+        merged into one candidate while every provider/query is retained in its
+        metadata provenance list.
+        """
         found: list[SourceCandidate] = []
 
         with concurrent.futures.ThreadPoolExecutor(
@@ -1448,15 +1472,91 @@ class SourceDiscovery:
                         exc,
                     )
 
-        unique: dict[str, SourceCandidate] = {}
-        for candidate in found:
-            normalized = normalize_url(candidate.url)
-            if normalized and normalized not in unique:
-                candidate.url = normalized
-                unique[normalized] = candidate
+        # Sort before grouping so the representative candidate is independent
+        # of ThreadPoolExecutor/as_completed completion order.
+        ordered = sorted(
+            found,
+            key=lambda item: (
+                normalize_url(item.url),
+                -float(item.score or 0.0),
+                item.provider or "",
+                item.discovery_query or "",
+                item.name or "",
+                json.dumps(item.metadata or {}, sort_keys=True, ensure_ascii=False, default=str),
+                item.discovered_at or "",
+            ),
+        )
 
-        result = list(unique.values())[:MAX_DISCOVERED_SOURCES]
-        log_event(logging.INFO, "Total unique sources discovered: %s", len(result))
+        grouped: dict[str, SourceCandidate] = {}
+        for candidate in ordered:
+            normalized = normalize_url(candidate.url)
+            if not normalized:
+                continue
+
+            raw_metadata = dict(candidate.metadata or {})
+            inherited_provenance = raw_metadata.pop("provenance", [])
+            provenance_items: list[dict[str, Any]] = []
+            if isinstance(inherited_provenance, list):
+                provenance_items.extend(
+                    item for item in inherited_provenance if isinstance(item, dict)
+                )
+
+            provenance_items.append(
+                {
+                    "provider": candidate.provider,
+                    "discovery_query": candidate.discovery_query,
+                    "discovered_at": candidate.discovered_at,
+                    "score": candidate.score,
+                    "name": candidate.name,
+                    "metadata": raw_metadata,
+                }
+            )
+
+            existing = grouped.get(normalized)
+            if existing is None:
+                grouped[normalized] = SourceCandidate(
+                    url=normalized,
+                    name=candidate.name,
+                    provider=candidate.provider,
+                    discovered_at=candidate.discovered_at,
+                    discovery_query=candidate.discovery_query,
+                    score=candidate.score,
+                    metadata={
+                        **raw_metadata,
+                        "provenance": provenance_items,
+                        "provenance_count": len(provenance_items),
+                    },
+                )
+                continue
+
+            current_provenance = existing.metadata.setdefault("provenance", [])
+            known = {
+                json.dumps(item, sort_keys=True, ensure_ascii=False, default=str)
+                for item in current_provenance
+            }
+            for item in provenance_items:
+                marker = json.dumps(
+                    item, sort_keys=True, ensure_ascii=False, default=str
+                )
+                if marker not in known:
+                    current_provenance.append(item)
+                    known.add(marker)
+
+            existing.metadata["provenance_count"] = len(current_provenance)
+            existing.score = max(float(existing.score or 0.0), float(candidate.score or 0.0))
+            existing.discovered_at = min(existing.discovered_at, candidate.discovered_at)
+
+        result = sorted(
+            grouped.values(),
+            key=lambda item: (-float(item.score or 0.0), item.url),
+        )[:MAX_DISCOVERED_SOURCES]
+
+        log_event(
+            logging.INFO,
+            "Total unique source documents discovered: %s (raw candidates=%s)",
+            len(result),
+            len(found),
+        )
         return result
 
 
@@ -1507,6 +1607,8 @@ class HunterStore:
                     metadata_json TEXT NOT NULL DEFAULT '{}'
                 );
 
+                -- One row per normalized URL: this table is a network-check cache.
+                -- It is deliberately not the authoritative M3U-entry table.
                 CREATE TABLE IF NOT EXISTS streams (
                     url TEXT PRIMARY KEY,
                     name TEXT NOT NULL DEFAULT '',
@@ -1519,6 +1621,25 @@ class HunterStore:
                     record_json TEXT NOT NULL DEFAULT '{}'
                 );
 
+                -- One row per exact source URL string. URL text is not normalized;
+                -- different URL spellings remain separate playlist entries.
+                CREATE TABLE IF NOT EXISTS playlist_entries (
+                    url TEXT PRIMARY KEY,
+                    name TEXT NOT NULL DEFAULT '',
+                    source_url TEXT NOT NULL DEFAULT '',
+                    extinf TEXT NOT NULL DEFAULT '',
+                    group_title TEXT NOT NULL DEFAULT '',
+                    tvg_id TEXT NOT NULL DEFAULT '',
+                    tvg_name TEXT NOT NULL DEFAULT '',
+                    tvg_logo TEXT NOT NULL DEFAULT '',
+                    record_json TEXT NOT NULL DEFAULT '{}',
+                    first_seen_at TEXT NOT NULL,
+                    last_seen_at TEXT NOT NULL
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_playlist_entries_source
+                    ON playlist_entries(source_url);
+
                 CREATE INDEX IF NOT EXISTS idx_streams_status
                     ON streams(status);
 
@@ -1526,6 +1647,48 @@ class HunterStore:
                     ON sources(provider);
                 """
             )
+
+            # One-time compatibility migration: older builds stored the whole
+            # PlaylistRecord inside streams.record_json. Recover what is still
+            # available into playlist_entries. Earlier builds had already
+            # normalized URLs, so this cannot reconstruct their original spelling.
+            legacy_rows = connection.execute(
+                "SELECT record_json FROM streams WHERE record_json <> '{}'"
+            ).fetchall()
+            for legacy_row in legacy_rows:
+                try:
+                    legacy_record = json.loads(legacy_row["record_json"] or "{}")
+                except json.JSONDecodeError:
+                    continue
+                if not isinstance(legacy_record, dict):
+                    continue
+                legacy_url = str(legacy_record.get("url", ""))
+                if not legacy_url:
+                    continue
+                legacy_seen = str(
+                    legacy_record.get("checked_at") or utc_now()
+                )
+                connection.execute(
+                    """
+                    INSERT OR IGNORE INTO playlist_entries
+                        (url, name, source_url, extinf, group_title, tvg_id,
+                         tvg_name, tvg_logo, record_json, first_seen_at, last_seen_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        legacy_url,
+                        str(legacy_record.get("name", "")),
+                        str(legacy_record.get("source_url", "")),
+                        str(legacy_record.get("extinf", "")),
+                        str(legacy_record.get("group_title", "")),
+                        str(legacy_record.get("tvg_id", "")),
+                        str(legacy_record.get("tvg_name", "")),
+                        str(legacy_record.get("tvg_logo", "")),
+                        json.dumps(legacy_record, ensure_ascii=False, default=str),
+                        legacy_seen,
+                        legacy_seen,
+                    ),
+                )
 
     def start_run(self, run_id: str) -> None:
         with self._lock, self._connect() as connection:
@@ -1560,77 +1723,186 @@ class HunterStore:
             )
 
     def save_sources(self, sources: Iterable[SourceCandidate]) -> None:
-        rows = [
-            (
-                normalize_url(source.url),
-                source.name,
-                source.provider,
-                source.discovered_at,
-                "",
-                "",
-                json.dumps(source.metadata, ensure_ascii=False, default=str),
-            )
-            for source in sources
-            if normalize_url(source.url)
-        ]
-
-        if not rows:
-            return
-
+        """Persist source documents without losing discovery provenance."""
         with self._lock, self._connect() as connection:
-            connection.executemany(
-                """
-                INSERT INTO sources
-                    (url, name, provider, discovered_at, last_status,
-                     last_checked_at, metadata_json)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(url) DO UPDATE SET
-                    name=excluded.name,
-                    provider=excluded.provider,
-                    metadata_json=excluded.metadata_json
-                """,
-                rows,
-            )
+            for source in sources:
+                normalized = normalize_url(source.url)
+                if not normalized:
+                    continue
+
+                incoming_metadata = dict(source.metadata or {})
+                row = connection.execute(
+                    "SELECT name, provider, discovered_at, metadata_json "
+                    "FROM sources WHERE url=?",
+                    (normalized,),
+                ).fetchone()
+
+                if row:
+                    try:
+                        existing_metadata = json.loads(row["metadata_json"] or "{}")
+                    except json.JSONDecodeError:
+                        existing_metadata = {}
+                    if not isinstance(existing_metadata, dict):
+                        existing_metadata = {}
+
+                    merged_metadata = dict(existing_metadata)
+                    merged_metadata.update(
+                        {
+                            key: value
+                            for key, value in incoming_metadata.items()
+                            if key != "provenance"
+                        }
+                    )
+
+                    old_provenance = existing_metadata.get("provenance", [])
+                    new_provenance = incoming_metadata.get("provenance", [])
+                    if not isinstance(old_provenance, list):
+                        old_provenance = []
+                    if not isinstance(new_provenance, list):
+                        new_provenance = []
+                    provenance: list[dict[str, Any]] = []
+                    seen_provenance: set[str] = set()
+                    for item in old_provenance + new_provenance:
+                        if not isinstance(item, dict):
+                            continue
+                        marker = json.dumps(
+                            item, sort_keys=True, ensure_ascii=False, default=str
+                        )
+                        if marker not in seen_provenance:
+                            provenance.append(item)
+                            seen_provenance.add(marker)
+                    if provenance:
+                        merged_metadata["provenance"] = provenance
+                        merged_metadata["provenance_count"] = len(provenance)
+
+                    providers = sorted(
+                        {
+                            part.strip()
+                            for part in (
+                                str(row["provider"] or "") + ";" + str(source.provider or "")
+                            ).split(";")
+                            if part.strip()
+                        }
+                    )
+                    name = str(row["name"] or source.name or "")
+                    discovered_at = min(
+                        str(row["discovered_at"] or source.discovered_at),
+                        str(source.discovered_at),
+                    )
+                else:
+                    merged_metadata = incoming_metadata
+                    providers = [source.provider] if source.provider else []
+                    name = source.name
+                    discovered_at = source.discovered_at
+
+                connection.execute(
+                    """
+                    INSERT INTO sources
+                        (url, name, provider, discovered_at, last_status,
+                         last_checked_at, metadata_json)
+                    VALUES (?, ?, ?, ?, '', '', ?)
+                    ON CONFLICT(url) DO UPDATE SET
+                        name=excluded.name,
+                        provider=excluded.provider,
+                        discovered_at=excluded.discovered_at,
+                        metadata_json=excluded.metadata_json
+                    """,
+                    (
+                        normalized,
+                        name,
+                        ";".join(providers),
+                        discovered_at,
+                        json.dumps(merged_metadata, ensure_ascii=False, default=str),
+                    ),
+                )
 
     def save_records(self, records: Iterable[PlaylistRecord]) -> None:
-        rows = [
-            (
-                record.identity,
-                record.name,
-                record.source_url,
-                record.stream_status,
-                record.http_status,
-                record.ffprobe_status,
-                record.checked_at,
-                record.error,
-                json.dumps(record.to_dict(), ensure_ascii=False, default=str),
-            )
-            for record in records
-            if record.identity
-        ]
+        """Persist exact M3U entries separately from normalized probe results.
 
-        if not rows:
-            return
-
+        playlist_entries is keyed by the original URL string and retains the
+        first EXTINF selected by level-3 deduplication. streams is keyed by the
+        normalized URL and stores only reusable network-check results.
+        """
+        now = utc_now()
         with self._lock, self._connect() as connection:
-            connection.executemany(
-                """
-                INSERT INTO streams
-                    (url, name, source_url, status, http_status,
-                     ffprobe_status, checked_at, error, record_json)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(url) DO UPDATE SET
-                    name=excluded.name,
-                    source_url=excluded.source_url,
-                    status=excluded.status,
-                    http_status=excluded.http_status,
-                    ffprobe_status=excluded.ffprobe_status,
-                    checked_at=excluded.checked_at,
-                    error=excluded.error,
-                    record_json=excluded.record_json
-                """,
-                rows,
-            )
+            for record in records:
+                exact_url = record.identity
+                normalized = record.probe_key
+                if not exact_url or not normalized:
+                    continue
+
+                record_json = json.dumps(
+                    record.to_dict(), ensure_ascii=False, default=str
+                )
+                connection.execute(
+                    """
+                    INSERT INTO playlist_entries
+                        (url, name, source_url, extinf, group_title, tvg_id,
+                         tvg_name, tvg_logo, record_json, first_seen_at, last_seen_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(url) DO UPDATE SET
+                        name=excluded.name,
+                        source_url=excluded.source_url,
+                        extinf=excluded.extinf,
+                        group_title=excluded.group_title,
+                        tvg_id=excluded.tvg_id,
+                        tvg_name=excluded.tvg_name,
+                        tvg_logo=excluded.tvg_logo,
+                        record_json=excluded.record_json,
+                        last_seen_at=excluded.last_seen_at
+                    """,
+                    (
+                        exact_url,
+                        record.name,
+                        record.source_url,
+                        record.extinf,
+                        record.group_title,
+                        record.tvg_id,
+                        record.tvg_name,
+                        record.tvg_logo,
+                        record_json,
+                        now,
+                        now,
+                    ),
+                )
+
+                probe_payload = {
+                    "url": normalized,
+                    "stream_status": record.stream_status,
+                    "http_status": record.http_status,
+                    "ffprobe_status": record.ffprobe_status,
+                    "content_type": record.content_type,
+                    "checked_at": record.checked_at,
+                    "error": record.error,
+                }
+                connection.execute(
+                    """
+                    INSERT INTO streams
+                        (url, name, source_url, status, http_status,
+                         ffprobe_status, checked_at, error, record_json)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(url) DO UPDATE SET
+                        name=excluded.name,
+                        source_url=excluded.source_url,
+                        status=excluded.status,
+                        http_status=excluded.http_status,
+                        ffprobe_status=excluded.ffprobe_status,
+                        checked_at=excluded.checked_at,
+                        error=excluded.error,
+                        record_json=excluded.record_json
+                    """,
+                    (
+                        normalized,
+                        record.name,
+                        record.source_url,
+                        record.stream_status,
+                        record.http_status,
+                        record.ffprobe_status,
+                        record.checked_at,
+                        record.error,
+                        json.dumps(probe_payload, ensure_ascii=False, default=str),
+                    ),
+                )
 
     def get_recent_stream_result(self, url: str) -> Optional[dict[str, Any]]:
         with self._lock, self._connect() as connection:
@@ -1833,7 +2105,7 @@ class PlaylistFetcher:
 
 def get_url_check_lock(url: str) -> threading.Lock:
     """Get a per-URL lock to prevent duplicate simultaneous checks."""
-    normalized = normalize_url(url)
+    normalized = normalize_url(url) or url
     with URL_CHECK_LOCKS_LOCK:
         lock = URL_CHECK_LOCKS.get(normalized)
         if lock is None:
@@ -2095,37 +2367,59 @@ class StreamChecker:
 
 def deduplicate_records(
     records: Iterable[PlaylistRecord],
+    stats: Optional[dict[str, int]] = None,
 ) -> list[PlaylistRecord]:
-    """Deduplicate by normalized URL while preserving first-seen metadata."""
+    """Level-3 deduplication by exact original stream URL.
+
+    Rule A: identical EXTINF + identical URL is a duplicate.
+    Rule B: identical URL is a duplicate even when any EXTINF metadata differs.
+
+    Therefore the operative key is the original URL string, compared exactly
+    character-for-character. No URL normalization, case folding, query sorting,
+    fragment removal, or metadata merging is allowed here. The first record
+    wins and its complete EXTINF/metadata is retained unchanged.
+    """
     unique: dict[str, PlaylistRecord] = {}
+    counters: Counter[str] = Counter()
 
     for record in records:
-        key = record.identity
+        counters["records_seen"] += 1
+        key = record.url
         if not key:
+            counters["empty_url_skipped"] += 1
             continue
 
-        if key not in unique:
+        existing = unique.get(key)
+        if existing is None:
             unique[key] = record
+            counters["unique_urls"] += 1
             continue
 
-        current = unique[key]
+        counters["duplicate_url_records"] += 1
+        if existing.extinf == record.extinf:
+            counters["exact_extinf_and_url_duplicates"] += 1
+        else:
+            counters["same_url_different_extinf_duplicates"] += 1
 
-        # Prefer a meaningful name if the first entry was empty or generic.
-        if (
-            current.name.strip().lower() in {"", "unknown", "unknown channel"}
-            and record.name.strip()
-        ):
-            current.name = record.name
+    result = list(unique.values())
+    counters["records_kept"] = len(result)
+    counters["records_removed"] = counters["records_seen"] - counters["records_kept"] - counters["empty_url_skipped"]
 
-        # Keep available metadata from later donor entries.
-        if not current.extinf and record.extinf:
-            current.extinf = record.extinf
-        if not current.group_title and record.group_title:
-            current.group_title = record.group_title
-        if not current.tvg_logo and record.tvg_logo:
-            current.tvg_logo = record.tvg_logo
+    if stats is not None:
+        stats.clear()
+        stats.update({key: int(value) for key, value in counters.items()})
 
-    return list(unique.values())
+    log_event(
+        logging.INFO,
+        "Level-3 deduplication: input=%d kept=%d removed=%d "
+        "exact_duplicates=%d same_url_metadata_variants=%d",
+        counters["records_seen"],
+        counters["records_kept"],
+        counters["records_removed"],
+        counters["exact_extinf_and_url_duplicates"],
+        counters["same_url_different_extinf_duplicates"],
+    )
+    return result
 
 
 def select_donor_records(
@@ -2271,10 +2565,12 @@ class Skala:
         self,
         records: list[PlaylistRecord],
     ) -> dict[str, PlaylistRecord]:
+        """Map snapshots by exact source URL, never by normalized URL."""
         mapped: dict[str, PlaylistRecord] = {}
         for record in records:
-            if record.identity and record.identity not in mapped:
-                mapped[record.identity] = record
+            exact_url = record.identity
+            if exact_url and exact_url not in mapped:
+                mapped[exact_url] = record
         return mapped
 
     def compare(
@@ -2500,6 +2796,11 @@ class UnifiedPlaylistHunter:
         sources = self.discovery.discover()
         self.store.save_sources(sources)
         self.summary["sources_discovered"] = len(sources)
+        self.summary["source_discovery_provenance_items"] = sum(
+            len(source.metadata.get("provenance", []))
+            for source in sources
+            if isinstance(source.metadata.get("provenance", []), list)
+        )
         return sources
 
     def fetch_and_parse_sources(
@@ -2545,11 +2846,15 @@ class UnifiedPlaylistHunter:
                 self.store,
             )
 
-        unique_records = deduplicate_records(records)
-        checked = self.stream_checker.check_all(unique_records)
+        # run() has already applied level-3 exact-URL deduplication once.
+        # Keep record objects and their first-seen EXTINF metadata intact here.
+        checked = self.stream_checker.check_all(records)
         self.store.save_records(checked)
 
         self.summary["records_checked"] = len(checked)
+        self.summary["unique_probe_urls"] = len(
+            {record.probe_key for record in checked if record.probe_key}
+        )
         self.summary["stream_status_counts"] = dict(
             Counter(record.stream_status for record in checked)
         )
@@ -2696,8 +3001,17 @@ class UnifiedPlaylistHunter:
             source_results, parsed_records = self.fetch_and_parse_sources(sources)
             self.summary["records_parsed"] = len(parsed_records)
 
-            deduplicated = deduplicate_records(parsed_records)
+            deduplication_stats: dict[str, int] = {}
+            deduplicated = deduplicate_records(
+                parsed_records,
+                stats=deduplication_stats,
+            )
             self.summary["records_after_dedup"] = len(deduplicated)
+            self.summary["level3_deduplication"] = deduplication_stats
+            self.summary["unique_exact_stream_urls"] = len(deduplicated)
+            self.summary["unique_normalized_probe_urls"] = len(
+                {record.probe_key for record in deduplicated if record.probe_key}
+            )
 
             if not deduplicated:
                 raise RuntimeError(
