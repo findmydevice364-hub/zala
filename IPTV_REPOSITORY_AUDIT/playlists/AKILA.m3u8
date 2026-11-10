@@ -1,0 +1,304 @@
+#EXTM3U url-tvg="http://epg.one/epg.xml; http://rafail1982.uz/uzbekistan1.xml; http://uztv.su/uploads/channelsarch/channels.xml; https://iptvx.one/EPG_NOARCH; http://gabbarit.drm-play.com/epg_lite.xml.gz; http://epg.cdntv.online/lite.xml; http://epg.it999.ru/epg.xml; http://iptv-content.rv77.pw/guide-lite.xml" tvg-shift="+5" refresh="86400"
+#EXTINF:-1 group-title="ЭФИРНЫЕ",PLANETA RTR
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream8.cinerama.uz/blocked/index.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",Регион 67
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://212.3.155.126:8181/udp/233.67.67.177:5510
+#EXTINF:-1 group-title="ЭФИРНЫЕ",МИТВ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://193.33.233.109:9000/tv
+#EXTINF:-1 group-title="ЭФИРНЫЕ",PLANETA RTR
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://player.smotrim.ru/iframe/stream/live_id/d7fef212-df66-485d-9952-7eab82d7d51b.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",РОССИЯ РТР
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://player.smotrim.ru/iframe/stream/live_id/3b73bf76-7245-4981-a865-38478e21df1f.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",РОССИЯ РТР
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://player.smotrim.ru/iframe/stream/live_id/683d9649-a96c-4a4d-b468-91c0ee2bf363.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",Вести FM HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://player.smotrim.ru/iframe/stream/live_id/0487fd79-60e6-4333-a545-909d6e015173.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",Радио России HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://player.smotrim.ru/iframe/stream/live_id/39ebf09f-bf74-4040-83e6-94b770ba77c4.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Теледом.png" group-title="ЭФИРНЫЕ",Теледом
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",OneBY
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",DW ESPANOL HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",Краснодар
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",360° HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",МТВ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",БАЙКАЛ Универ ТВ HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Первый канал +4.png" group-title="ЭФИРНЫЕ",Первый канал +4
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",Волга HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",Урал 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",Наш дом
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ЭФИРНЫЕ",7tv
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/favicon.png" group-title="NEXO",NEXO
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://rafail1982.uz/nexo2.mp4
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Осетия Ирыстон HD.png" group-title="РЕГИОНАЛЬНЫЕ",Осетия Ирыстон HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",Волгоград 24 HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/smotrim/region/CH_VOLGOGRAD24HD_VGRAD.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",Волжский Плюс HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_VOLPLUSHD_VLSKIY.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Мир Белогорья HD.png" group-title="РЕГИОНАЛЬНЫЕ",Мир Белогорья HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_MIR_BLGRYAHD_BELG.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",Волгоград 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/smotrim/region/CH_VOLGOGRAD24_VGRAD.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",ОТВ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_OTV_EKT.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",ШАЯН HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_SHAYANHD_KZN.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",АИСТ HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_AISTHD_IRK.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",ШАЯН
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_SHAYAN_KZN.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",Запад 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/smotrim/region/CH_3APAD24_KLGR.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",Запад 24 HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/smotrim/region/CH_3APAD24HD_KLGR.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",Краснодар HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/smotrim/region/CH_KRASNODARHD_KRDAR.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",ТВК 24 HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_TVK24HD_KRSK.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",ТВК 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_TVK24_KRSK.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",Мособр ТВ HD720
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_MOSOBRTVHD720_MOS.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",Липецкое время HD720
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_LVREMYAHD720_LIPETSK.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",UNIVER
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_UNIVER_KZN.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",TVАист
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_TVAIST_LD.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",Север
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="РЕГИОНАЛЬНЫЕ",РГВК Дагестан HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/region/CH_DAGESTANHD_MAHACHK.m3u8
+#EXTINF:-1 group-title="КИНО И СЕРИАЛЫ",НТВ ХИТ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_NTVHIT.m3u8
+#EXTINF:-1 group-title="КИНО И СЕРИАЛЫ",НТВ СТИЛЬ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_NTVSTIL.m3u8
+#EXTINF:-1 group-title="КИНО И СЕРИАЛЫ",КИНО ТВ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_KINOTV.m3u8
+#EXTINF:-1 group-title="КИНО И СЕРИАЛЫ",CINEMA
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_CINEMA.m3u8
+#EXTINF:-1 group-title="КИНО И СЕРИАЛЫ",Кино и сериалы
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/smotrim/CH_KINO_I_SERIALY.m3u8
+#EXTINF:-1 group-title="КИНО И СЕРИАЛЫ",НТВ ПРАВО
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_NTVPRAVO.m3u8
+#EXTINF:-1 group-title="КИНО И СЕРИАЛЫ",НТВ СЕРИАЛ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_NTVSERIAL.m3u8
+#EXTINF:-1 group-title="КИНО И СЕРИАЛЫ",Кино и сериалы HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/smotrim/CH_KINO_I_SERIALYHD.m3u8
+#EXTINF:-1 group-title="КИНО И СЕРИАЛЫ",KINO 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_KINO24.m3u8
+#EXTINF:-1 group-title="КИНО И СЕРИАЛЫ",Кино 1 International
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="РАЗВЛЕКАТЕЛЬНЫЕ",8 канал
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_8CHANNEL.m3u8
+#EXTINF:-1 group-title="РАЗВЛЕКАТЕЛЬНЫЕ",8 Канал
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_8CHANNEL_EUROPE.m3u8
+#EXTINF:-1 group-title="РАЗВЛЕКАТЕЛЬНЫЕ",E TV HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="РАЗВЛЕКАТЕЛЬНЫЕ",Надежда HD720
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_NADEZHDAHD720.m3u8
+#EXTINF:-1 group-title="РАЗВЛЕКАТЕЛЬНЫЕ",360°
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/smotrim/CH_360TV.m3u8
+#EXTINF:-1 group-title="РАЗВЛЕКАТЕЛЬНЫЕ",Fashion TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="РАЗВЛЕКАТЕЛЬНЫЕ",Просвещение
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_PROSVESHENIE.m3u8
+#EXTINF:-1 group-title="РАЗВЛЕКАТЕЛЬНЫЕ",LIFE TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_LIFETV_RUSEST.m3u8
+#EXTINF:-1 group-title="РАЗВЛЕКАТЕЛЬНЫЕ",LIFE TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_LIFETV_RUS.m3u8
+#EXTINF:-1 group-title="РАЗВЛЕКАТЕЛЬНЫЕ",Твое ТВ HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_TVOETVHD.m3u8
+#EXTINF:-1 group-title="ДЕТСКИЕ",Радость моя
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_RADOSTMOYA.m3u8
+#EXTINF:-1 group-title="ПОЗНАВАТЕЛЬНЫЕ",ПРОДВИЖЕНИЕ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_PRODVIZHENIE.m3u8
+#EXTINF:-1 group-title="ПОЗНАВАТЕЛЬНЫЕ",СОЮЗ HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_SOYUZHD.m3u8
+#EXTINF:-1 group-title="ПОЗНАВАТЕЛЬНЫЕ",НЕИЗВЕСТНАЯ РОССИЯ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_UNKNOWN_RUSSIA.m3u8
+#EXTINF:-1 group-title="ПОЗНАВАТЕЛЬНЫЕ",НЕИЗВЕСТНАЯ РОССИЯ HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_UNKNOWN_RUSSIAHD.m3u8
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",Муз Союз
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_MUZSOYUZ.m3u8
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",RUTV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_RUTV.m3u8
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",RUTV HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",ТНТ MUSIC HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",OneBY HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://rtmp.one.by:1300
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",Kronehit
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_KRONEHIT.m3u8
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",Kronehit HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_KRONEHITHD.m3u8
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",TRACE Urban HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",OneBY HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://rtmp.one.by:2300
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",OneBY
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://rtmp.one.by:2200
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",V2BEAT HD720
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_V2BEATHD720.m3u8
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",ТНТ MUSIC
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",TRACE Urban
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="МУЗЫКАЛЬНЫЕ",Шансон ТВ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_SHANSONTV.m3u8
+#EXTINF:-1 group-title="СПОРТИВНЫЕ",Red Bull TV HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",DW ENGLISH
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_DW_ENGLISH.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",DW ARABIC HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",DW ENGLISH HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",CGTN ENGLISH HD720
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",CGTN РУССКИЙ HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_CGTN_RUSSKIYHD.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",CGTN DOCUMENTARY HD720
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_CGTN_DOCUMENTARYHD720.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",RTД HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_RTDHD.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",Красная линия
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_REDLINE.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",РЖД ТВ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_RZHDTV.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",РЖД ТВ HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_RZHDTVHD.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",Большая Азия
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_BAZIYA.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",Большая Азия HD720
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_BAZIYAHD720.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",360° НОВОСТИ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/smotrim/CH_360TV_NEWS.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",360° НОВОСТИ HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/smotrim/CH_360TV_NEWSHD.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",CGTN FRANCAIS HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_CGTN_FRANCAISHD.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",РБК HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_RBKHD.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",МИР 24 HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_MIR24HD.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",МИР 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",РБК
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_RBK.m3u8
+#EXTINF:-1 group-title="ИНФОРМАЦИОННЫЕ",CGTN ESPANOL HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://dmi3y-tv6.ru/hls/CH_CGTN_ESPANOLHD.m3u8

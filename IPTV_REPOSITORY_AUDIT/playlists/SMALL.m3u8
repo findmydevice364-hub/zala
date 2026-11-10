@@ -1,0 +1,63 @@
+#EXTM3U url-tvg="http://epg.one/epg.xml; http://rafail1982.uz/uzbekistan1.xml; http://uztv.su/uploads/channelsarch/channels.xml; https://iptvx.one/EPG_NOARCH; http://gabbarit.drm-play.com/epg_lite.xml.gz; http://epg.cdntv.online/lite.xml; http://epg.it999.ru/epg.xml; http://iptv-content.rv77.pw/guide-lite.xml" tvg-shift="+5" refresh="86400"
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1.png" group-title="SMOTRIM",Россия 1
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://109.207.243.18/2/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Звезда.png" group-title="SMOTRIM",Звезда
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Первый Канал.png" group-title="SMOTRIM",Первый Канал
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream8.cinerama.uz/blocked/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Мир.png" group-title="SMOTRIM",Мир
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/НТВ.png" group-title="SMOTRIM",НТВ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/НТВ.png" group-title="SMOTRIM",НТВ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Первый Канал.png" group-title="SMOTRIM",Первый Канал
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://31.148.48.15:80/Pervii_kanal_HD/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1.png" group-title="SMOTRIM",Россия 1
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://31.148.48.15:80/Rossiya_1_HD/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 24.png" group-title="SMOTRIM",Россия 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://31.148.48.15:80/Rossiya_24/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 24.png" group-title="SMOTRIM",Россия 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Мир 24.png" group-title="SMOTRIM",Мир 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://194.143.148.28:8080/Mir24/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Мир 24.png" group-title="SMOTRIM",Мир 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://cdn4.skygo.mn/live/disk1/MIR/HLSv3-FTA/MIR.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Мир.png" group-title="SMOTRIM",Мир
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://hls.mirtv.cdnvideo.ru/mirtv-parampublish/mirtv_2500/playlist.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Мир 24.png" group-title="SMOTRIM",Мир 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://hls.mirtv.cdnvideo.ru/mirtv-parampublish/mir24_2500/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Мир 24.png" group-title="SMOTRIM",Мир 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://hls.mirtv.cdnvideo.ru/mirtv-parampublish/mir24_2500/playlist.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Известия.png" group-title="SMOTRIM",Известия
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://igi-hls.cdnvideo.ru/igi/igi_tcode/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Известия.png" group-title="SMOTRIM",Известия
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://igi-hls.cdnvideo.ru/igi/igi_tcode/tracks-v1a1/mono.ts.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Известия HD.png" group-title="SMOTRIM",Известия HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://igi-hls.cdnvideo.ru/igi/igi_tcode/tracks-v2a1/mono.ts.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Известия.png" group-title="SMOTRIM",Известия
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://igi-hls.cdnvideo.ru/igi/igi_tcode/tracks-v3a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Известия.png" group-title="SMOTRIM",Известия
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+http://igi-hls.cdnvideo.ru/igi/igi_tcode/playlist.m3u8

@@ -1,0 +1,45 @@
+#EXTM3U url-tvg="http://epg.one/epg.xml; http://rafail1982.uz/uzbekistan1.xml; http://uztv.su/uploads/channelsarch/channels.xml; https://iptvx.one/EPG_NOARCH; http://gabbarit.drm-play.com/epg_lite.xml.gz; http://epg.cdntv.online/lite.xml; http://epg.it999.ru/epg.xml; http://iptv-content.rv77.pw/guide-lite.xml" tvg-shift="+5" refresh="86400"
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",Smooth Gold Radio Ireland
+https://a4.asurahosting.com:6630/radio.mp3
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",Power Smooth Jazz
+https://listen.powerapp.com.tr/powersmoothjazz/mpeg/icecast.audio
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",BRYAN ADAMS
+http://nl4.rafail1982.uz/er/bryanadamshits/icecast.audio
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",Mariah Carey
+http://nl4.rafail1982.uz/er/mariahcarey/icecast.audio
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",MARIAH CAREY
+http://2.rafail1982.uz/er/mariahcarey/icecast.audio
+#EXTINF:-1 group-title="RADIO" tvg-logo="https://top-radio.ru/assets/image/radio/180/galaxy-progressiveradio.png",Galaxy Progressive Radio
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",Bryan Adams
+http://2.rafail1982.uz/er/bryanadamshits/icecast.audio
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",Chris Rea
+http://2.rafail1982.uz/er/chrisrea/icecast.audio
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",Radio Regenbogen 90er Dance
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",Michael Bolton
+http://nl4.rafail1982.uz/er/michaelbolton/icecast.audio
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/RPR1. 90er Dance.png",RPR1. 90er Dance
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/Digital 95.5 FM.jpeg",Digital 95.5 FM
+https://s42.radiolize.com/radio/8090/radio.mp3
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",WESTLIFE
+http://nl4.rafail1982.uz/er/westlife/icecast.audio
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",DIRE STRAITS
+http://nl4.rafail1982.uz/er/direstraitshits/icecast.audio
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",RUKI VVERH
+http://radiorecord.rafail1982.uz/rv96.aacp
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",Michael Jackson
+http://2.rafail1982.uz/er/michaeljackson/icecast.audio
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",Radio SAW 90er
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",NAFTALIN FM
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",PULS TRANCE
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="RADIO" tvg-logo="http://rafail1982.uz/logo/radio.png",PULS 90S
+https://s7.iptv-24.net/blocked/index.m3u8
+http://79.111.14.76:8000/symphony
+http://79.120.39.202:8000/smoothjazz
+https://s7.iptv-24.net/blocked/index.m3u8
+http://79.111.14.76:8000/indianfolk

@@ -1,0 +1,61 @@
+#EXTM3U url-tvg="http://epg.one/epg.xml; http://rafail1982.uz/uzbekistan1.xml; http://uztv.su/uploads/channelsarch/channels.xml; https://iptvx.one/EPG_NOARCH; http://gabbarit.drm-play.com/epg_lite.xml.gz; http://epg.cdntv.online/lite.xml; http://epg.it999.ru/epg.xml; http://iptv-content.rv77.pw/guide-lite.xml" tvg-shift="+5" refresh="86400"
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Trace Sport Stars HD.png" group-title="Спортивные",Trace Sport Stars HD
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://s8.rafail1982.uz/1274/tracks-v1a1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Матч! Планета.png" group-title="Спортивные",Матч! Планета
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://s8.rafail1982.uz/1243/tracks-v1a1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Setanta Sports 2 HD.png" group-title="Спортивные",Setanta Sports 2 HD
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://s8.rafail1982.uz/1264/tracks-v1a1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Viju+ Sport.png" group-title="Спортивные",Viju+ Sport
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://s8.rafail1982.uz/1229/tracks-v1a1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Viju+ Sport.png" group-title="Спортивные",Viju+ Sport
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://s8.rafail1982.uz/1229/tracks-v1a2a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Setanta Sports 1 HD.png" group-title="Спортивные",Setanta Sports 1 HD
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://s8.rafail1982.uz/1263/tracks-v1a1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/KHL HD.png" group-title="Спортивные",KHL HD
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://s8.rafail1982.uz/1422/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Trace Sport Stars HD.png" group-title="Спортивные",Trace Sport Stars HD
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://s8.rafail1982.uz/1274/tracks-v1a2a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/sport2.png" group-title="Спортивные",OnlineTV
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://185.221.213.254:8080/Okko/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/sport2.png" group-title="Спортивные",Arena Sport 1
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Russian Extreme.png" group-title="Спортивные",Russian Extreme
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://195.26.83.96:7029/play/a008
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/sport2.png" group-title="Спортивные",97.XSPORT+
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://176.122.99.7:7000/ch117/video.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/sport2.png" group-title="Спортивные",Viasat Sport
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://176.122.99.7:7000/ch282/video.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/sport2.png" group-title="Спортивные",Trace Sport Stars
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://176.122.99.7:7000/ch236/video.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/sport2.png" group-title="Спортивные",FIGHTBOX
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://176.122.99.7:7000/ch118/video.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/sport2.png" group-title="Спортивные",PROSTO DRIVE
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://176.122.99.7:7000/ch326/video.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/sport2.png" group-title="Спортивные",XStream
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://176.122.99.7:7000/ch313/video.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Extreme Sports.png" group-title="Спортивные",Extreme Sports
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://188.113.190.15/39/tracks-v1a1/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Старт.png" group-title="Спортивные",Старт
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://188.113.190.15/127/tracks-v1a1/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/sport2.png" group-title="Спортивные",Игра
+#EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
+http://31.148.48.15:80/Match_Igra/index.m3u8?token=test

@@ -1,0 +1,301 @@
+#EXTM3U url-tvg="http://epg.one/epg.xml; http://rafail1982.uz/uzbekistan1.xml; http://uztv.su/uploads/channelsarch/channels.xml; https://iptvx.one/EPG_NOARCH; http://gabbarit.drm-play.com/epg_lite.xml.gz; http://epg.cdntv.online/lite.xml; http://epg.it999.ru/epg.xml; http://iptv-content.rv77.pw/guide-lite.xml" tvg-shift="+5" refresh="86400"
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/NEXO.png" group-title="NEXO",NEXO
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://rafail1982.uz/nexo2.mp4
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/IPTV.png" group-title="NEXO",IPTV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://rafail1982.uz/IPTV.mp4
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/NexoIPTV.png" group-title="NEXO",NexoIPTV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://rafail1982.uz/NexoIPTV.mp4
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/ES/Candy (Jazz-Funk Cover)_v2.png" group-title="NEXO",Candy (Jazz-Funk Cover)_v2
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://rafail1982.uz/ES/Candy (Jazz-Funk Cover)_v2.mp4
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/ES/Пастух (Pan Flute Cover)_v2.png" group-title="NEXO",Пастух (Pan Flute Cover)_v2
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://rafail1982.uz/ES/Пастух (Pan Flute Cover)_v2.mp4
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/ES/Parisienne days(Fender guitar)_v1.png" group-title="NEXO",Parisienne days(Fender guitar)_v1
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://rafail1982.uz/ES/Parisienne days(Fender guitar)_v1.mp4
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/ES/Horizon (Fender Guitar Cov.)_v1.png" group-title="NEXO",Horizon (Fender Guitar Cov.)_v1
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://rafail1982.uz/ES/Horizon (Fender Guitar Cov.)_v1.mp4
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/ES/Sorrow (Guitar Solo Cover)_v1.png" group-title="NEXO",Sorrow (Guitar Solo Cover)_v1
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://rafail1982.uz/ES/Sorrow (Guitar Solo Cover)_v1.mp4
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/ES/Fading Light_2.png" group-title="NEXO",Fading Light (Vocal Version)_v2
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://rafail1982.uz/ES/Fading Light (Vocal Version)_v2.mp4
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/ES/Never Leav (Country Cover)_v2.png" group-title="NEXO",Never Leav (Country Cover)_v2
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://rafail1982.uz/ES/Never Leav (Country Cover)_v2.mp4
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1 +1.png" group-title="Российские",Россия 1 +1
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://vgtrkregion-reg.cdnvideo.ru/vgtrk/1/russia1-hd/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1 +2.png" group-title="Российские",Россия 1 +2
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://vgtrkregion-reg.cdnvideo.ru/vgtrk/2/russia1-hd/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1 +3.png" group-title="Российские",Россия 1 +3
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://vgtrkregion-reg.cdnvideo.ru/vgtrk/3/russia1-hd/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1 +4.png" group-title="Российские",Россия 1 +4
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://vgtrkregion-reg.cdnvideo.ru/vgtrk/4/russia1-hd/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1 +5.png" group-title="Российские",Россия 1 +5
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://vgtrkregion-reg.cdnvideo.ru/vgtrk/5/russia1-hd/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1 +6.png" group-title="Российские",Россия 1 +6
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://vgtrkregion-reg.cdnvideo.ru/vgtrk/6/russia1-hd/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1 +7.png" group-title="Российские",Россия 1 +7
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://vgtrkregion-reg.cdnvideo.ru/vgtrk/7/russia1-hd/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1 +8.png" group-title="Российские",Россия 1 +8
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://vgtrkregion-reg.cdnvideo.ru/vgtrk/8/russia1-hd/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1 +9.png" group-title="Российские",Россия 1 +9
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://vgtrkregion-reg.cdnvideo.ru/vgtrk/9/russia1-hd/index.m3u8
+#EXTINF:-1 group-title="Российские",НТВ +1
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://cdn.ntv.ru/ntv1/playlist.m3u8
+#EXTINF:-1 group-title="ОПЛОТ",НТС Севастополь
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://peqk71plnjy.a.trbcdn.net/livemaster/w4kz7pki62_nts_tv/chunklist.m3u8
+#EXTINF:-1 group-title="ОПЛОТ",Север
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://live2.mediacdn.ru/sr1/sever/playlist_hdhigh.m3u8
+#EXTINF:-1 group-title="ОПЛОТ",Радио Харьков Z
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://node1.craftradio.ru:8000/215_55AE795B
+#EXTINF:-1 group-title="ОПЛОТ",News Front TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://tv.2kita.com/stream/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Белгород 24.png" group-title="ОПЛОТ",Белгород 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://belnovosti.cdn.easyhoster.ru:8443/stream.m3u8
+#EXTINF:-1 group-title="ОПЛОТ",TV Губерния
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://s68149.cdn.ngenix.net/s68149-media-origin/lvs/tvgub/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="ОПЛОТ",Известия Воронеж
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://rt-ct-vrzh-htlive.cdn.ngenix.net/hls/CH_R01_IZVESTIYA/variant.m3u8
+#EXTINF:-1 group-title="ОПЛОТ",Краснодар HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://live-tvkrasnodar.cdnvideo.ru/tvkrasnodar/tvkrasnodar.sdp/playlist.m3u8
+#EXTINF:-1 group-title="ОПЛОТ",Кубань 24 (Краснодар)
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://rt-sth-krdar-htlive.cdn.ngenix.net/hls/CH_R04_KUBAN24/variant.m3u8
+#EXTINF:-1 group-title="ОПЛОТ",ВМЕСТЕ:РФ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://qcpdqumitwf.a.trbcdn.net/livemastersrt/pr4mw_lvie-vmesterf-srt.smil/playlist.m3u8
+#EXTINF:-1 group-title="Фильмовые",Кино и сериалы
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://live-vgtrksmotrim.cdnvideo.ru/vgtrksmotrim/smotrim-live-01.smil/tracks-v5a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Кинеко.png" group-title="Фильмовые",Кинеко
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://31.148.48.15/Kineko/index.m3u8
+#EXTINF:-1 group-title="Фильмовые",Кино TV HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/3/video.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Иллюзион+.png" group-title="Фильмовые",Иллюзион+
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/45/tracks-v1a1/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Кинеко.png" group-title="Фильмовые",Кинеко
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/57/tracks-v1a1/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Кинеко HD.png" group-title="Фильмовые",Кинеко HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/156/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Индийское Кино.png" group-title="Фильмовые",Индийское Кино
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/329/video.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Киноужас HD.png" group-title="Фильмовые",Киноужас HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/323/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Киномикс.png" group-title="Фильмовые",Киномикс
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/308/video.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Киносемья.png" group-title="Фильмовые",Киносемья
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/311/video.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Матч! Боец.png" group-title="Спортивные",Матч! Боец
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.11/126/video.m3u8
+#EXTINF:-1 group-title="Спортивные",Canal Motor
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://digicom.hls.iptvdc.com/canalmotor/index.m3u8
+#EXTINF:-1 group-title="Спортивные",Sports Grid
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://sportsgrid-tribal.amagi.tv/playlist1080p.m3u8
+#EXTINF:-1 group-title="Спортивные",Dubai Racing
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://dmisdracta.cdn.mgmlcdn.com/events/smil:events.stream.smil/chunklist_b4000000.m3u8
+#EXTINF:-1 group-title="Спортивные",BEK TV Sports
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://cdn3.wowza.com/5/ZWQ1K2NYTmpFbGsr/BEK-WOWZA-1/smil:BEKPRIMEW.smil/playlist.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Матч! Футбол 3.png" group-title="Спортивные",Матч! Футбол 3
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://185.57.68.33/110/mpegts
+#EXTINF:-1 group-title="Спортивные",Матч! HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://bl.video.matchtv.ru/media/playlist/free_d46d0cf1712c0542ec7fd4f0808f600a_hd/17_89756005/1080/e6bef86de8a133cd7b27deb040758a00/4796141934.m3u8
+#EXTINF:-1 group-title="Спортивные",MMA-TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://31.148.48.15/M1_Global/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Russian Extreme.png" group-title="Спортивные",Russian Extreme
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://195.26.83.96:7029/play/a008
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Viju+ Sport.png" group-title="Спортивные",Viju+ Sport
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://178.134.1.158:8081/viasatsport/index.m3u8
+#EXTINF:-1 group-title="Детские",Чип и Дейл
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://194.26.229.213/chip-n-dale-rescue-rangers/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Солнце.png" group-title="Детские",Солнце
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://tv.streams.baikal-telecom.net:8080/Disney/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Мама.png" group-title="Детские",Мама
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://stv.mediacdn.ru/live/cdn/mama/playlist.m3u8
+#EXTINF:-1 group-title="Детские",Мамонтëнок ТВ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://sirius.greenhosting.ru/MamontRu/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Мульт HD.png" group-title="Детские",Мульт HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://stv.mediacdn.ru/live/cdn/mult/playlist.m3u8
+#EXTINF:-1 group-title="Детские",Мультимания LV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://sirius.greenhosting.ru/MultimaniaRu/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Мультимузыка.png" group-title="Детские",Мультимузыка
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://stv.mediacdn.ru/live/cdn/multimuzika/playlist.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Радость моя.png" group-title="Детские",Радость моя
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://radm.mediacdn.ru/cdn/radost/playlist_sdhigh.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Рыжий.png" group-title="Детские",Рыжий
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://31.148.48.15/Rizhiy/index.m3u8
+#EXTINF:-1 group-title="Детские",СТС Kids
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://195.26.83.96:7006/play/a00z/index.m3u8
+#EXTINF:-1 group-title="Познавательные",Нано
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://s1.tv-nano.com/Nano_rec/video.m3u8
+#EXTINF:-1 group-title="Познавательные",Просвещение
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://cdn-01.bonus-tv.ru/prosveschenie_edge/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Univer TV HD.png" group-title="Познавательные",Univer TV HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://cdn.universmotri.ru/live/smil:univer.smil/chunklist_w911267907_b3628000_slru.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Nano.png" group-title="Познавательные",Nano
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://194.143.148.28:8080/NanoTV/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Познавательные",English Class
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://141.95.55.143/CH4039/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Red Bull TV.png" group-title="Познавательные",Red Bull TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_3360.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Доктор HD.png" group-title="Познавательные",Доктор HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://31.148.48.15/Doktor/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Звезда Плюс.png" group-title="Познавательные",Звезда Плюс
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://tvzvezda.bonus-tv.ru/cdn/zvezdaplus/tracks-v1a1/mono.ts.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Зоо ТВ.png" group-title="Познавательные",Зоо ТВ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://31.148.48.15/Zoo_TV/index.m3u8
+#EXTINF:-1 group-title="Познавательные",Наука 2.0
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://vod.tuva.ru/nauka2/index.m3u8
+#EXTINF:-1 group-title="Развлекательные",Твоё ТВ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://tvoetv.space:8080/tvoetv/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Крик-ТВ.png" group-title="Развлекательные",Крик-ТВ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://cdn-01.bonus-tv.ru:80/kriktv_edge/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Че!.png" group-title="Развлекательные",Че!
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://195.26.83.96:7009/play/89/index.m3u8
+#EXTINF:-1 group-title="Развлекательные",Кухня TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/38/tracks-v1a1/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Телекафе.png" group-title="Развлекательные",Телекафе
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://31.148.48.15:80/Telekafe/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Galaxy.png" group-title="Развлекательные",Galaxy
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/62/tracks-v1a1/index.m3u8
+#EXTINF:-1 group-title="Развлекательные",Кто Есть Кто
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/220/tracks-v1a1/index.m3u8
+#EXTINF:-1 group-title="Развлекательные",Кто Есть Кто
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/82/tracks-v1a1/index.m3u8
+#EXTINF:-1 group-title="Развлекательные",Центральное TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/228/tracks-v1a1/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Точка Отрыва.png" group-title="Развлекательные",Точка Отрыва
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.15/183/tracks-v1a1/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/rus.png" group-title="Региональные",Арис 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://serv25.vintera.tv:8081/test/aris/playlist.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/rus.png" group-title="Региональные",Архыз 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://live.mediacdn.ru/sr1/arhis24/playlist.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/rus.png" group-title="Региональные",Астрахань 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://streaming.astrakhan.ru/astrakhan24/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/rus.png" group-title="Региональные",Белгород 24
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://belnovosti.cdn.easyhoster.ru:8080/stream.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/rus.png" group-title="Региональные",НТМ
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://live-ntm13.cdnvideo.ru/ntm13/smil:ntm13.smil/playlist.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/rus.png" group-title="Региональные",Север
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://live.mediacdn.ru:80/sr1/sever/playlist.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/rus.png" group-title="Региональные",Север
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://live2.mediacdn.ru/sr1/sever/playlist.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/rus.png" group-title="Региональные",Sochi Live HD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://serv30.vintera.tv:8081/sochi/sochi_stream/chunks.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/rus.png" group-title="Региональные",Тел+ Астрахань
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://streaming.astrakhan.ru/telplushd/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/rus.png" group-title="Региональные",Волжский Плюс FHD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://flussonic.powernet.com.ru:8080/volplus/index.fmp4.m3u8
+#EXTINF:-1 group-title="Разное",Univer TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://cdn.universmotri.ru/live/hq.sdp/playlist.m3u8
+#EXTINF:-1 group-title="Разное",Univer TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://cdn.universmotri.ru/live/mq.sdp/playlist.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/КТК.png" group-title="Разное",КТК
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://89.218.30.37/ktklive/live.hq/playlist.m3u8
+#EXTINF:-1 group-title="Разное",Миллет
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://live.trkmillet.ru/millet/index.m3u8
+#EXTINF:-1 group-title="Разное",Страна FM
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://live.stranafm.cdnvideo.ru/stranafm/stranafm_hd.sdp/playlist.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Продвижение.png" group-title="Разное",Продвижение
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://origin5.mediacdn.ru/live/prodvizhenie_new/index.m3u8
+#EXTINF:-1 group-title="Разное",Galaxy TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://195.26.83.96:7007/play/a00j/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Телекафе.png" group-title="Разное",Телекафе
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://188.113.190.11/117/tracks-v1a1/index.m3u8
+#EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/World Fashion Channel.png" group-title="Разное",World Fashion Channel
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://live-3.otcnet.ru/wfcrus/index.m3u8
+#EXTINF:-1 group-title="Разное",Курай
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://bsttv.bonus-tv.ru/cdn/kurai/playlist.m3u8

@@ -1,0 +1,61 @@
+#EXTM3U url-tvg="http://epg.one/epg.xml; http://rafail1982.uz/uzbekistan1.xml; http://uztv.su/uploads/channelsarch/channels.xml; https://iptvx.one/EPG_NOARCH; http://gabbarit.drm-play.com/epg_lite.xml.gz; http://epg.cdntv.online/lite.xml; http://epg.it999.ru/epg.xml; http://iptv-content.rv77.pw/guide-lite.xml" tvg-shift="+5" refresh="86400"
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/zur.webp",Zo'r-TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1016/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/iqbol.webp",I-kbol
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1282/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/istiq.webp",Istiqlol TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1283/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/qaraqal.webp" ,Qaraqalpaqstan
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1467/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/farg.jpeg",Farg'ona
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1458/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/taraqq.webp",Taraqqiyot tv
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1204/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/xor.jpeg" ,Xorazm
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1464/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari"  tvg-logo="https://m3u.usite.pro/tv/ntv.webp",Ntv (O'zbekiston)
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1284/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://files.itv.uz/uploads/iptv/channels/2024/10/15//75b4b090cb1f5663d7eb0373c1fb1a80-q-500x500.jpeg",Jizzax TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream8.cinerama.uz/1488/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://files.itv.uz/uploads/iptv/channels/2024/12/18//e6505a1ed9a0e61a67aa3e7afeb52167-q-500x500.jpeg", Makon TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://files.itv.uz/uploads/iptv/channels/2023/06/02//d1498a17fd6850c0e7404e9487353cfc-q-500x500.jpeg", Gold Television
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream8.cinerama.uz/4007/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/uztv.webp",O'zbekiston
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1001/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/yosh.webp",Yoshlar
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1002/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/my5i.png",My5 International
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://st.my5.media/hls/fullhd/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/milliy.webp",Milliy TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1014/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://files.itv.uz/uploads/iptv/channels/2024/07/10//36d91922645f095fde22cb2b836715be-q-500x500.jpeg", Vodiy TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://s7.iptv-24.net/blocked/index.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/my5.webp",My5
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1012/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/tosh.webp",Toshkent
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1003/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://m3u.usite.pro/tv/lux.webp",LuxTV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream1.cinerama.uz/1210/tracks-v1a1/mono.m3u8
+#EXTINF:-1 group-title="Uzbekiston Telekanallari" tvg-logo="https://files.itv.uz/uploads/iptv/channels/2024/10/17//c32cb89a20def5498dac66a7a6923399-q-500x500.jpeg", Muloqot TV
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
+https://stream8.cinerama.uz/1285/tracks-v1a1/mono.m3u8

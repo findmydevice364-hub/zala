@@ -1,0 +1,31 @@
+#EXTM3U url-tvg="http://epg.one/epg.xml; http://rafail1982.uz/uzbekistan1.xml; http://uztv.su/uploads/channelsarch/channels.xml; https://iptvx.one/EPG_NOARCH; http://gabbarit.drm-play.com/epg_lite.xml.gz; http://epg.cdntv.online/lite.xml; http://epg.it999.ru/epg.xml; http://iptv-content.rv77.pw/guide-lite.xml" tvg-shift="+5" refresh="86400"
+#EXTINF:-1  tvg-id="4kanal-piatnica"  tvg-logo="https://iptvx.one/picons/4kanal-piatnica.png"   $ExtFilter="SUZTVFREE",4 КАНАЛ (ЕКАТЕРИНБУРГ) FD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://tele2dvrnat01-02.cdnvideo.ru/stream/NAT_EKB1/hls/1024x576@2024/playlist.m3u8
+#EXTINF:-1  tvg-id="4kanal-piatnica"  tvg-logo="https://iptvx.one/picons/4kanal-piatnica.png" ,4 КАНАЛ (ЕКАТЕРИНБУРГ) FD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://tele2dvrnat01-02.cdnvideo.ru:80/stream/NAT_EKB1/hls/1024x576@2024/playlist.m3u8
+#EXTINF:-1  tvg-id="4kanal-piatnica"  tvg-logo="https://assets-iptv2022.cdnvideo.ru/static/channel/10539/logo_256_1655389509.png" ,4 КАНАЛ (ЕКАТЕРИНБУРГ) FD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://tele2dvrnat01-02.cdnvideo.ru/stream/NAT_EKB1/hls/1024x576@2024/playlist.m3u8
+#EXTINF:-1  tvg-id="otv-eburg"  tvg-logo="https://iptvx.one/picons/otv-eburg.png" ,ОТВ (Екатеринбург) FD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://dmitry-tv.ddns.net/hls/region/CH_OTV_EKT.m3u8
+#EXTINF:-1  tvg-id="otv-eburg"  tvg-logo="https://iptvx.one/picons/otv-eburg.png" ,ОТВ (Екатеринбург) SD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://dmitry-tv.ddns.net/hls/region/CH_OTVHD720_EKT.m3u8
+#EXTINF:-1  tvg-id="otv-eburg"  tvg-logo="http://epg.one/img2/6682.png" ,ОТВ (ЕКАТЕРИНБУРГ) FD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://vd.obltv.ru/watch/air_sd.m3u8
+#EXTINF:-1  tvg-id="otv-eburg"  tvg-logo="http://epg.one/img2/6682.png" ,ОТВ (ЕКАТЕРИНБУРГ) SD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+https://vd.obltv.ru/watch/air_hd.m3u8
+#EXTINF:-1  tvg-id="otv-eburg"  tvg-logo="https://i.imgur.com/NaXbES6.png" ,ОТВ (ЕКАТЕРИНБУРГ) SD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://vd.obltv.ru/watch/air_hd.m3u8
+#EXTINF:-1  tvg-id="moigorod" ,МОЙ ГОРОД (КУШВА) SD
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://85.208.223.249:8888/play/a033
+#EXTINF:-1  tvg-id="echotv24"  tvg-logo="http://epg.one/img2/6776.png" ,ЭХО ТВ 24 (НОВОУРАЛЬСК)
+#EXTVLCOPT:http-user-agent=Player (Linux; Android 10)
+http://stream.novouralsk-news.ru/echotv24/live.m3u8
