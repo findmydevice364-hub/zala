@@ -1,6 +1,6 @@
 Repository: Rafail1082GitHUB/rafail1982.ru
 Branch: main
-Generated: 2026-11-10 21:03:56
+Generated: 2026-11-10 21:22:37
 
 1175.m3u8
 URL: https://raw.githubusercontent.com/Rafail1082GitHUB/rafail1982.ru/main/1175.m3u8
