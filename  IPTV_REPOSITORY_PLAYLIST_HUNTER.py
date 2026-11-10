@@ -12,7 +12,8 @@ Repository:
 WORKERS:
     28 - playlist downloads
     34 - playlist parsing
-    45 - unique stream validation
+    45 - per-record stream validation (no deduplication)
+    39 - concurrent audio-language analysis workers
 
 MAIN ANALYZER:
     FFprobe
@@ -23,6 +24,8 @@ INDEPENDENT DIAGNOSTICS:
     TSDuck / tsanalyze
     TShark (local capture only, opt-in)
     PyAV
+    faster-whisper language identification
+    SpeechBrain VoxLingua107 (optional independent confirmation)
 
 INSTALLATION:
     requests
@@ -95,6 +98,37 @@ PLAYLIST_EXTENSIONS = (
 DOWNLOAD_WORKERS = 28
 PARSER_WORKERS = 34
 CHECK_WORKERS = 45
+
+# Audio language analysis has its own pool. 39 workers can prepare/analyze
+# channel samples while inference and decoding are separately throttled.
+AUDIO_LANGUAGE_WORKERS = max(1, int(os.getenv("IPTV_AUDIO_LANGUAGE_WORKERS", "39")))
+AUDIO_EXTRACTION_SLOTS = max(1, int(os.getenv("IPTV_AUDIO_EXTRACTION_SLOTS", "6")))
+AUDIO_INFERENCE_SLOTS = max(1, int(os.getenv("IPTV_AUDIO_INFERENCE_SLOTS", "2")))
+AUDIO_SAMPLE_SECONDS = max(5, int(os.getenv("IPTV_AUDIO_SAMPLE_SECONDS", "18")))
+AUDIO_MAX_TRACKS_PER_CHANNEL = max(1, int(os.getenv("IPTV_AUDIO_MAX_TRACKS", "4")))
+AUDIO_LANGUAGE_ENABLED = os.getenv("IPTV_AUDIO_LANGUAGE_ENABLED", "1").lower() not in ("0", "false", "no")
+WHISPER_MODEL_SIZE = os.getenv("IPTV_WHISPER_MODEL", "small").strip() or "small"
+ENABLE_SPEECHBRAIN = os.getenv("IPTV_ENABLE_SPEECHBRAIN", "1").lower() not in ("0", "false", "no")
+SPEECHBRAIN_THRESHOLD = float(os.getenv("IPTV_SPEECHBRAIN_THRESHOLD", "0.55"))
+WHISPER_THRESHOLD = float(os.getenv("IPTV_WHISPER_THRESHOLD", "0.60"))
+
+# Intentionally no URL or record deduplication: every playlist occurrence
+# is checked and exported independently.
+DEDUPLICATE_STREAMS = False
+
+CINERAMA_OLD_HOST = "stream8.cinerama.uz"
+CINERAMA_NEW_HOST = "stream1.cinerama.uz"
+URL_REWRITE_COUNT = 0
+URL_REWRITE_LOCK = threading.Lock()
+_AUDIO_EXECUTOR = None
+_AUDIO_EXTRACTION_SEMAPHORE = threading.BoundedSemaphore(max(1, AUDIO_EXTRACTION_SLOTS))
+_AUDIO_INFERENCE_SEMAPHORE = threading.BoundedSemaphore(max(1, AUDIO_INFERENCE_SLOTS))
+_WHISPER_MODEL = None
+_WHISPER_MODEL_ERROR = ""
+_WHISPER_MODEL_LOCK = threading.Lock()
+_SPEECHBRAIN_MODEL = None
+_SPEECHBRAIN_MODEL_ERROR = ""
+_SPEECHBRAIN_MODEL_LOCK = threading.Lock()
 
 REQUEST_TIMEOUT = 20
 CONNECT_TIMEOUT = 10
@@ -200,6 +234,14 @@ for directory in (
 ):
     os.makedirs(directory, exist_ok=True)
 
+MODEL_CACHE_DIR = os.path.abspath(
+    os.getenv(
+        "IPTV_MODEL_CACHE_DIR",
+        os.path.join(TOOLS_DIR, "models"),
+    )
+)
+os.makedirs(MODEL_CACHE_DIR, exist_ok=True)
+
 LOG_FILE = os.path.join(
     LOG_DIR,
     "Stream_Audit.log",
@@ -240,13 +282,13 @@ _thread_local = threading.local()
 
 
 def log_event(event, **data):
-    record = {
+    record = _sanitize_audit_value({
         "timestamp": datetime.now(
             timezone.utc
         ).isoformat(),
         "event": event,
         **data,
-    }
+    })
 
     with audit_lock:
         with open(
@@ -340,6 +382,136 @@ def safe_url(url):
 
     except Exception:
         return "<URL_REDACTED>"
+
+
+
+def rewrite_stream_url(url):
+    """
+    Force the retired Cinerama hostname to the replacement hostname.
+    Only the hostname is changed; scheme, port, path, query and fragment
+    are preserved. The rewrite is applied before every stream check/export.
+    """
+    global URL_REWRITE_COUNT
+
+    try:
+        value = str(url or "")
+        parsed = urlparse(value)
+        hostname = (parsed.hostname or "").lower()
+
+        if hostname != CINERAMA_OLD_HOST:
+            return value
+
+        auth = ""
+        hostport = parsed.netloc.rsplit("@", 1)[-1]
+        if "@" in parsed.netloc:
+            auth = parsed.netloc.rsplit("@", 1)[0] + "@"
+
+        port = parsed.port
+        new_netloc = auth + CINERAMA_NEW_HOST
+        if port:
+            new_netloc += f":{port}"
+
+        rewritten = urlunparse((
+            parsed.scheme,
+            new_netloc,
+            parsed.path,
+            parsed.params,
+            parsed.query,
+            parsed.fragment,
+        ))
+
+        with URL_REWRITE_LOCK:
+            URL_REWRITE_COUNT += 1
+
+        logger.info(
+            "[URL REWRITE] %s -> %s",
+            safe_url(value),
+            safe_url(rewritten),
+        )
+        return rewritten
+
+    except Exception:
+        return str(url or "")
+
+
+_SECRET_TEXT_PATTERN = re.compile(
+    r"(?i)(\b(?:token|access_token|refresh_token|api[_-]?key|key|auth|"
+    r"authorization|password|passwd|secret|signature|credential|session|jwt)\b"
+    r"\s*[=:]\s*)([^&\s,;\"'<>]+)"
+)
+_BEARER_PATTERN = re.compile(r"(?i)(\bBearer\s+)[A-Za-z0-9._~+/=-]+")
+
+
+def redact_text(value):
+    """Redact credentials embedded in URLs, errors, stderr and log messages."""
+    text_value = str(value or "")
+    text_value = _SECRET_TEXT_PATTERN.sub(r"\1***", text_value)
+    text_value = _BEARER_PATTERN.sub(r"\1***", text_value)
+    try:
+        candidates = re.findall(r"https?://[^\s\"'<>]+", text_value)
+        for candidate in candidates:
+            text_value = text_value.replace(candidate, safe_url(candidate))
+    except Exception:
+        pass
+    return text_value
+
+
+def _sanitize_audit_value(value):
+    if isinstance(value, dict):
+        cleaned = {}
+        for key, item in value.items():
+            key_text = str(key)
+            if key_text.lower() in ("url", "final_url", "manifest_url"):
+                cleaned[key] = safe_url(item) if item else item
+            else:
+                cleaned[key] = _sanitize_audit_value(item)
+        return cleaned
+    if isinstance(value, (list, tuple)):
+        return [_sanitize_audit_value(item) for item in value]
+    if isinstance(value, str):
+        return redact_text(value)
+    return value
+
+
+class _SecretRedactionFilter(logging.Filter):
+    def filter(self, record):
+        try:
+            rendered = record.getMessage()
+            record.msg = redact_text(rendered)
+            record.args = ()
+            if record.exc_info:
+                formatter = logging.Formatter()
+                record.exc_text = redact_text(
+                    formatter.formatException(record.exc_info)
+                )
+                record.exc_info = None
+        except Exception:
+            pass
+        return True
+
+
+_secret_redaction_filter = _SecretRedactionFilter()
+for _handler in logging.getLogger().handlers:
+    _handler.addFilter(_secret_redaction_filter)
+logger.addFilter(_secret_redaction_filter)
+
+
+def rewrite_playlist_text(text_data):
+    """Rewrite every literal occurrence of the retired Cinerama host in playlist text."""
+    global URL_REWRITE_COUNT
+    pattern = re.compile(re.escape(CINERAMA_OLD_HOST), re.IGNORECASE)
+    matches = len(pattern.findall(text_data or ""))
+    if matches:
+        text_data = pattern.sub(CINERAMA_NEW_HOST, text_data)
+        with URL_REWRITE_LOCK:
+            URL_REWRITE_COUNT += matches
+        logger.info(
+            "[PLAYLIST URL REWRITE] replaced=%s | %s -> %s",
+            matches,
+            CINERAMA_OLD_HOST,
+            CINERAMA_NEW_HOST,
+        )
+    return text_data
 
 
 def safe_int(value):
@@ -774,39 +946,31 @@ def download_ffprobe_bundle():
 
                 archive.extractall(extract_dir)
 
-        executable_name = (
-            "ffprobe.exe"
-            if system == "windows"
-            else "ffprobe"
-        )
-
-        found = None
-
+        executable_suffix = ".exe" if system == "windows" else ""
+        found = {}
         for root, _, files in os.walk(extract_dir):
-            if executable_name in files:
-                found = os.path.join(
-                    root,
-                    executable_name,
-                )
-                break
+            for binary_name in ("ffprobe", "ffmpeg"):
+                candidate_name = binary_name + executable_suffix
+                if candidate_name in files and binary_name not in found:
+                    found[binary_name] = os.path.join(
+                        root,
+                        candidate_name,
+                    )
 
-        if not found:
+        if "ffprobe" not in found:
             raise RuntimeError(
                 "ffprobe executable not found after extraction."
             )
 
-        if system != "windows":
-            os.chmod(
-                found,
-                0o755,
+        for binary_name, binary_path in found.items():
+            if system != "windows":
+                os.chmod(binary_path, 0o755)
+            TOOL_PATHS[binary_name] = binary_path
+            logger.info(
+                "[FFMPEG INSTALL] %s installed locally: %s",
+                binary_name,
+                binary_path,
             )
-
-        TOOL_PATHS["ffprobe"] = found
-
-        logger.info(
-            "[FFPROBE INSTALL] Installed locally: %s",
-            found,
-        )
 
         return True
 
@@ -831,6 +995,7 @@ def install_optional_tools():
 
         for name in (
             "ffprobe",
+            "ffmpeg",
             "tsanalyze",
             "tshark",
         ):
@@ -884,7 +1049,7 @@ def install_optional_tools():
 
                     packages = []
 
-                    if "ffprobe" in missing:
+                    if "ffprobe" in missing or "ffmpeg" in missing:
                         packages.append("ffmpeg")
 
                     if "tsanalyze" in missing:
@@ -910,7 +1075,7 @@ def install_optional_tools():
             if brew:
                 packages = []
 
-                if "ffprobe" in missing:
+                if "ffprobe" in missing or "ffmpeg" in missing:
                     packages.append("ffmpeg")
 
                 if "tsanalyze" in missing:
@@ -929,7 +1094,7 @@ def install_optional_tools():
             winget = shutil.which("winget")
 
             if winget:
-                if "ffprobe" in missing:
+                if "ffprobe" in missing or "ffmpeg" in missing:
                     run_install_command(
                         [
                             winget,
@@ -959,7 +1124,7 @@ def install_optional_tools():
                         "Wireshark",
                     )
 
-        if not find_tool("ffprobe"):
+        if not find_tool("ffprobe") or not find_tool("ffmpeg"):
             download_ffprobe_bundle()
 
         logger.info(
@@ -981,6 +1146,12 @@ def tool_inventory():
 
     inventory["pyav"] = bool(
         importlib.util.find_spec("av")
+    )
+    inventory["faster_whisper"] = bool(
+        importlib.util.find_spec("faster_whisper")
+    )
+    inventory["speechbrain"] = bool(
+        importlib.util.find_spec("speechbrain")
     )
 
     for name, path in inventory.items():
@@ -1303,6 +1474,7 @@ def download_playlist(item):
             "utf-8-sig",
             errors="replace",
         )
+        text_data = rewrite_playlist_text(text_data)
 
         local_path = os.path.join(
             PLAYLIST_DIR,
@@ -1331,7 +1503,7 @@ def download_playlist(item):
             "size_bytes": len(raw_data),
             "local_path": local_path,
             "compressed_size_bytes": len(raw),
-            "final_url": safe_url(response.url),
+            "final_url": rewrite_stream_url(response.url),
         })
 
         logger.info(
@@ -1538,6 +1710,8 @@ def parse_playlist(text_data, playlist_path):
         if not URL_PATTERN.match(line):
             continue
 
+        line = rewrite_stream_url(line)
+
         if (
             MAX_STREAMS_PER_PLAYLIST
             and len(channels) >= MAX_STREAMS_PER_PLAYLIST
@@ -1703,7 +1877,7 @@ def check_head(url, channel_name, headers=None):
             "content_type": response.headers.get("Content-Type", ""),
             "content_length": response.headers.get("Content-Length", ""),
             "accept_ranges": response.headers.get("Accept-Ranges", ""),
-            "final_url": safe_url(response.url),
+            "final_url": rewrite_stream_url(response.url),
             "response_headers": dict(response.headers),
             "redirects": [
                 {
@@ -1842,7 +2016,7 @@ def check_get(url, channel_name, headers=None):
             "content_length": response.headers.get("Content-Length", ""),
             "content_range": response.headers.get("Content-Range", ""),
             "accept_ranges": response.headers.get("Accept-Ranges", ""),
-            "final_url": safe_url(response.url),
+            "final_url": rewrite_stream_url(response.url),
             "response_headers": dict(response.headers),
             "range_supported": response.status_code == 206,
             "redirects": [
@@ -1978,6 +2152,8 @@ def analyze_hls_manifest(url, channel_name, request_headers=None):
         "target_duration": "",
         "endlist": False,
         "nested_manifests": [],
+        "audio_renditions": [],
+        "declared_languages": [],
         "errors": [],
     }
 
@@ -2060,7 +2236,7 @@ def analyze_hls_manifest(url, channel_name, request_headers=None):
 
                     if not next_line.startswith("#"):
                         variants.append(
-                            urljoin(url, next_line)
+                            rewrite_stream_url(urljoin(url, next_line))
                         )
 
             if line.startswith("#EXTINF"):
@@ -2069,8 +2245,39 @@ def analyze_hls_manifest(url, channel_name, request_headers=None):
 
                     if not next_line.startswith("#"):
                         segments.append(
-                            urljoin(url, next_line)
+                            rewrite_stream_url(urljoin(url, next_line))
                         )
+
+            if line.startswith("#EXT-X-MEDIA:"):
+                media_attributes = {}
+                for match in re.finditer(
+                    r'([\w-]+)=("[^"]*"|[^,]*)',
+                    line.split(":", 1)[1],
+                ):
+                    media_attributes[match.group(1)] = (
+                        match.group(2).strip('"')
+                    )
+
+                if media_attributes.get("TYPE", "").upper() == "AUDIO":
+                    declared_language = normalize_language_code(
+                        media_attributes.get("LANGUAGE", "")
+                    )
+                    rendition = {
+                        "group_id": media_attributes.get("GROUP-ID", ""),
+                        "name": media_attributes.get("NAME", ""),
+                        "language": declared_language,
+                        "default": media_attributes.get("DEFAULT", ""),
+                        "autoselect": media_attributes.get("AUTOSELECT", ""),
+                        "uri": safe_url(rewrite_stream_url(
+                            urljoin(url, media_attributes.get("URI", ""))
+                        )) if media_attributes.get("URI") else "",
+                    }
+                    result["audio_renditions"].append(rendition)
+                    if (
+                        declared_language
+                        and declared_language not in result["declared_languages"]
+                    ):
+                        result["declared_languages"].append(declared_language)
 
             if line.startswith("#EXT-X-KEY:"):
                 attributes = {}
@@ -2091,7 +2298,7 @@ def analyze_hls_manifest(url, channel_name, request_headers=None):
 
                 if key_uri:
                     result["key_urls"].append(
-                        safe_url(urljoin(url, key_uri))
+                        safe_url(rewrite_stream_url(urljoin(url, key_uri)))
                     )
 
         result["variant_count"] = len(variants)
@@ -3134,11 +3341,851 @@ def run_pyav(url, channel_name, request_headers=None):
         return result
 
 
+
+# ============================================================
+# AUDIO LANGUAGE IDENTIFICATION
+# ============================================================
+
+LANGUAGE_NAMES = {
+    "ar": "Arabic", "az": "Azerbaijani", "be": "Belarusian",
+    "bg": "Bulgarian", "bn": "Bengali", "bs": "Bosnian",
+    "ca": "Catalan", "cs": "Czech", "cy": "Welsh",
+    "da": "Danish", "de": "German", "el": "Greek",
+    "en": "English", "es": "Spanish", "et": "Estonian",
+    "fa": "Persian", "fi": "Finnish", "fr": "French",
+    "ga": "Irish", "he": "Hebrew", "hi": "Hindi",
+    "hr": "Croatian", "hu": "Hungarian", "hy": "Armenian",
+    "id": "Indonesian", "is": "Icelandic", "it": "Italian",
+    "ja": "Japanese", "ka": "Georgian", "kk": "Kazakh",
+    "ko": "Korean", "lt": "Lithuanian", "lv": "Latvian",
+    "mk": "Macedonian", "ms": "Malay", "mt": "Maltese",
+    "nl": "Dutch", "no": "Norwegian", "pl": "Polish",
+    "pt": "Portuguese", "ro": "Romanian", "ru": "Russian",
+    "sk": "Slovak", "sl": "Slovenian", "sq": "Albanian",
+    "sr": "Serbian", "sv": "Swedish", "sw": "Swahili",
+    "ta": "Tamil", "te": "Telugu", "th": "Thai",
+    "tr": "Turkish", "uk": "Ukrainian", "ur": "Urdu",
+    "uz": "Uzbek", "vi": "Vietnamese", "zh": "Chinese",
+}
+
+
+LANGUAGE_CODE_ALIASES = {
+    "eng": "en", "rus": "ru", "deu": "de", "ger": "de",
+    "fra": "fr", "fre": "fr", "spa": "es", "ita": "it",
+    "por": "pt", "zho": "zh", "chi": "zh", "jpn": "ja",
+    "kor": "ko", "ukr": "uk", "ara": "ar", "hin": "hi",
+    "tur": "tr", "pol": "pl", "nld": "nl", "dut": "nl",
+    "ces": "cs", "cze": "cs", "ron": "ro", "rum": "ro",
+    "swe": "sv", "nor": "no", "dan": "da", "fin": "fi",
+    "ell": "el", "gre": "el", "heb": "he", "fas": "fa",
+    "per": "fa", "urd": "ur", "vie": "vi", "tha": "th",
+    "ind": "id", "msa": "ms", "may": "ms", "ben": "bn",
+    "tam": "ta", "tel": "te",
+}
+
+
+def normalize_language_code(value):
+    value = str(value or "").strip().lower().replace("_", "-")
+    if not value or value in ("und", "unknown", "unk", "none", "n/a"):
+        return ""
+    match = re.search(r"\b([a-z]{2,3})(?:[-_:]|$)", value)
+    if not match:
+        return ""
+    code = match.group(1)
+    return LANGUAGE_CODE_ALIASES.get(code, code)
+
+
+def language_name(code):
+    code = normalize_language_code(code)
+    return LANGUAGE_NAMES.get(code, code.upper() if code else "UNKNOWN")
+
+
+def _audio_ffmpeg_headers(request_headers):
+    allowed = {
+        "authorization", "cookie", "referer", "user-agent", "origin"
+    }
+    lines = []
+    for key, value in (request_headers or {}).items():
+        if str(key).lower() in allowed and value:
+            lines.append(f"{key}: {value}")
+    return "\r\n".join(lines) + ("\r\n" if lines else "")
+
+
+def extract_audio_sample(url, channel_name, track, request_headers=None):
+    """
+    Decode a short mono 16 kHz PCM sample from one FFprobe audio stream.
+    Extraction is separately throttled so 39 queued workers do not spawn
+    39 simultaneous full FFmpeg decoders on a small hosted runner.
+    """
+    ffmpeg = find_tool("ffmpeg")
+    result = {
+        "success": False,
+        "path": "",
+        "stream_index": track.get("index", ""),
+        "bytes": 0,
+        "duration_seconds": AUDIO_SAMPLE_SECONDS,
+        "error": "",
+    }
+
+    if not ffmpeg:
+        result["error"] = "ffmpeg not installed"
+        return result
+
+    temp_path = None
+    try:
+        with _AUDIO_EXTRACTION_SEMAPHORE:
+            fd, temp_path = tempfile.mkstemp(
+                suffix=".wav",
+                prefix="iptv_language_",
+                dir=TOOLS_DIR,
+            )
+            os.close(fd)
+
+            command = [
+                ffmpeg,
+                "-nostdin",
+                "-hide_banner",
+                "-loglevel", "error",
+                "-rw_timeout", "20000000",
+            ]
+
+            header_text = _audio_ffmpeg_headers(request_headers)
+            if header_text:
+                command.extend(["-headers", header_text])
+
+            command.extend([
+                "-i", rewrite_stream_url(url),
+                "-map", f"0:{track.get('index', 0)}",
+                "-t", str(AUDIO_SAMPLE_SECONDS),
+                "-vn",
+                "-ac", "1",
+                "-ar", "16000",
+                "-c:a", "pcm_s16le",
+                "-f", "wav",
+                "-y",
+                temp_path,
+            ])
+
+            process = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                timeout=max(45, AUDIO_SAMPLE_SECONDS * 3),
+                encoding="utf-8",
+                errors="replace",
+            )
+
+            result["bytes"] = (
+                os.path.getsize(temp_path)
+                if os.path.exists(temp_path)
+                else 0
+            )
+
+            if process.returncode != 0 or result["bytes"] < 16000:
+                result["error"] = redact_text(
+                    process.stderr[-1200:] or
+                    f"FFmpeg audio extraction exit={process.returncode}"
+                )
+                return result
+
+            result["success"] = True
+            result["path"] = temp_path
+            return result
+
+    except subprocess.TimeoutExpired:
+        result["error"] = "Audio extraction timeout"
+        return result
+    except Exception as error:
+        result["error"] = redact_text(error)
+        return result
+
+
+def _get_whisper_model():
+    global _WHISPER_MODEL, _WHISPER_MODEL_ERROR
+    if _WHISPER_MODEL is not None:
+        return _WHISPER_MODEL
+    if _WHISPER_MODEL_ERROR:
+        return None
+
+    with _WHISPER_MODEL_LOCK:
+        if _WHISPER_MODEL is not None:
+            return _WHISPER_MODEL
+        if _WHISPER_MODEL_ERROR:
+            return None
+
+        try:
+            from faster_whisper import WhisperModel
+
+            model_cache = os.path.join(MODEL_CACHE_DIR, "faster-whisper")
+            os.makedirs(model_cache, exist_ok=True)
+
+            logger.info(
+                "[LANGUAGE] Loading faster-whisper model=%s on CPU/int8",
+                WHISPER_MODEL_SIZE,
+            )
+
+            _WHISPER_MODEL = WhisperModel(
+                WHISPER_MODEL_SIZE,
+                device="cpu",
+                compute_type="int8",
+                cpu_threads=max(1, min(4, AUDIO_INFERENCE_SLOTS)),
+                num_workers=1,
+                download_root=model_cache,
+            )
+            return _WHISPER_MODEL
+
+        except Exception as error:
+            _WHISPER_MODEL_ERROR = redact_text(error)
+            logger.warning(
+                "[LANGUAGE] faster-whisper model initialization failed: %s",
+                _WHISPER_MODEL_ERROR,
+            )
+            return None
+
+def identify_with_whisper(wav_path):
+    result = {
+        "engine": "faster-whisper",
+        "available": False,
+        "attempted": False,
+        "language": "",
+        "language_name": "UNKNOWN",
+        "confidence": 0.0,
+        "error": "",
+    }
+
+    try:
+        model = _get_whisper_model()
+        if model is None:
+            result["error"] = "faster-whisper not installed or model unavailable"
+            return result
+
+        result["available"] = True
+        result["attempted"] = True
+
+        with _AUDIO_INFERENCE_SEMAPHORE:
+            segments, info = model.transcribe(
+                wav_path,
+                beam_size=1,
+                best_of=1,
+                vad_filter=True,
+                without_timestamps=True,
+            )
+            # faster-whisper executes lazily; consume a few segments so
+            # the language result and VAD/transcription path are exercised.
+            for index, _segment in enumerate(segments):
+                if index >= 4:
+                    break
+
+        code = normalize_language_code(getattr(info, "language", ""))
+        confidence = safe_float(
+            getattr(info, "language_probability", 0.0)
+        )
+
+        result.update({
+            "language": code,
+            "language_name": language_name(code),
+            "confidence": round(confidence, 4),
+        })
+
+        if not code:
+            result["error"] = "Whisper returned no language"
+    except Exception as error:
+        result["error"] = redact_text(error)
+        logger.warning("[LANGUAGE WHISPER ERROR] %s", result["error"])
+
+    return result
+
+
+def _get_speechbrain_model():
+    global _SPEECHBRAIN_MODEL, _SPEECHBRAIN_MODEL_ERROR
+    if not ENABLE_SPEECHBRAIN:
+        return None
+    if _SPEECHBRAIN_MODEL is not None:
+        return _SPEECHBRAIN_MODEL
+    if _SPEECHBRAIN_MODEL_ERROR:
+        return None
+
+    with _SPEECHBRAIN_MODEL_LOCK:
+        if _SPEECHBRAIN_MODEL is not None:
+            return _SPEECHBRAIN_MODEL
+        if _SPEECHBRAIN_MODEL_ERROR:
+            return None
+
+        try:
+            try:
+                from speechbrain.inference.classifiers import EncoderClassifier
+            except ImportError:
+                from speechbrain.pretrained import EncoderClassifier
+
+            model_dir = os.path.join(
+                MODEL_CACHE_DIR,
+                "speechbrain-voxlingua107",
+            )
+            os.makedirs(model_dir, exist_ok=True)
+
+            logger.info(
+                "[LANGUAGE] Loading SpeechBrain VoxLingua107 model"
+            )
+
+            _SPEECHBRAIN_MODEL = EncoderClassifier.from_hparams(
+                source="speechbrain/lang-id-voxlingua107-ecapa",
+                savedir=model_dir,
+                run_opts={"device": "cpu"},
+            )
+            return _SPEECHBRAIN_MODEL
+
+        except Exception as error:
+            _SPEECHBRAIN_MODEL_ERROR = redact_text(error)
+            logger.warning(
+                "[LANGUAGE] SpeechBrain initialization failed: %s",
+                _SPEECHBRAIN_MODEL_ERROR,
+            )
+            return None
+
+def identify_with_speechbrain(wav_path):
+    result = {
+        "engine": "SpeechBrain VoxLingua107",
+        "available": False,
+        "attempted": False,
+        "language": "",
+        "language_name": "UNKNOWN",
+        "confidence": 0.0,
+        "error": "",
+    }
+
+    try:
+        model = _get_speechbrain_model()
+        if model is None:
+            result["error"] = (
+                "SpeechBrain disabled, not installed, or model unavailable"
+            )
+            return result
+
+        result["available"] = True
+        result["attempted"] = True
+
+        with _AUDIO_INFERENCE_SEMAPHORE:
+            classifier_output = model.classify_file(wav_path)
+
+        if len(classifier_output) == 4:
+            out_prob, score, index, text_lab = classifier_output
+        elif len(classifier_output) == 3:
+            out_prob, index, text_lab = classifier_output
+            score = None
+        else:
+            raise RuntimeError(
+                f"Unexpected SpeechBrain classify_file result length: {len(classifier_output)}"
+            )
+
+        label = ""
+        if text_lab is not None:
+            try:
+                label = str(text_lab[0])
+            except Exception:
+                label = str(text_lab)
+
+        code = normalize_language_code(label)
+        confidence = 0.0
+
+        def scalar_probability(value):
+            try:
+                return float(value[0].detach().cpu().item())
+            except Exception:
+                try:
+                    return float(value[0])
+                except Exception:
+                    try:
+                        return float(value.detach().cpu().item())
+                    except Exception:
+                        try:
+                            return float(value)
+                        except Exception:
+                            return 0.0
+
+        if score is not None:
+            confidence = scalar_probability(score)
+        if confidence <= 0 and out_prob is not None:
+            try:
+                confidence = float(out_prob.max().detach().cpu().item())
+            except Exception:
+                confidence = scalar_probability(out_prob)
+
+        result.update({
+            "language": code,
+            "language_name": language_name(code),
+            "confidence": round(confidence, 4),
+            "label": label,
+        })
+
+        if not code:
+            result["error"] = "SpeechBrain returned an unrecognized label"
+
+    except Exception as error:
+        result["error"] = redact_text(error)
+        logger.warning("[LANGUAGE SPEECHBRAIN ERROR] %s", result["error"])
+
+    return result
+
+
+def combine_language_engines(whisper_result, speechbrain_result):
+    whisper_code = whisper_result.get("language", "")
+    speechbrain_code = speechbrain_result.get("language", "")
+    whisper_conf = safe_float(whisper_result.get("confidence", 0))
+    speechbrain_conf = safe_float(speechbrain_result.get("confidence", 0))
+
+    if whisper_code and speechbrain_code:
+        if whisper_code == speechbrain_code:
+            confidence = (
+                whisper_conf * 0.55 + speechbrain_conf * 0.45
+            )
+            return {
+                "detected_language": whisper_code,
+                "language_name": language_name(whisper_code),
+                "confidence": round(confidence, 4),
+                "status": "CONFIRMED",
+                "agreement": True,
+            }
+
+        return {
+            "detected_language": "CONFLICT",
+            "language_name": "CONFLICT",
+            "confidence": round(max(whisper_conf, speechbrain_conf), 4),
+            "status": "CONFLICT",
+            "agreement": False,
+        }
+
+    if whisper_code:
+        return {
+            "detected_language": whisper_code,
+            "language_name": language_name(whisper_code),
+            "confidence": round(whisper_conf, 4),
+            "status": (
+                "PROVISIONAL" if whisper_conf >= WHISPER_THRESHOLD
+                else "LOW_CONFIDENCE"
+            ),
+            "agreement": None,
+        }
+
+    if speechbrain_code:
+        return {
+            "detected_language": speechbrain_code,
+            "language_name": language_name(speechbrain_code),
+            "confidence": round(speechbrain_conf, 4),
+            "status": (
+                "PROVISIONAL" if speechbrain_conf >= SPEECHBRAIN_THRESHOLD
+                else "LOW_CONFIDENCE"
+            ),
+            "agreement": None,
+        }
+
+    return {
+        "detected_language": "UNKNOWN",
+        "language_name": "UNKNOWN",
+        "confidence": 0.0,
+        "status": "UNKNOWN",
+        "agreement": None,
+    }
+
+
+def detect_channel_language(url, channel_name, request_headers, audio_tracks):
+    """
+    Audio-language task for one playlist occurrence. Every occurrence is
+    analyzed separately, even if its URL is identical to another record.
+    """
+    started = time.perf_counter()
+    result = {
+        "enabled": AUDIO_LANGUAGE_ENABLED,
+        "workers": AUDIO_LANGUAGE_WORKERS,
+        "detected_language": "UNKNOWN",
+        "language_name": "UNKNOWN",
+        "confidence": 0.0,
+        "status": "UNKNOWN",
+        "metadata_languages": [],
+        "track_results": [],
+        "engines": ["faster-whisper", "SpeechBrain VoxLingua107"],
+        "error": "",
+    }
+
+    if not AUDIO_LANGUAGE_ENABLED:
+        result["status"] = "DISABLED"
+        result["error"] = "Audio language detection disabled by configuration"
+        return result
+
+    if not audio_tracks:
+        result["status"] = "NO_AUDIO_TRACK"
+        result["error"] = "FFprobe did not find an audio track"
+        return result
+
+    result["metadata_languages"] = sorted({
+        normalize_language_code(track.get("language", ""))
+        for track in audio_tracks
+        if normalize_language_code(track.get("language", ""))
+    })
+
+    for track in audio_tracks[:max(1, AUDIO_MAX_TRACKS_PER_CHANNEL)]:
+        extracted = extract_audio_sample(
+            url,
+            channel_name,
+            track,
+            request_headers,
+        )
+
+        track_result = {
+            "stream_index": track.get("index", ""),
+            "metadata_language": normalize_language_code(
+                track.get("language", "")
+            ),
+            "detected_language": "UNKNOWN",
+            "language_name": "UNKNOWN",
+            "confidence": 0.0,
+            "status": "UNKNOWN",
+            "audio_sample_bytes": extracted.get("bytes", 0),
+            "whisper": {},
+            "speechbrain": {},
+            "error": extracted.get("error", ""),
+        }
+
+        wav_path = extracted.get("path")
+        if wav_path:
+            try:
+                whisper_result = identify_with_whisper(wav_path)
+                speechbrain_result = identify_with_speechbrain(wav_path)
+                combined = combine_language_engines(
+                    whisper_result,
+                    speechbrain_result,
+                )
+                track_result.update(combined)
+                track_result["whisper"] = whisper_result
+                track_result["speechbrain"] = speechbrain_result
+            finally:
+                try:
+                    os.remove(wav_path)
+                except OSError:
+                    pass
+
+        result["track_results"].append(track_result)
+
+    accepted = [
+        item for item in result["track_results"]
+        if item.get("detected_language")
+        not in ("", "UNKNOWN", "CONFLICT")
+        and item.get("status") in ("CONFIRMED", "PROVISIONAL")
+    ]
+    languages = sorted({
+        item["detected_language"] for item in accepted
+    })
+
+    if len(languages) == 1:
+        selected = languages[0]
+        selected_items = [
+            item for item in accepted
+            if item["detected_language"] == selected
+        ]
+        result.update({
+            "detected_language": selected,
+            "language_name": language_name(selected),
+            "confidence": round(
+                sum(safe_float(item.get("confidence")) for item in selected_items)
+                / len(selected_items),
+                4,
+            ),
+            "status": (
+                "CONFIRMED"
+                if all(item.get("status") == "CONFIRMED" for item in selected_items)
+                else "PROVISIONAL"
+            ),
+        })
+    elif len(languages) > 1:
+        result.update({
+            "detected_language": "MULTI_LANGUAGE",
+            "language_name": "MULTI_LANGUAGE",
+            "confidence": round(
+                sum(safe_float(item.get("confidence")) for item in accepted)
+                / len(accepted),
+                4,
+            ),
+            "status": "MULTI_LANGUAGE",
+        })
+    elif any(
+        item.get("status") == "CONFLICT"
+        for item in result["track_results"]
+    ):
+        result["detected_language"] = "CONFLICT"
+        result["language_name"] = "CONFLICT"
+        result["status"] = "CONFLICT"
+    elif any(
+        item.get("status") == "LOW_CONFIDENCE"
+        for item in result["track_results"]
+    ):
+        result["detected_language"] = "UNKNOWN"
+        result["language_name"] = "UNKNOWN"
+        result["status"] = "LOW_CONFIDENCE"
+    else:
+        errors = [
+            item.get("error", "")
+            for item in result["track_results"]
+            if item.get("error")
+        ]
+        result["error"] = "; ".join(errors[:3])
+
+    result["analysis_ms"] = round(
+        (time.perf_counter() - started) * 1000,
+        2,
+    )
+
+    logger.info(
+        "[AUDIO LANGUAGE] %s | language=%s | status=%s | confidence=%.3f | tracks=%s | %.2f ms",
+        channel_name,
+        result["detected_language"],
+        result["status"],
+        result["confidence"],
+        len(result["track_results"]),
+        result["analysis_ms"],
+    )
+
+    log_event(
+        "AUDIO_LANGUAGE_DETECTION",
+        channel=channel_name,
+        url=safe_url(url),
+        detected_language=result["detected_language"],
+        language_name=result["language_name"],
+        confidence=result["confidence"],
+        status=result["status"],
+        metadata_languages=result["metadata_languages"],
+        track_results=result["track_results"],
+        analysis_ms=result["analysis_ms"],
+    )
+
+    return result
+
+
+def classify_channel_region(channel):
+    """
+    Conservative RU/WORLD classification.
+    Explicit country metadata wins; then group/title; then detected audio
+    language. Unknown/conflicting evidence is not silently labeled RU.
+    """
+    attrs = channel.get("attributes", {}) or {}
+    validation = channel.get("validation", {}) or {}
+    language = validation.get("language_detection", {}) or {}
+
+    country_value = " ".join(str(attrs.get(key, "")) for key in (
+        "tvg-country", "tvg-country-code", "country", "country-code"
+    )).strip().lower()
+    country_normalized = re.sub(r"[^a-zа-яё0-9]+", " ", country_value).strip()
+
+    russian_country_values = {
+        "ru", "rus", "russia", "russian", "russian federation",
+        "россия", "российская федерация",
+    }
+    if country_normalized in russian_country_values:
+        return "RU"
+
+    if country_value:
+        return "WORLD"
+
+    group_and_name = (
+        str(channel.get("group_title", "")) + " " +
+        str(channel.get("name", ""))
+    ).lower()
+
+    if any(token in group_and_name for token in (
+        "россия", "россий", "russia", "russian"
+    )):
+        return "RU"
+
+    if any(token in group_and_name for token in (
+        "world", "international", "international tv", "мир", "зарубеж"
+    )):
+        return "WORLD"
+
+    detected = language.get("detected_language", "")
+    metadata_candidates = {
+        normalize_language_code(channel.get("language", "")),
+        *(
+            normalize_language_code(item)
+            for item in language.get("metadata_languages", [])
+        ),
+    }
+    metadata_candidates.discard("")
+
+    if detected == "ru":
+        return "RU"
+
+    if detected in LANGUAGE_NAMES and detected != "ru":
+        return "WORLD"
+
+    if not detected or detected in ("UNKNOWN", "CONFLICT", "MULTI_LANGUAGE"):
+        if metadata_candidates == {"ru"}:
+            return "RU"
+        if len(metadata_candidates) == 1 and next(iter(metadata_candidates)) != "ru":
+            return "WORLD"
+
+    return "UNKNOWN"
+
+
+def export_language_reports(channels):
+    csv_path = os.path.join(DATABASE_DIR, "Language_Detection.csv")
+    json_path = os.path.join(DATABASE_DIR, "Language_Detection.json")
+    jsonl_path = os.path.join(LOG_DIR, "Audio_Language_Audit.jsonl")
+    text_path = os.path.join(OUTPUT_DIR, "Language_Summary.txt")
+
+    rows = []
+    for index, channel in enumerate(channels, 1):
+        validation = channel.get("validation", {}) or {}
+        detection = validation.get("language_detection", {}) or {}
+        row = {
+            "record_number": index,
+            "channel": channel.get("name", ""),
+            "url": safe_url(channel.get("url", "")),
+            "playlist": channel.get("playlist", ""),
+            "metadata_language": channel.get("language", ""),
+            "metadata_audio_languages": "|".join(
+                detection.get("metadata_languages", [])
+            ),
+            "detected_language": detection.get("detected_language", "UNKNOWN"),
+            "language_name": detection.get("language_name", "UNKNOWN"),
+            "confidence": detection.get("confidence", 0),
+            "language_status": detection.get("status", "UNKNOWN"),
+            "region_class": classify_channel_region(channel),
+            "audio_analysis_ms": detection.get("analysis_ms", ""),
+            "audio_error": redact_text(detection.get("error", "")),
+            "track_results_json": json.dumps(
+                detection.get("track_results", []),
+                ensure_ascii=False,
+            ),
+        }
+        rows.append(row)
+
+    fields = list(rows[0].keys()) if rows else [
+        "record_number", "channel", "url", "playlist",
+        "metadata_language", "metadata_audio_languages",
+        "detected_language", "language_name", "confidence",
+        "language_status", "region_class", "audio_analysis_ms",
+        "audio_error", "track_results_json",
+    ]
+
+    with open(csv_path, "w", newline="", encoding="utf-8-sig") as file:
+        writer = csv.DictWriter(file, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    with open(json_path, "w", encoding="utf-8") as file:
+        json.dump(rows, file, ensure_ascii=False, indent=2)
+
+    tracks_csv_path = os.path.join(
+        DATABASE_DIR,
+        "Audio_Language_Tracks.csv",
+    )
+    track_fields = [
+        "record_number", "channel", "playlist", "url",
+        "audio_stream_index", "metadata_language",
+        "whisper_language", "whisper_confidence",
+        "speechbrain_language", "speechbrain_confidence",
+        "combined_language", "combined_confidence",
+        "language_status", "error",
+    ]
+    with open(tracks_csv_path, "w", newline="", encoding="utf-8-sig") as file:
+        writer = csv.DictWriter(file, fieldnames=track_fields)
+        writer.writeheader()
+        for index, channel in enumerate(channels, 1):
+            detection = (
+                channel.get("validation", {}) or {}
+            ).get("language_detection", {}) or {}
+            for track in detection.get("track_results", []):
+                whisper = track.get("whisper", {}) or {}
+                speechbrain = track.get("speechbrain", {}) or {}
+                writer.writerow({
+                    "record_number": index,
+                    "channel": channel.get("name", ""),
+                    "playlist": channel.get("playlist", ""),
+                    "url": safe_url(channel.get("url", "")),
+                    "audio_stream_index": track.get("stream_index", ""),
+                    "metadata_language": track.get("metadata_language", ""),
+                    "whisper_language": whisper.get("language", ""),
+                    "whisper_confidence": whisper.get("confidence", ""),
+                    "speechbrain_language": speechbrain.get("language", ""),
+                    "speechbrain_confidence": speechbrain.get("confidence", ""),
+                    "combined_language": track.get("detected_language", ""),
+                    "combined_confidence": track.get("confidence", ""),
+                    "language_status": track.get("status", ""),
+                    "error": redact_text(track.get("error", "")),
+                })
+
+    with open(jsonl_path, "w", encoding="utf-8") as file:
+        for row in rows:
+            file.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+    counts = defaultdict(int)
+    for row in rows:
+        counts[row["detected_language"]] += 1
+
+    audio_log_path = os.path.join(LOG_DIR, "Audio_Language_Audit.log")
+    with open(audio_log_path, "w", encoding="utf-8") as file:
+        file.write("AUDIO LANGUAGE AUDIT\n")
+        file.write("=" * 72 + "\n")
+        for row in rows:
+            file.write(
+                f"#{row['record_number']} | {row['channel']} | "
+                f"{row['detected_language']} ({row['language_name']}) | "
+                f"confidence={row['confidence']} | status={row['language_status']} | "
+                f"region={row['region_class']} | url={row['url']}\n"
+            )
+            if row["audio_error"]:
+                file.write(f"    ERROR: {row['audio_error']}\n")
+
+    with open(text_path, "w", encoding="utf-8") as file:
+        file.write("IPTV AUDIO LANGUAGE DETECTION SUMMARY\n")
+        file.write("=" * 72 + "\n")
+        file.write(f"Generated: {now_string()}\n")
+        file.write(f"Records analyzed: {len(rows)}\n")
+        file.write(f"Audio workers: {AUDIO_LANGUAGE_WORKERS}\n")
+        file.write(f"Whisper model: {WHISPER_MODEL_SIZE}\n")
+        file.write(f"SpeechBrain enabled: {ENABLE_SPEECHBRAIN}\n\n")
+        file.write("LANGUAGE COUNTS\n")
+        file.write("-" * 72 + "\n")
+        for code, count in sorted(counts.items(), key=lambda item: (-item[1], item[0])):
+            file.write(f"{code}: {count}\n")
+        file.write("\nREGION CLASSIFICATION\n")
+        for region in ("RU", "WORLD", "UNKNOWN"):
+            count = sum(
+                1 for channel in channels
+                if classify_channel_region(channel) == region
+            )
+            file.write(f"{region}: {count}\n")
+
+        file.write("\nSTATUSES\n")
+        for status in sorted({
+            (channel.get("validation", {}) or {})
+            .get("language_detection", {}).get("status", "UNKNOWN")
+            for channel in channels
+        }):
+            count = sum(
+                1 for channel in channels
+                if (channel.get("validation", {}) or {})
+                .get("language_detection", {}).get("status", "UNKNOWN") == status
+            )
+            file.write(f"{status}: {count}\n")
+
+    logger.info(
+        "[LANGUAGE EXPORT] CSV=%s | JSON=%s | TRACKS=%s | JSONL=%s | SUMMARY=%s",
+        csv_path, json_path, tracks_csv_path, jsonl_path, text_path,
+    )
+    logger.info("[LANGUAGE EXPORT] Human-readable audio log=%s", audio_log_path)
+
+
+def export_regional_playlists(channels):
+    export_m3u(channels, "Rafail_donor_Ru.m3u", mode="region_ru")
+    export_m3u(channels, "Rafail_donor_mir.m3u", mode="region_world")
+    export_m3u(channels, "Rafail_stable.m3u", mode="stable")
+
+
 # ============================================================
 # STREAM VALIDATION
 # ============================================================
 
 def validate_url(url, channel_name, request_headers=None):
+    url = rewrite_stream_url(url)
     total_started = time.perf_counter()
 
     logger.info("=" * 75)
@@ -3174,6 +4221,23 @@ def validate_url(url, channel_name, request_headers=None):
         channel_name,
         request_headers,
     )
+
+    # Submit language analysis immediately after audio tracks are known.
+    # It runs in its own 39-worker pool while the remaining diagnostics
+    # (HLS/TSDuck/TShark/PyAV) continue in this stream-check worker.
+    language_future = None
+    if (
+        AUDIO_LANGUAGE_ENABLED
+        and probe.get("audio_tracks")
+        and _AUDIO_EXECUTOR is not None
+    ):
+        language_future = _AUDIO_EXECUTOR.submit(
+            detect_channel_language,
+            rewrite_stream_url(url),
+            channel_name,
+            request_headers or {},
+            probe.get("audio_tracks", []),
+        )
 
     content_type = (
         get.get("content_type")
@@ -3334,7 +4398,50 @@ def validate_url(url, channel_name, request_headers=None):
             })
         ),
         "live_latency": "NOT MEASURED",
+        "language_detection": {},
     }
+
+    if language_future is not None:
+        try:
+            result["language_detection"] = language_future.result()
+        except Exception as language_error:
+            result["language_detection"] = {
+                "detected_language": "UNKNOWN",
+                "language_name": "UNKNOWN",
+                "confidence": 0.0,
+                "status": "ERROR",
+                "error": redact_text(language_error),
+            }
+    else:
+        result["language_detection"] = {
+            "detected_language": "UNKNOWN",
+            "language_name": "UNKNOWN",
+            "confidence": 0.0,
+            "status": (
+                "NO_AUDIO_TRACK"
+                if not audio_tracks
+                else "DISABLED_OR_NOT_SCHEDULED"
+            ),
+            "error": (
+                "No audio track detected"
+                if not audio_tracks
+                else "Audio analysis was not scheduled"
+            ),
+            "metadata_languages": [],
+        }
+
+    hls_declared_languages = hls.get("declared_languages", []) or []
+    current_metadata_languages = (
+        result["language_detection"].get("metadata_languages", []) or []
+    )
+    result["language_detection"]["metadata_languages"] = sorted({
+        normalize_language_code(item)
+        for item in current_metadata_languages + hls_declared_languages
+        if normalize_language_code(item)
+    })
+    result["language_detection"]["hls_audio_renditions"] = (
+        hls.get("audio_renditions", []) or []
+    )
 
     logger.info(
         "[STREAM RESULT] %s | %s | protocol=%s | HTTP=%s | MEDIA=%s | resolution=%s | quality=%s | video=%s | audio=%s | subtitles=%s | total=%.2f ms",
@@ -3349,6 +4456,13 @@ def validate_url(url, channel_name, request_headers=None):
         result["audio_track_count"],
         result["subtitle_track_count"],
         total_ms,
+    )
+    logger.info(
+        "[STREAM LANGUAGE] %s | %s | confidence=%s | status=%s",
+        channel_name,
+        result["language_detection"].get("detected_language", "UNKNOWN"),
+        result["language_detection"].get("confidence", 0),
+        result["language_detection"].get("status", "UNKNOWN"),
     )
 
     logger.info(
@@ -3385,6 +4499,7 @@ def validate_url(url, channel_name, request_headers=None):
         video_tracks=len(video_tracks),
         audio_tracks=len(audio_tracks),
         subtitle_tracks=len(subtitle_tracks),
+        language_detection=result.get("language_detection", {}),
         live_latency="NOT MEASURED",
     )
 
@@ -3402,113 +4517,150 @@ def validate_url(url, channel_name, request_headers=None):
 # ============================================================
 
 def validate_unique_streams(channels):
-    unique_urls = {}
-
-    for channel in channels:
-        url = channel["url"]
-
-        if url not in unique_urls:
-            unique_urls[url] = {
-                "name": channel["name"],
-                "url": url,
-                "headers": channel.get(
-                    "request_headers",
-                    {},
-                ),
-                "aliases": [],
-            }
-
-        if channel["name"] not in unique_urls[url]["aliases"]:
-            unique_urls[url]["aliases"].append(
-                channel["name"]
-            )
+    """
+    Historical function name retained for compatibility.
+    DEDUPLICATION IS DISABLED: every occurrence from every playlist
+    is checked independently, including identical URLs and aliases.
+    """
+    global _AUDIO_EXECUTOR
 
     logger.info("=" * 75)
     logger.info(
-        "[CHECK POOL] START | workers=%s | unique_urls=%s",
+        "[CHECK POOL] START | workers=%s | records=%s | deduplication=%s",
         CHECK_WORKERS,
-        len(unique_urls),
+        len(channels),
+        DEDUPLICATE_STREAMS,
     )
     logger.info(
-        "[CHECK POOL] Records=%s | duplicate aliases=%s",
-        len(channels),
-        len(channels) - len(unique_urls),
+        "[AUDIO LANGUAGE POOL] workers=%s | extraction_slots=%s | inference_slots=%s",
+        AUDIO_LANGUAGE_WORKERS,
+        AUDIO_EXTRACTION_SLOTS,
+        AUDIO_INFERENCE_SLOTS,
     )
     logger.info("=" * 75)
 
     results = {}
     completed = 0
-    total = len(unique_urls)
+    total = len(channels)
+    url_occurrences = defaultdict(int)
 
-    with ThreadPoolExecutor(
-        max_workers=CHECK_WORKERS,
-        thread_name_prefix="STREAM_CHECK",
-    ) as executor:
-
-        futures = {
-            executor.submit(
-                validate_url,
-                item["url"],
-                item["name"],
-                item["headers"],
-            ): item["url"]
-            for item in unique_urls.values()
-        }
-
-        for future in as_completed(futures):
-            url = futures[future]
-            completed += 1
-
-            try:
-                result = future.result()
-
-            except Exception as error:
-                logger.exception(
-                    "[CHECK WORKER ERROR] %s",
-                    safe_url(url),
-                )
-
-                result = {
-                    "url": url,
-                    "verified": False,
-                    "status": "FAILED",
-                    "error": str(error),
-                    "live_latency": "NOT MEASURED",
-                    "video_tracks": [],
-                    "audio_tracks": [],
-                    "subtitle_tracks": [],
-                    "video_track_count": 0,
-                    "audio_track_count": 0,
-                    "subtitle_track_count": 0,
-                }
-
-            results[url] = result
-
-            logger.info(
-                "[CHECK PROGRESS] %s/%s | %s | %s",
-                completed,
-                total,
-                result.get("status", "UNKNOWN"),
-                safe_url(url),
-            )
-
-    # Every alias retains the same shared validation result.
     for channel in channels:
-        channel["validation"] = results.get(
-            channel["url"],
-            {},
-        )
+        channel["url"] = rewrite_stream_url(channel.get("url", ""))
+        url_occurrences[channel["url"]] += 1
+
+    duplicate_occurrences = sum(
+        count - 1 for count in url_occurrences.values() if count > 1
+    )
 
     logger.info(
-        "[CHECK COMPLETE] verified=%s failed=%s",
-        sum(
-            1 for item in results.values()
-            if item.get("verified")
-        ),
-        sum(
-            1 for item in results.values()
-            if not item.get("verified")
-        ),
+        "[CHECK POOL] duplicate URL occurrences retained=%s | distinct URL count=%s",
+        duplicate_occurrences,
+        len(url_occurrences),
+    )
+
+    with ThreadPoolExecutor(
+        max_workers=AUDIO_LANGUAGE_WORKERS,
+        thread_name_prefix="AUDIO_LANGUAGE",
+    ) as audio_executor:
+        _AUDIO_EXECUTOR = audio_executor
+
+        with ThreadPoolExecutor(
+            max_workers=CHECK_WORKERS,
+            thread_name_prefix="STREAM_CHECK",
+        ) as executor:
+            futures = {
+                executor.submit(
+                    validate_url,
+                    channel["url"],
+                    channel["name"],
+                    channel.get("request_headers", {}),
+                ): (index, channel)
+                for index, channel in enumerate(channels, 1)
+            }
+
+            for future in as_completed(futures):
+                index, channel = futures[future]
+                completed += 1
+                url = channel["url"]
+
+                try:
+                    result = future.result()
+                except Exception as error:
+                    logger.exception(
+                        "[CHECK WORKER ERROR] record=%s | %s",
+                        index,
+                        safe_url(url),
+                    )
+                    result = {
+                        "url": url,
+                        "verified": False,
+                        "status": "FAILED",
+                        "error": redact_text(error),
+                        "live_latency": "NOT MEASURED",
+                        "video_tracks": [],
+                        "audio_tracks": [],
+                        "subtitle_tracks": [],
+                        "video_track_count": 0,
+                        "audio_track_count": 0,
+                        "subtitle_track_count": 0,
+                        "language_detection": {
+                            "detected_language": "UNKNOWN",
+                            "language_name": "UNKNOWN",
+                            "confidence": 0.0,
+                            "status": "ERROR",
+                            "error": redact_text(error),
+                        },
+                    }
+
+                record_id = (
+                    f"{index:08d}:"
+                    + hashlib.sha256(
+                        (
+                            str(channel.get("playlist", "")) + "|"
+                            + str(channel.get("line", "")) + "|"
+                            + str(channel.get("name", "")) + "|"
+                            + str(url)
+                        ).encode("utf-8", errors="replace")
+                    ).hexdigest()[:16]
+                )
+
+                result["record_id"] = record_id
+                result["record_number"] = index
+                result["url"] = url
+                result["duplicate_url_occurrences"] = (
+                    url_occurrences[url] - 1
+                )
+
+                channel["validation"] = result
+                channel["record_id"] = record_id
+                result["region_class"] = classify_channel_region(channel)
+                results[record_id] = result
+
+                logger.info(
+                    "[CHECK PROGRESS] %s/%s | record=%s | %s | %s | language=%s",
+                    completed,
+                    total,
+                    index,
+                    result.get("status", "UNKNOWN"),
+                    safe_url(url),
+                    (result.get("language_detection", {}) or {}).get(
+                        "detected_language", "UNKNOWN"
+                    ),
+                )
+
+        _AUDIO_EXECUTOR = None
+
+    verified = sum(
+        1 for item in results.values()
+        if item.get("verified")
+    )
+
+    logger.info(
+        "[CHECK COMPLETE] checked_records=%s verified=%s failed=%s duplicate_URL_occurrences_retained=%s",
+        len(results),
+        verified,
+        len(results) - verified,
+        duplicate_occurrences,
     )
 
     return results
@@ -3519,34 +4671,35 @@ def validate_unique_streams(channels):
 # ============================================================
 
 def build_channel_database(channels):
-    unique = {}
+    """
+    Preserve every playlist record. Identical URLs are intentionally
+    repeated so source provenance, aliases and per-entry headers survive.
+    """
+    result = []
 
-    for channel in channels:
-        url = channel["url"]
-
-        if url not in unique:
-            unique[url] = {
-                **channel,
-                "aliases": [],
-                "source_playlists": [],
-            }
-
-        alias = channel["name"]
-
-        if alias not in unique[url]["aliases"]:
-            unique[url]["aliases"].append(alias)
-
-        playlist = channel["playlist"]
-
-        if playlist not in unique[url]["source_playlists"]:
-            unique[url]["source_playlists"].append(playlist)
-
-    result = list(unique.values())
+    for index, channel in enumerate(channels, 1):
+        item = dict(channel)
+        item["record_number"] = index
+        item["record_id"] = item.get("record_id") or (
+            f"{index:08d}:"
+            + hashlib.sha256(
+                (
+                    str(item.get("playlist", "")) + "|"
+                    + str(item.get("line", "")) + "|"
+                    + str(item.get("name", "")) + "|"
+                    + str(item.get("url", ""))
+                ).encode("utf-8", errors="replace")
+            ).hexdigest()[:16]
+        )
+        item["aliases"] = [item.get("name", "")]
+        item["source_playlists"] = [item.get("playlist", "")]
+        item["url"] = rewrite_stream_url(item.get("url", ""))
+        result.append(item)
 
     logger.info(
-        "[DATABASE] Unique streams=%s | records=%s",
+        "[DATABASE] Records retained=%s | deduplication=%s",
         len(result),
-        len(channels),
+        DEDUPLICATE_STREAMS,
     )
 
     return result
@@ -3590,6 +4743,14 @@ def export_m3u(channels, filename, mode="all"):
             if mode == "failed" and verified:
                 continue
 
+            region = classify_channel_region(channel)
+            if mode == "region_ru" and region != "RU":
+                continue
+            if mode == "region_world" and region != "WORLD":
+                continue
+            if mode == "stable" and not verified:
+                continue
+
             attributes = channel.get(
                 "attributes",
                 {},
@@ -3612,6 +4773,16 @@ def export_m3u(channels, filename, mode="all"):
                         f'{key}="{value}"'
                     )
 
+            validation_language = (
+                (validation.get("language_detection", {}) or {})
+                .get("detected_language", "")
+            )
+            if (
+                validation_language in LANGUAGE_NAMES
+                and not attributes.get("tvg-language")
+            ):
+                attrs.append(f'tvg-language="{validation_language}"')
+
             attr_text = (
                 " " + " ".join(attrs)
                 if attrs
@@ -3632,7 +4803,7 @@ def export_m3u(channels, filename, mode="all"):
                 )
 
             file.write(
-                f'{channel["url"]}\n'
+                f'{rewrite_stream_url(channel["url"])}\n'
             )
 
             count += 1
@@ -3699,6 +4870,12 @@ def export_csv(channels):
         "tsduck_success",
         "tshark_success",
         "pyav_success",
+        "detected_language",
+        "detected_language_name",
+        "language_confidence",
+        "language_status",
+        "language_metadata",
+        "region_class",
         "live_latency",
     ]
 
@@ -3731,7 +4908,7 @@ def export_csv(channels):
 
             writer.writerow({
                 "name": channel["name"],
-                "url": channel["url"],
+                "url": safe_url(channel["url"]),
                 "aliases": " | ".join(channel.get("aliases", [])),
                 "source_playlists": " | ".join(
                     channel.get("source_playlists", [])
@@ -3775,6 +4952,20 @@ def export_csv(channels):
                 "tsduck_success": tsduck.get("success", False),
                 "tshark_success": tshark.get("success", False),
                 "pyav_success": pyav.get("success", False),
+                "detected_language": (
+                    validation.get("language_detection", {}) or {}
+                ).get("detected_language", "UNKNOWN"),
+                "detected_language_name": (
+                    validation.get("language_detection", {}) or {}
+                ).get("language_name", "UNKNOWN"),
+                "language_confidence": (
+                    validation.get("language_detection", {}) or {}
+                ).get("confidence", 0),
+                "language_status": (
+                    validation.get("language_detection", {}) or {}
+                ).get("status", "UNKNOWN"),
+                "language_metadata": channel.get("language", ""),
+                "region_class": classify_channel_region(channel),
                 "live_latency": "NOT MEASURED",
             })
 
@@ -3804,7 +4995,7 @@ def export_json(channels):
 
         export_data.append({
             "name": channel["name"],
-            "url": channel["url"],
+            "url": safe_url(channel["url"]),
             "aliases": channel.get("aliases", []),
             "source_playlists": channel.get("source_playlists", []),
             "playlist": channel["playlist"],
@@ -3815,7 +5006,13 @@ def export_json(channels):
             "group_title": channel["group_title"],
             "language": channel["language"],
             "verified": validation.get("verified", False),
-            "validation": validation,
+            "detected_language": (
+                validation.get("language_detection", {}) or {}
+            ).get("detected_language", "UNKNOWN"),
+            "language_detection": validation.get("language_detection", {}),
+            "region_class": classify_channel_region(channel),
+            "record_id": channel.get("record_id", ""),
+            "validation": _sanitize_audit_value(validation),
         })
 
     with open(
@@ -3869,6 +5066,9 @@ def export_track_report(channels):
         "duration",
         "packets",
         "frames",
+        "detected_channel_language",
+        "language_confidence",
+        "language_status",
     ]
 
     with open(
@@ -3905,7 +5105,7 @@ def export_track_report(channels):
                 for track in tracks:
                     writer.writerow({
                         "channel": channel["name"],
-                        "url": channel["url"],
+                        "url": safe_url(channel["url"]),
                         "playlist": channel["playlist"],
                         "track_type": track_type,
                         "track_index": track.get("index", ""),
@@ -3925,6 +5125,15 @@ def export_track_report(channels):
                         "duration": track.get("duration", ""),
                         "packets": track.get("nb_read_packets", ""),
                         "frames": track.get("nb_read_frames", ""),
+                        "detected_channel_language": (
+                            validation.get("language_detection", {}) or {}
+                        ).get("detected_language", "UNKNOWN"),
+                        "language_confidence": (
+                            validation.get("language_detection", {}) or {}
+                        ).get("confidence", 0),
+                        "language_status": (
+                            validation.get("language_detection", {}) or {}
+                        ).get("status", "UNKNOWN"),
                     })
 
     logger.info(
@@ -3984,7 +5193,7 @@ def export_playlist_report(playlist_results):
                 ),
                 "channel_count": item.get("channel_count", 0),
                 "final_url": item.get("final_url", ""),
-                "error": item.get("error", ""),
+                "error": redact_text(item.get("error", "")),
             })
 
     logger.info(
@@ -4008,14 +5217,20 @@ def export_check_report(
     )
 
     total_records = len(channels)
-    total_unique = len(unique_results)
+    total_checked = len(unique_results)
+    url_counts = defaultdict(int)
+    for channel in channels:
+        url_counts[channel.get("url", "")] += 1
+    duplicate_url_occurrences = sum(
+        count - 1 for count in url_counts.values() if count > 1
+    )
 
     verified = sum(
         1 for result in unique_results.values()
         if result.get("verified")
     )
 
-    failed = total_unique - verified
+    failed = total_checked - verified
 
     def count_if(predicate):
         return sum(
@@ -4085,6 +5300,30 @@ def export_check_report(
     slow = count_if(
         lambda item: item.get("response_class") == "SLOW RESPONSE"
     )
+    response_unknown = count_if(
+        lambda item: item.get("response_class") in (None, "", "UNKNOWN")
+    )
+    ffprobe_success_not_verified = count_if(
+        lambda item: item.get("probe", {}).get("success", False)
+        and not item.get("verified", False)
+    )
+    verified_without_ffprobe = count_if(
+        lambda item: item.get("verified", False)
+        and not item.get("probe", {}).get("success", False)
+    )
+    language_confirmed = count_if(
+        lambda item: (item.get("language_detection", {}) or {}).get("status") == "CONFIRMED"
+    )
+    language_provisional = count_if(
+        lambda item: (item.get("language_detection", {}) or {}).get("status") == "PROVISIONAL"
+    )
+    language_conflicts = count_if(
+        lambda item: (item.get("language_detection", {}) or {}).get("status") == "CONFLICT"
+    )
+    language_unknown = count_if(
+        lambda item: (item.get("language_detection", {}) or {}).get("detected_language")
+        in ("UNKNOWN", "", None)
+    )
 
     with open(
         filename,
@@ -4117,7 +5356,25 @@ def export_check_report(
             f"Parser workers: {PARSER_WORKERS}\n"
         )
         file.write(
-            f"Check workers: {CHECK_WORKERS}\n\n"
+            f"Check workers: {CHECK_WORKERS}\n"
+        )
+        file.write(
+            f"Deduplication enabled: {DEDUPLICATE_STREAMS}\n"
+        )
+        file.write(
+            f"Audio language workers: {AUDIO_LANGUAGE_WORKERS}\n"
+        )
+        file.write(
+            f"Audio extraction slots: {AUDIO_EXTRACTION_SLOTS}\n"
+        )
+        file.write(
+            f"Audio inference slots: {AUDIO_INFERENCE_SLOTS}\n"
+        )
+        file.write(
+            f"Whisper model: {WHISPER_MODEL_SIZE}\n"
+        )
+        file.write(
+            f"SpeechBrain enabled: {ENABLE_SPEECHBRAIN}\n\n"
         )
 
         file.write("--- PLAYLISTS ---\n")
@@ -4136,10 +5393,13 @@ def export_check_report(
             f"Total records: {total_records}\n"
         )
         file.write(
-            f"Unique stream URLs: {total_unique}\n"
+            f"Records checked (deduplication disabled): {total_checked}\n"
         )
         file.write(
-            f"Duplicate URL aliases: {total_records - total_unique}\n"
+            f"Distinct URL values (statistics only): {len(url_counts)}\n"
+        )
+        file.write(
+            f"Duplicate URL occurrences retained and checked: {duplicate_url_occurrences}\n"
         )
         file.write(
             f"Verified: {verified}\n"
@@ -4148,7 +5408,7 @@ def export_check_report(
             f"Failed: {failed}\n"
         )
         file.write(
-            f"Success rate: {(verified / total_unique * 100) if total_unique else 0:.2f}%\n\n"
+            f"Success rate: {(verified / total_checked * 100) if total_checked else 0:.2f}%\n\n"
         )
 
         file.write("--- HTTP / MEDIA DIAGNOSTICS ---\n")
@@ -4170,7 +5430,45 @@ def export_check_report(
             f"Normal (<= {NORMAL_RESPONSE_MS} ms): {normal}\n"
         )
         file.write(
-            f"Slow (> {NORMAL_RESPONSE_MS} ms): {slow}\n\n"
+            f"Slow (> {NORMAL_RESPONSE_MS} ms): {slow}\n"
+        )
+        file.write(
+            f"Unknown / not measured: {response_unknown}\n"
+        )
+        file.write(
+            f"Response classes accounted: {fast + normal + slow + response_unknown}/{total_checked}\n"
+        )
+        file.write(
+            f"FFprobe successful but not verified: {ffprobe_success_not_verified}\n"
+        )
+        file.write(
+            f"Verified without FFprobe success: {verified_without_ffprobe}\n\n"
+        )
+
+        file.write("--- AUDIO LANGUAGE DETECTION ---\n")
+        file.write(
+            f"Audio workers: {AUDIO_LANGUAGE_WORKERS}\n"
+        )
+        file.write(
+            f"Whisper model: {WHISPER_MODEL_SIZE}\n"
+        )
+        file.write(
+            f"SpeechBrain enabled: {ENABLE_SPEECHBRAIN}\n"
+        )
+        file.write(
+            f"Forced Cinerama host rewrites: {URL_REWRITE_COUNT}\n"
+        )
+        file.write(
+            f"Confirmed: {language_confirmed}\n"
+        )
+        file.write(
+            f"Provisional: {language_provisional}\n"
+        )
+        file.write(
+            f"Conflicts: {language_conflicts}\n"
+        )
+        file.write(
+            f"Unknown: {language_unknown}\n\n"
         )
 
         file.write("--- MEDIA TRACKS ---\n")
@@ -4203,7 +5501,9 @@ def export_check_report(
 
         file.write("--- STREAM DETAILS ---\n\n")
 
-        for url, result in unique_results.items():
+        for record_id, result in unique_results.items():
+            url = result.get("url", record_id)
+            language = result.get("language_detection", {}) or {}
             head = result.get("head", {})
             get = result.get("get", {})
             probe = result.get("probe", {})
@@ -4226,17 +5526,17 @@ def export_check_report(
             )
 
             file.write(
-                f"HEAD: {head.get('status_code', 'N/A')} | {head.get('response_ms', '')} ms | {head.get('error', '')}\n"
+                f"HEAD: {head.get('status_code', 'N/A')} | {head.get('response_ms', '')} ms | {redact_text(head.get('error', ''))}\n"
             )
             file.write(
                 f"GET: {get.get('status_code', 'N/A')} | {get.get('headers_ms', '')} ms headers | {get.get('first_byte_total_ms', '')} ms first byte | {get.get('bytes_read', 0)} bytes\n"
             )
             file.write(
-                f"GET error: {get.get('error', '')}\n"
+                f"GET error: {redact_text(get.get('error', ''))}\n"
             )
 
             file.write(
-                f"FFprobe: success={probe.get('success', False)} | timeout={probe.get('timed_out', False)} | error={probe.get('error', '')}\n"
+                f"FFprobe: success={probe.get('success', False)} | timeout={probe.get('timed_out', False)} | error={redact_text(probe.get('error', ''))}\n"
             )
             file.write(
                 f"Format: {result.get('format_name', '')}\n"
@@ -4277,13 +5577,32 @@ def export_check_report(
             )
 
             file.write(
-                f"TSDuck: {tsduck.get('success', False)} | {tsduck.get('error', '')}\n"
+                f"TSDuck: {tsduck.get('success', False)} | {redact_text(tsduck.get('error', ''))}\n"
             )
             file.write(
-                f"TShark: {tshark.get('success', False)} | {tshark.get('error', '')}\n"
+                f"TShark: {tshark.get('success', False)} | {redact_text(tshark.get('error', ''))}\n"
             )
             file.write(
-                f"PyAV: {pyav.get('success', False)} | {pyav.get('error', '')}\n"
+                f"PyAV: {pyav.get('success', False)} | {redact_text(pyav.get('error', ''))}\n"
+            )
+            file.write(
+                f"Detected language: {language.get('detected_language', 'UNKNOWN')} | {language.get('language_name', 'UNKNOWN')} | confidence={language.get('confidence', 0)} | status={language.get('status', 'UNKNOWN')}\n"
+            )
+            file.write(
+                f"Language metadata: {language.get('metadata_languages', [])}\n"
+            )
+            file.write(
+                f"Language error: {redact_text(language.get('error', ''))}\n"
+            )
+            for language_track in language.get("track_results", []):
+                file.write(
+                    f"  Audio stream #{language_track.get('stream_index', '')}: "
+                    f"{language_track.get('detected_language', 'UNKNOWN')} | "
+                    f"{language_track.get('status', 'UNKNOWN')} | "
+                    f"confidence={language_track.get('confidence', 0)}\n"
+                )
+            file.write(
+                f"Region classification: {result.get('region_class', 'UNKNOWN')}\n"
             )
 
             file.write(
@@ -4336,6 +5655,12 @@ def print_final_statistics(
     playlist_results,
 ):
     total = len(unique_results)
+    url_counts = defaultdict(int)
+    for channel in channels:
+        url_counts[channel.get("url", "")] += 1
+    duplicate_url_occurrences = sum(
+        count - 1 for count in url_counts.values() if count > 1
+    )
 
     verified = sum(
         1 for item in unique_results.values()
@@ -4375,8 +5700,24 @@ def print_final_statistics(
         len(channels),
     )
     logger.info(
-        "Unique stream URLs: %s",
+        "Channel records checked (deduplication disabled): %s",
         total,
+    )
+    logger.info(
+        "Distinct URL values (statistics only): %s",
+        len(url_counts),
+    )
+    logger.info(
+        "Duplicate URL occurrences retained and checked: %s",
+        duplicate_url_occurrences,
+    )
+    logger.info(
+        "Audio language workers: %s",
+        AUDIO_LANGUAGE_WORKERS,
+    )
+    logger.info(
+        "Forced Cinerama hostname rewrites: %s",
+        URL_REWRITE_COUNT,
     )
     logger.info(
         "Verified streams: %s",
@@ -4397,7 +5738,10 @@ def print_final_statistics(
         "FINAL_STATISTICS",
         playlists=len(playlist_results),
         channel_records=len(channels),
-        unique_streams=total,
+        checked_records=total,
+        distinct_url_values=len(url_counts),
+        duplicate_url_occurrences_retained=duplicate_url_occurrences,
+        audio_language_workers=AUDIO_LANGUAGE_WORKERS,
         verified=verified,
         failed=failed,
     )
@@ -4436,6 +5780,18 @@ def main():
         "CHECK WORKERS: %s",
         CHECK_WORKERS,
     )
+    logger.info(
+        "AUDIO LANGUAGE WORKERS: %s",
+        AUDIO_LANGUAGE_WORKERS,
+    )
+    logger.info(
+        "DEDUPLICATION: DISABLED",
+    )
+    logger.info(
+        "CINERAMA URL REWRITE: %s -> %s",
+        CINERAMA_OLD_HOST,
+        CINERAMA_NEW_HOST,
+    )
 
     # --------------------------------------------------------
     # STEP 0: TOOL PREPARATION
@@ -4456,6 +5812,12 @@ def main():
         download_workers=DOWNLOAD_WORKERS,
         parser_workers=PARSER_WORKERS,
         check_workers=CHECK_WORKERS,
+        audio_language_workers=AUDIO_LANGUAGE_WORKERS,
+        deduplication=DEDUPLICATE_STREAMS,
+        cinerama_rewrite={
+            "from": CINERAMA_OLD_HOST,
+            "to": CINERAMA_NEW_HOST,
+        },
         tools=inventory,
     )
 
@@ -4600,6 +5962,8 @@ def main():
         mode="failed",
     )
 
+    export_regional_playlists(all_channels)
+
     # --------------------------------------------------------
     # STEP 8: DATABASE EXPORT
     # --------------------------------------------------------
@@ -4627,6 +5991,8 @@ def main():
     export_track_report(
         unique_channels
     )
+
+    export_language_reports(all_channels)
 
     # --------------------------------------------------------
     # STEP 10: PLAYLIST REPORT
