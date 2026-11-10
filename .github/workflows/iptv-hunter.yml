@@ -1,0 +1,156 @@
+
+name: IPTV Repository Playlist Hunter
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "0 2 * * *"
+
+  push:
+    branches:
+      - main
+    paths:
+      - "**IPTV_REPOSITORY_PLAYLIST_HUNTER.py"
+      - ".github/workflows/iptv-hunter.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: iptv-repository-playlist-hunter
+  cancel-in-progress: false
+
+jobs:
+  run-hunter:
+    name: Run IPTV Playlist Hunter
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            ffmpeg \
+            curl \
+            wget \
+            jq \
+            unzip \
+            ca-certificates
+
+          ffmpeg -version
+          ffprobe -version
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            pip install requests aiohttp tqdm colorama
+          fi
+
+      - name: Locate IPTV Hunter script
+        id: hunter
+        shell: bash
+        run: |
+          SCRIPT="$(find . -type f \
+            -name '*IPTV_REPOSITORY_PLAYLIST_HUNTER.py' \
+            -print -quit)"
+
+          if [ -z "$SCRIPT" ]; then
+            echo "::error::IPTV_REPOSITORY_PLAYLIST_HUNTER.py not found"
+            exit 1
+          fi
+
+          echo "script=$SCRIPT" >> "$GITHUB_OUTPUT"
+          echo "Found script: $SCRIPT"
+
+      - name: Run IPTV Repository Playlist Hunter
+        env:
+          PYTHONUNBUFFERED: "1"
+          PYTHONIOENCODING: "utf-8"
+          PYTHONUTF8: "1"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "========================================"
+          echo " IPTV REPOSITORY PLAYLIST HUNTER"
+          echo "========================================"
+
+          python -u "${{ steps.hunter.outputs.script }}"
+
+      - name: Prepare generated results
+        if: always()
+        run: |
+          mkdir -p channel_database logs
+
+          echo "Generated files:"
+          find . -type f \
+            \( -name '*.m3u' \
+            -o -name '*.m3u8' \
+            -o -name '*.csv' \
+            -o -name '*.json' \
+            -o -name '*.jsonl' \
+            -o -name '*.txt' \
+            -o -name '*.log' \) \
+            -not -path './.git/*' \
+            -printf '%p (%s bytes)\n' | sort
+
+      - name: Publish results to repository
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A -- \
+            '*.m3u' \
+            '*.m3u8' \
+            '*.csv' \
+            '*.json' \
+            '*.jsonl' \
+            '*.txt' \
+            '*.log' \
+            'channel_database/' \
+            'logs/'
+
+          if git diff --cached --quiet; then
+            echo "No generated changes to publish."
+            exit 0
+          fi
+
+          git commit -m "Update IPTV playlists and audit reports"
+
+          git push origin HEAD:main
+
+      - name: Upload all results as artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: IPTV-Repository-Playlist-Hunter-Results
+          path: |
+            **/*.m3u
+            **/*.m3u8
+            **/*.csv
+            **/*.json
+            **/*.jsonl
+            **/*.txt
+            **/*.log
+          if-no-files-found: warn
+          compression-level: 6
+          retention-days: 30
