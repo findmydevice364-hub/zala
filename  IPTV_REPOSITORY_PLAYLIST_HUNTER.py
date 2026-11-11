@@ -99,13 +99,21 @@ DOWNLOAD_WORKERS = 28
 PARSER_WORKERS = 34
 CHECK_WORKERS = 45
 
-# Audio language analysis has its own pool. 39 workers can prepare/analyze
-# channel samples while inference and decoding are separately throttled.
-AUDIO_LANGUAGE_WORKERS = max(1, int(os.getenv("IPTV_AUDIO_LANGUAGE_WORKERS", "39")))
+# Audio analysis uses three independent execution levels:
+#   channel pool: one coordinator task per playlist occurrence;
+#   track pool: every FFprobe audio stream is analyzed independently;
+#   engine pool: Whisper and SpeechBrain can evaluate the same sample in parallel.
+# The extraction/inference semaphores remain the hard resource limits. They are
+# deliberately separate from executor sizes so queue capacity never implies
+# that dozens of heavy decoders/models run at once.
+AUDIO_LANGUAGE_WORKERS = max(1, int(os.getenv("IPTV_AUDIO_LANGUAGE_WORKERS", "50")))
+AUDIO_TRACK_WORKERS = max(1, int(os.getenv("IPTV_AUDIO_TRACK_WORKERS", "50")))
+AUDIO_ENGINE_WORKERS = max(2, int(os.getenv("IPTV_AUDIO_ENGINE_WORKERS", "4")))
 AUDIO_EXTRACTION_SLOTS = max(1, int(os.getenv("IPTV_AUDIO_EXTRACTION_SLOTS", "6")))
 AUDIO_INFERENCE_SLOTS = max(1, int(os.getenv("IPTV_AUDIO_INFERENCE_SLOTS", "2")))
 AUDIO_SAMPLE_SECONDS = max(5, int(os.getenv("IPTV_AUDIO_SAMPLE_SECONDS", "18")))
-AUDIO_MAX_TRACKS_PER_CHANNEL = max(1, int(os.getenv("IPTV_AUDIO_MAX_TRACKS", "4")))
+# Every FFprobe audio track is analyzed. No per-record track cap is applied.
+AUDIO_MAX_TRACKS_PER_CHANNEL = 0
 AUDIO_LANGUAGE_ENABLED = os.getenv("IPTV_AUDIO_LANGUAGE_ENABLED", "1").lower() not in ("0", "false", "no")
 WHISPER_MODEL_SIZE = os.getenv("IPTV_WHISPER_MODEL", "small").strip() or "small"
 ENABLE_SPEECHBRAIN = os.getenv("IPTV_ENABLE_SPEECHBRAIN", "1").lower() not in ("0", "false", "no")
@@ -128,6 +136,8 @@ CINERAMA_NEW_HOST = "stream1.cinerama.uz"
 URL_REWRITE_COUNT = 0
 URL_REWRITE_LOCK = threading.Lock()
 _AUDIO_EXECUTOR = None
+_AUDIO_TRACK_EXECUTOR = None
+_AUDIO_ENGINE_EXECUTOR = None
 _AUDIO_EXTRACTION_SEMAPHORE = threading.BoundedSemaphore(max(1, AUDIO_EXTRACTION_SLOTS))
 _AUDIO_INFERENCE_SEMAPHORE = threading.BoundedSemaphore(max(1, AUDIO_INFERENCE_SLOTS))
 _WHISPER_MODEL = None
@@ -4019,15 +4029,160 @@ def combine_language_engines(whisper_result, speechbrain_result):
     }
 
 
-def detect_channel_language(url, channel_name, request_headers, audio_tracks):
-    """
-    Audio-language task for one playlist occurrence. Every occurrence is
-    analyzed separately, even if its URL is identical to another record.
-    """
+def analyze_audio_track(
+    url,
+    channel_name,
+    request_headers,
+    track,
+    record_id="",
+    track_number=0,
+    engine_executor=None,
+):
+    """Analyze one FFprobe audio stream without blocking stream-check workers."""
+    started = time.perf_counter()
+    stream_index = track.get("index", "")
+    track_id = f"{record_id or 'UNASSIGNED'}:audio:{stream_index}"
+
+    logger.info(
+        "[AUDIO TRACK START] record=%s | track_id=%s | channel=%s | stream_index=%s | worker=%s",
+        record_id or "UNASSIGNED",
+        track_id,
+        channel_name,
+        stream_index,
+        threading.current_thread().name,
+    )
+
+    extracted = extract_audio_sample(
+        url,
+        channel_name,
+        track,
+        request_headers,
+    )
+
+    track_result = {
+        "record_id": record_id,
+        "track_id": track_id,
+        "track_number": track_number,
+        "stream_index": stream_index,
+        "metadata_language": normalize_language_code(
+            track.get("language", "")
+        ),
+        "codec_name": track.get("codec_name", ""),
+        "channels": track.get("channels", 0),
+        "channel_layout": track.get("channel_layout", ""),
+        "sample_rate": track.get("sample_rate", ""),
+        "bit_rate": track.get("bit_rate", ""),
+        "detected_language": "UNKNOWN",
+        "language_name": "UNKNOWN",
+        "confidence": 0.0,
+        "status": "UNKNOWN",
+        "audio_sample_bytes": extracted.get("bytes", 0),
+        "whisper": {},
+        "speechbrain": {},
+        "error": extracted.get("error", ""),
+    }
+
+    wav_path = extracted.get("path")
+    if wav_path:
+        try:
+            if engine_executor is not None:
+                whisper_future = engine_executor.submit(
+                    identify_with_whisper,
+                    wav_path,
+                )
+                speechbrain_future = engine_executor.submit(
+                    identify_with_speechbrain,
+                    wav_path,
+                )
+                try:
+                    whisper_result = whisper_future.result()
+                except Exception as error:
+                    whisper_result = {
+                        "engine": "faster-whisper",
+                        "available": False,
+                        "attempted": False,
+                        "language": "",
+                        "confidence": 0.0,
+                        "error": redact_text(error),
+                    }
+                try:
+                    speechbrain_result = speechbrain_future.result()
+                except Exception as error:
+                    speechbrain_result = {
+                        "engine": "SpeechBrain VoxLingua107",
+                        "available": False,
+                        "attempted": False,
+                        "language": "",
+                        "confidence": 0.0,
+                        "error": redact_text(error),
+                    }
+            else:
+                whisper_result = identify_with_whisper(wav_path)
+                speechbrain_result = identify_with_speechbrain(wav_path)
+
+            combined = combine_language_engines(
+                whisper_result,
+                speechbrain_result,
+            )
+            track_result.update(combined)
+            track_result["whisper"] = whisper_result
+            track_result["speechbrain"] = speechbrain_result
+        finally:
+            try:
+                os.remove(wav_path)
+            except OSError:
+                pass
+
+    track_result["analysis_ms"] = round(
+        (time.perf_counter() - started) * 1000,
+        2,
+    )
+
+    logger.info(
+        "[AUDIO TRACK FINISHED] record=%s | track_id=%s | language=%s | status=%s | confidence=%.3f | extraction_bytes=%s | total_ms=%.2f",
+        record_id or "UNASSIGNED",
+        track_id,
+        track_result.get("detected_language", "UNKNOWN"),
+        track_result.get("status", "UNKNOWN"),
+        safe_float(track_result.get("confidence", 0)),
+        track_result.get("audio_sample_bytes", 0),
+        track_result["analysis_ms"],
+    )
+
+    log_event(
+        "AUDIO_TRACK_ANALYSIS_FINISHED",
+        record_id=record_id,
+        track_id=track_id,
+        channel=channel_name,
+        stream_index=stream_index,
+        metadata_language=track_result.get("metadata_language", ""),
+        detected_language=track_result.get("detected_language", "UNKNOWN"),
+        confidence=track_result.get("confidence", 0),
+        status=track_result.get("status", "UNKNOWN"),
+        audio_sample_bytes=track_result.get("audio_sample_bytes", 0),
+        whisper=track_result.get("whisper", {}),
+        speechbrain=track_result.get("speechbrain", {}),
+        error=track_result.get("error", ""),
+        analysis_ms=track_result["analysis_ms"],
+    )
+    return track_result
+
+
+def detect_channel_language(
+    url,
+    channel_name,
+    request_headers,
+    audio_tracks,
+    record_id="",
+):
+    """Coordinate independently scheduled track analyses for one record."""
     started = time.perf_counter()
     result = {
         "enabled": AUDIO_LANGUAGE_ENABLED,
         "workers": AUDIO_LANGUAGE_WORKERS,
+        "track_workers": AUDIO_TRACK_WORKERS,
+        "engine_workers": AUDIO_ENGINE_WORKERS,
+        "record_id": record_id,
         "detected_language": "UNKNOWN",
         "language_name": "UNKNOWN",
         "confidence": 0.0,
@@ -4054,48 +4209,88 @@ def detect_channel_language(url, channel_name, request_headers, audio_tracks):
         if normalize_language_code(track.get("language", ""))
     })
 
-    for track in audio_tracks[:max(1, AUDIO_MAX_TRACKS_PER_CHANNEL)]:
-        extracted = extract_audio_sample(
-            url,
-            channel_name,
-            track,
-            request_headers,
-        )
+    selected_tracks = list(audio_tracks)
+    result["tracks_discovered"] = len(audio_tracks)
+    result["tracks_scheduled"] = len(selected_tracks)
+    result["tracks_not_scheduled"] = len(audio_tracks) - len(selected_tracks)
 
-        track_result = {
-            "stream_index": track.get("index", ""),
-            "metadata_language": normalize_language_code(
-                track.get("language", "")
-            ),
-            "detected_language": "UNKNOWN",
-            "language_name": "UNKNOWN",
-            "confidence": 0.0,
-            "status": "UNKNOWN",
-            "audio_sample_bytes": extracted.get("bytes", 0),
-            "whisper": {},
-            "speechbrain": {},
-            "error": extracted.get("error", ""),
-        }
+    logger.info(
+        "[AUDIO CHANNEL QUEUE] record=%s | channel=%s | discovered_tracks=%s | scheduled_tracks=%s | track_pool=%s | engine_pool=%s",
+        record_id or "UNASSIGNED",
+        channel_name,
+        len(audio_tracks),
+        len(selected_tracks),
+        AUDIO_TRACK_WORKERS,
+        AUDIO_ENGINE_WORKERS,
+    )
 
-        wav_path = extracted.get("path")
-        if wav_path:
+    track_executor = _AUDIO_TRACK_EXECUTOR
+    engine_executor = _AUDIO_ENGINE_EXECUTOR
+    track_futures = {}
+
+    if track_executor is not None:
+        for track_number, track in enumerate(selected_tracks, 1):
+            future = track_executor.submit(
+                analyze_audio_track,
+                url,
+                channel_name,
+                request_headers or {},
+                track,
+                record_id,
+                track_number,
+                engine_executor,
+            )
+            track_futures[future] = (track_number, track)
+
+        completed_tracks = {}
+        for future in as_completed(track_futures):
+            track_number, track = track_futures[future]
             try:
-                whisper_result = identify_with_whisper(wav_path)
-                speechbrain_result = identify_with_speechbrain(wav_path)
-                combined = combine_language_engines(
-                    whisper_result,
-                    speechbrain_result,
+                completed_tracks[track_number] = future.result()
+            except Exception as error:
+                stream_index = track.get("index", "")
+                track_id = f"{record_id or 'UNASSIGNED'}:audio:{stream_index}"
+                logger.exception(
+                    "[AUDIO TRACK ERROR] record=%s | track_id=%s | channel=%s",
+                    record_id,
+                    track_id,
+                    channel_name,
                 )
-                track_result.update(combined)
-                track_result["whisper"] = whisper_result
-                track_result["speechbrain"] = speechbrain_result
-            finally:
-                try:
-                    os.remove(wav_path)
-                except OSError:
-                    pass
-
-        result["track_results"].append(track_result)
+                completed_tracks[track_number] = {
+                    "record_id": record_id,
+                    "track_id": track_id,
+                    "track_number": track_number,
+                    "stream_index": stream_index,
+                    "metadata_language": normalize_language_code(
+                        track.get("language", "")
+                    ),
+                    "detected_language": "UNKNOWN",
+                    "language_name": "UNKNOWN",
+                    "confidence": 0.0,
+                    "status": "ERROR",
+                    "audio_sample_bytes": 0,
+                    "whisper": {},
+                    "speechbrain": {},
+                    "error": redact_text(error),
+                }
+        result["track_results"] = [
+            completed_tracks[number]
+            for number in sorted(completed_tracks)
+        ]
+    else:
+        # Defensive fallback for direct unit calls outside the orchestrator.
+        result["track_results"] = [
+            analyze_audio_track(
+                url,
+                channel_name,
+                request_headers or {},
+                track,
+                record_id,
+                track_number,
+                None,
+            )
+            for track_number, track in enumerate(selected_tracks, 1)
+        ]
 
     accepted = [
         item for item in result["track_results"]
@@ -4103,9 +4298,7 @@ def detect_channel_language(url, channel_name, request_headers, audio_tracks):
         not in ("", "UNKNOWN", "CONFLICT")
         and item.get("status") in ("CONFIRMED", "PROVISIONAL")
     ]
-    languages = sorted({
-        item["detected_language"] for item in accepted
-    })
+    languages = sorted({item["detected_language"] for item in accepted})
 
     if len(languages) == 1:
         selected = languages[0]
@@ -4158,7 +4351,7 @@ def detect_channel_language(url, channel_name, request_headers, audio_tracks):
             for item in result["track_results"]
             if item.get("error")
         ]
-        result["error"] = "; ".join(errors[:3])
+        result["error"] = "; ".join(errors)
 
     result["analysis_ms"] = round(
         (time.perf_counter() - started) * 1000,
@@ -4166,17 +4359,20 @@ def detect_channel_language(url, channel_name, request_headers, audio_tracks):
     )
 
     logger.info(
-        "[AUDIO LANGUAGE] %s | language=%s | status=%s | confidence=%.3f | tracks=%s | %.2f ms",
+        "[AUDIO LANGUAGE] record=%s | %s | language=%s | status=%s | confidence=%.3f | tracks=%s/%s | %.2f ms",
+        record_id or "UNASSIGNED",
         channel_name,
         result["detected_language"],
         result["status"],
         result["confidence"],
         len(result["track_results"]),
+        len(audio_tracks),
         result["analysis_ms"],
     )
 
     log_event(
         "AUDIO_LANGUAGE_DETECTION",
+        record_id=record_id,
         channel=channel_name,
         url=safe_url(url),
         detected_language=result["detected_language"],
@@ -4184,10 +4380,12 @@ def detect_channel_language(url, channel_name, request_headers, audio_tracks):
         confidence=result["confidence"],
         status=result["status"],
         metadata_languages=result["metadata_languages"],
+        tracks_discovered=result["tracks_discovered"],
+        tracks_scheduled=result["tracks_scheduled"],
+        tracks_not_scheduled=result["tracks_not_scheduled"],
         track_results=result["track_results"],
         analysis_ms=result["analysis_ms"],
     )
-
     return result
 
 
@@ -4377,7 +4575,10 @@ def export_language_reports(channels):
         file.write("=" * 72 + "\n")
         file.write(f"Generated: {now_string()}\n")
         file.write(f"Records analyzed: {len(rows)}\n")
-        file.write(f"Audio workers: {AUDIO_LANGUAGE_WORKERS}\n")
+        file.write(f"Audio channel workers: {AUDIO_LANGUAGE_WORKERS}\n")
+        file.write(f"Audio track workers: {AUDIO_TRACK_WORKERS}\n")
+        file.write(f"Audio engine workers: {AUDIO_ENGINE_WORKERS}\n")
+        file.write(f"Audio max tracks per record: {AUDIO_MAX_TRACKS_PER_CHANNEL or 'ALL'}\n")
         file.write(f"Whisper model: {WHISPER_MODEL_SIZE}\n")
         file.write(f"SpeechBrain enabled: {ENABLE_SPEECHBRAIN}\n\n")
         file.write("LANGUAGE COUNTS\n")
@@ -4422,7 +4623,7 @@ def export_regional_playlists(channels):
 # STREAM VALIDATION
 # ============================================================
 
-def validate_url(url, channel_name, request_headers=None):
+def validate_url(url, channel_name, request_headers=None, record_id=None):
     url = rewrite_stream_url(url)
     total_started = time.perf_counter()
 
@@ -4460,9 +4661,8 @@ def validate_url(url, channel_name, request_headers=None):
         request_headers,
     )
 
-    # Submit language analysis immediately after audio tracks are known.
-    # It runs in its own 39-worker pool while the remaining diagnostics
-    # (HLS/TSDuck/TShark/PyAV) continue in this stream-check worker.
+    # Submit audio work to its independent pool. The check worker must never
+    # wait for language inference; it continues with HLS/TSDuck/TShark/PyAV.
     language_future = None
     if (
         AUDIO_LANGUAGE_ENABLED
@@ -4475,6 +4675,14 @@ def validate_url(url, channel_name, request_headers=None):
             channel_name,
             request_headers or {},
             probe.get("audio_tracks", []),
+            record_id or "",
+        )
+        logger.info(
+            "[AUDIO LANGUAGE QUEUED] record=%s | channel=%s | audio_tracks=%s | audio_worker_pool=%s",
+            record_id or "UNASSIGNED",
+            channel_name,
+            len(probe.get("audio_tracks", [])),
+            AUDIO_LANGUAGE_WORKERS,
         )
 
     content_type = (
@@ -4640,16 +4848,21 @@ def validate_url(url, channel_name, request_headers=None):
     }
 
     if language_future is not None:
-        try:
-            result["language_detection"] = language_future.result()
-        except Exception as language_error:
-            result["language_detection"] = {
-                "detected_language": "UNKNOWN",
-                "language_name": "UNKNOWN",
-                "confidence": 0.0,
-                "status": "ERROR",
-                "error": redact_text(language_error),
-            }
+        # Keep the Future private to the in-memory coordinator. It is removed
+        # before export/JSON serialization and resolved only after CHECK_POOL
+        # has fully released its workers.
+        result["language_detection"] = {
+            "detected_language": "UNKNOWN",
+            "language_name": "UNKNOWN",
+            "confidence": 0.0,
+            "status": "PENDING",
+            "metadata_languages": sorted({
+                normalize_language_code(item.get("language", ""))
+                for item in audio_tracks
+                if normalize_language_code(item.get("language", ""))
+            }),
+        }
+        result["_language_future"] = language_future
     else:
         result["language_detection"] = {
             "detected_language": "UNKNOWN",
@@ -4755,12 +4968,10 @@ def validate_url(url, channel_name, request_headers=None):
 # ============================================================
 
 def validate_unique_streams(channels):
-    """
-    Historical function name retained for compatibility.
-    DEDUPLICATION IS DISABLED: every occurrence from every playlist
-    is checked independently, including identical URLs and aliases.
-    """
+    """Validate every record independently and coordinate audio asynchronously."""
     global _AUDIO_EXECUTOR
+    global _AUDIO_TRACK_EXECUTOR
+    global _AUDIO_ENGINE_EXECUTOR
 
     logger.info("=" * 75)
     logger.info(
@@ -4770,10 +4981,13 @@ def validate_unique_streams(channels):
         DEDUPLICATE_STREAMS,
     )
     logger.info(
-        "[AUDIO LANGUAGE POOL] workers=%s | extraction_slots=%s | inference_slots=%s",
+        "[AUDIO POOLS] channel_workers=%s | track_workers=%s | engine_workers=%s | extraction_slots=%s | inference_slots=%s | max_tracks_per_record=%s",
         AUDIO_LANGUAGE_WORKERS,
+        AUDIO_TRACK_WORKERS,
+        AUDIO_ENGINE_WORKERS,
         AUDIO_EXTRACTION_SLOTS,
         AUDIO_INFERENCE_SLOTS,
+        AUDIO_MAX_TRACKS_PER_CHANNEL or "ALL",
     )
     logger.info("=" * 75)
 
@@ -4781,10 +4995,24 @@ def validate_unique_streams(channels):
     completed = 0
     total = len(channels)
     url_occurrences = defaultdict(int)
+    record_context = []
 
-    for channel in channels:
+    for index, channel in enumerate(channels, 1):
         channel["url"] = rewrite_stream_url(channel.get("url", ""))
-        url_occurrences[channel["url"]] += 1
+        url = channel["url"]
+        url_occurrences[url] += 1
+        record_id = (
+            f"{index:08d}:"
+            + hashlib.sha256(
+                (
+                    str(channel.get("playlist", "")) + "|"
+                    + str(channel.get("line", "")) + "|"
+                    + str(channel.get("name", "")) + "|"
+                    + str(url)
+                ).encode("utf-8", errors="replace")
+            ).hexdigest()[:16]
+        )
+        record_context.append((index, channel, record_id))
 
     duplicate_occurrences = sum(
         count - 1 for count in url_occurrences.values() if count > 1
@@ -4796,97 +5024,197 @@ def validate_unique_streams(channels):
         len(url_occurrences),
     )
 
+    audio_pending = []
+    audio_completed = 0
+    audio_failed = 0
+    channels_by_record_id = {}
+
+    # Pool nesting is intentional: channel tasks submit track tasks, and track
+    # tasks submit engine tasks. Each level has its own executor; no worker waits
+    # on a Future from its own pool. CHECK_POOL never joins audio Futures.
     with ThreadPoolExecutor(
-        max_workers=AUDIO_LANGUAGE_WORKERS,
-        thread_name_prefix="AUDIO_LANGUAGE",
-    ) as audio_executor:
-        _AUDIO_EXECUTOR = audio_executor
+        max_workers=AUDIO_ENGINE_WORKERS,
+        thread_name_prefix="AUDIO_ENGINE",
+    ) as engine_executor:
+        _AUDIO_ENGINE_EXECUTOR = engine_executor
 
         with ThreadPoolExecutor(
-            max_workers=CHECK_WORKERS,
-            thread_name_prefix="STREAM_CHECK",
-        ) as executor:
-            futures = {
-                executor.submit(
-                    validate_url,
-                    channel["url"],
-                    channel["name"],
-                    channel.get("request_headers", {}),
-                ): (index, channel)
-                for index, channel in enumerate(channels, 1)
-            }
+            max_workers=AUDIO_TRACK_WORKERS,
+            thread_name_prefix="AUDIO_TRACK",
+        ) as track_executor:
+            _AUDIO_TRACK_EXECUTOR = track_executor
 
-            for future in as_completed(futures):
-                index, channel = futures[future]
-                completed += 1
-                url = channel["url"]
+            with ThreadPoolExecutor(
+                max_workers=AUDIO_LANGUAGE_WORKERS,
+                thread_name_prefix="AUDIO_LANGUAGE",
+            ) as audio_executor:
+                _AUDIO_EXECUTOR = audio_executor
 
-                try:
-                    result = future.result()
-                except Exception as error:
-                    logger.exception(
-                        "[CHECK WORKER ERROR] record=%s | %s",
-                        index,
-                        safe_url(url),
-                    )
-                    result = {
-                        "url": url,
-                        "verified": False,
-                        "status": "FAILED",
-                        "error": redact_text(error),
-                        "live_latency": "NOT MEASURED",
-                        "video_tracks": [],
-                        "audio_tracks": [],
-                        "subtitle_tracks": [],
-                        "video_track_count": 0,
-                        "audio_track_count": 0,
-                        "subtitle_track_count": 0,
-                        "language_detection": {
+                with ThreadPoolExecutor(
+                    max_workers=CHECK_WORKERS,
+                    thread_name_prefix="STREAM_CHECK",
+                ) as executor:
+                    futures = {
+                        executor.submit(
+                            validate_url,
+                            channel["url"],
+                            channel["name"],
+                            channel.get("request_headers", {}),
+                            record_id,
+                        ): (index, channel, record_id)
+                        for index, channel, record_id in record_context
+                    }
+
+                    for future in as_completed(futures):
+                        index, channel, record_id = futures[future]
+                        completed += 1
+                        url = channel["url"]
+
+                        try:
+                            result = future.result()
+                        except Exception as error:
+                            logger.exception(
+                                "[CHECK WORKER ERROR] record=%s | %s",
+                                record_id,
+                                safe_url(url),
+                            )
+                            result = {
+                                "url": url,
+                                "verified": False,
+                                "status": "FAILED",
+                                "error": redact_text(error),
+                                "live_latency": "NOT MEASURED",
+                                "video_tracks": [],
+                                "audio_tracks": [],
+                                "subtitle_tracks": [],
+                                "video_track_count": 0,
+                                "audio_track_count": 0,
+                                "subtitle_track_count": 0,
+                                "language_detection": {
+                                    "detected_language": "UNKNOWN",
+                                    "language_name": "UNKNOWN",
+                                    "confidence": 0.0,
+                                    "status": "ERROR",
+                                    "error": redact_text(error),
+                                },
+                            }
+
+                        result["record_id"] = record_id
+                        result["record_number"] = index
+                        result["url"] = url
+                        result["duplicate_url_occurrences"] = (
+                            url_occurrences[url] - 1
+                        )
+
+                        language_future = result.pop("_language_future", None)
+                        if language_future is not None:
+                            audio_pending.append((
+                                language_future,
+                                record_id,
+                                channel,
+                                result,
+                            ))
+
+                        channel["validation"] = result
+                        channel["record_id"] = record_id
+                        channels_by_record_id[record_id] = channel
+                        results[record_id] = result
+
+                        logger.info(
+                            "[CHECK PROGRESS] %s/%s | record=%s | %s | %s | language=%s",
+                            completed,
+                            total,
+                            record_id,
+                            result.get("status", "UNKNOWN"),
+                            safe_url(url),
+                            (result.get("language_detection", {}) or {}).get(
+                                "detected_language", "UNKNOWN"
+                            ),
+                        )
+
+                # CHECK_POOL is now fully drained. Only the coordinator thread
+                # waits for audio completion; all 45 check workers are reusable.
+                logger.info(
+                    "[AUDIO COORDINATOR] CHECK_POOL released | pending_records=%s | check_workers=%s",
+                    len(audio_pending),
+                    CHECK_WORKERS,
+                )
+
+                audio_future_map = {
+                    item[0]: item[1:]
+                    for item in audio_pending
+                }
+                for audio_future in as_completed(audio_future_map):
+                    record_id, channel, result = audio_future_map[audio_future]
+                    try:
+                        language_result = audio_future.result()
+                        audio_completed += 1
+                    except Exception as error:
+                        audio_failed += 1
+                        logger.exception(
+                            "[AUDIO COORDINATOR ERROR] record=%s | channel=%s",
+                            record_id,
+                            channel.get("name", ""),
+                        )
+                        language_result = {
+                            "record_id": record_id,
                             "detected_language": "UNKNOWN",
                             "language_name": "UNKNOWN",
                             "confidence": 0.0,
                             "status": "ERROR",
+                            "metadata_languages": [],
+                            "track_results": [],
                             "error": redact_text(error),
-                        },
-                    }
+                        }
 
-                record_id = (
-                    f"{index:08d}:"
-                    + hashlib.sha256(
-                        (
-                            str(channel.get("playlist", "")) + "|"
-                            + str(channel.get("line", "")) + "|"
-                            + str(channel.get("name", "")) + "|"
-                            + str(url)
-                        ).encode("utf-8", errors="replace")
-                    ).hexdigest()[:16]
-                )
+                    hls = result.get("hls", {}) or {}
+                    current_metadata = language_result.get(
+                        "metadata_languages", []
+                    ) or []
+                    hls_languages = hls.get("declared_languages", []) or []
+                    language_result["metadata_languages"] = sorted({
+                        normalize_language_code(value)
+                        for value in current_metadata + hls_languages
+                        if normalize_language_code(value)
+                    })
+                    language_result["hls_audio_renditions"] = (
+                        hls.get("audio_renditions", []) or []
+                    )
+                    result["language_detection"] = language_result
+                    channel["validation"] = result
+                    result["region_class"] = classify_channel_region(channel)
 
-                result["record_id"] = record_id
-                result["record_number"] = index
-                result["url"] = url
-                result["duplicate_url_occurrences"] = (
-                    url_occurrences[url] - 1
-                )
+                    logger.info(
+                        "[AUDIO COORDINATOR PROGRESS] %s/%s | record=%s | channel=%s | language=%s | status=%s | tracks=%s",
+                        audio_completed + audio_failed,
+                        len(audio_pending),
+                        record_id,
+                        channel.get("name", ""),
+                        language_result.get("detected_language", "UNKNOWN"),
+                        language_result.get("status", "UNKNOWN"),
+                        len(language_result.get("track_results", [])),
+                    )
 
-                channel["validation"] = result
-                channel["record_id"] = record_id
-                result["region_class"] = classify_channel_region(channel)
-                results[record_id] = result
+                    log_event(
+                        "AUDIO_RECORD_RESULT_ATTACHED",
+                        record_id=record_id,
+                        channel=channel.get("name", ""),
+                        detected_language=language_result.get("detected_language", "UNKNOWN"),
+                        status=language_result.get("status", "UNKNOWN"),
+                        track_count=len(language_result.get("track_results", [])),
+                        error=language_result.get("error", ""),
+                    )
 
-                logger.info(
-                    "[CHECK PROGRESS] %s/%s | record=%s | %s | %s | language=%s",
-                    completed,
-                    total,
-                    index,
-                    result.get("status", "UNKNOWN"),
-                    safe_url(url),
-                    (result.get("language_detection", {}) or {}).get(
-                        "detected_language", "UNKNOWN"
-                    ),
-                )
+            _AUDIO_EXECUTOR = None
+        _AUDIO_TRACK_EXECUTOR = None
+    _AUDIO_ENGINE_EXECUTOR = None
 
-        _AUDIO_EXECUTOR = None
+    # Records without a scheduled audio job still receive region classification
+    # after all validation data is final. No record is dropped or merged.
+    for record_id, result in results.items():
+        channel = channels_by_record_id.get(record_id)
+        if channel is not None:
+            result["region_class"] = classify_channel_region(channel)
 
     verified = sum(
         1 for item in results.values()
@@ -4894,11 +5222,18 @@ def validate_unique_streams(channels):
     )
 
     logger.info(
-        "[CHECK COMPLETE] checked_records=%s verified=%s failed=%s duplicate_URL_occurrences_retained=%s",
+        "[AUDIO COORDINATOR COMPLETE] scheduled_records=%s | completed=%s | failed=%s",
+        len(audio_pending),
+        audio_completed,
+        audio_failed,
+    )
+    logger.info(
+        "[CHECK COMPLETE] checked_records=%s verified=%s failed=%s duplicate_URL_occurrences_retained=%s audio_records=%s",
         len(results),
         verified,
         len(results) - verified,
         duplicate_occurrences,
+        len(audio_pending),
     )
 
     return results
@@ -5632,7 +5967,16 @@ def export_check_report(
             f"Deduplication enabled: {DEDUPLICATE_STREAMS}\n"
         )
         file.write(
-            f"Audio language workers: {AUDIO_LANGUAGE_WORKERS}\n"
+            f"Audio language channel workers: {AUDIO_LANGUAGE_WORKERS}\n"
+        )
+        file.write(
+            f"Audio track workers: {AUDIO_TRACK_WORKERS}\n"
+        )
+        file.write(
+            f"Audio engine workers: {AUDIO_ENGINE_WORKERS}\n"
+        )
+        file.write(
+            f"Audio max tracks per record: {AUDIO_MAX_TRACKS_PER_CHANNEL or 'ALL'}\n"
         )
         file.write(
             f"Audio extraction slots: {AUDIO_EXTRACTION_SLOTS}\n"
@@ -5717,7 +6061,16 @@ def export_check_report(
 
         file.write("--- AUDIO LANGUAGE DETECTION ---\n")
         file.write(
-            f"Audio workers: {AUDIO_LANGUAGE_WORKERS}\n"
+            f"Audio channel workers: {AUDIO_LANGUAGE_WORKERS}\n"
+        )
+        file.write(
+            f"Audio track workers: {AUDIO_TRACK_WORKERS}\n"
+        )
+        file.write(
+            f"Audio engine workers: {AUDIO_ENGINE_WORKERS}\n"
+        )
+        file.write(
+            f"Audio max tracks per record: {AUDIO_MAX_TRACKS_PER_CHANNEL or 'ALL'}\n"
         )
         file.write(
             f"Whisper model: {WHISPER_MODEL_SIZE}\n"
@@ -5982,8 +6335,20 @@ def print_final_statistics(
         duplicate_url_occurrences,
     )
     logger.info(
-        "Audio language workers: %s",
+        "Audio language channel workers: %s",
         AUDIO_LANGUAGE_WORKERS,
+    )
+    logger.info(
+        "Audio track workers: %s",
+        AUDIO_TRACK_WORKERS,
+    )
+    logger.info(
+        "Audio engine workers: %s",
+        AUDIO_ENGINE_WORKERS,
+    )
+    logger.info(
+        "Audio max tracks per record: %s",
+        AUDIO_MAX_TRACKS_PER_CHANNEL or "ALL",
     )
     logger.info(
         "Forced Cinerama hostname rewrites: %s",
@@ -6012,6 +6377,9 @@ def print_final_statistics(
         distinct_url_values=len(url_counts),
         duplicate_url_occurrences_retained=duplicate_url_occurrences,
         audio_language_workers=AUDIO_LANGUAGE_WORKERS,
+        audio_track_workers=AUDIO_TRACK_WORKERS,
+        audio_engine_workers=AUDIO_ENGINE_WORKERS,
+        audio_max_tracks_per_record=AUDIO_MAX_TRACKS_PER_CHANNEL or "ALL",
         verified=verified,
         failed=failed,
     )
@@ -6126,8 +6494,20 @@ def main():
         CHECK_WORKERS,
     )
     logger.info(
-        "AUDIO LANGUAGE WORKERS: %s",
+        "AUDIO LANGUAGE CHANNEL WORKERS: %s",
         AUDIO_LANGUAGE_WORKERS,
+    )
+    logger.info(
+        "AUDIO TRACK WORKERS: %s",
+        AUDIO_TRACK_WORKERS,
+    )
+    logger.info(
+        "AUDIO ENGINE WORKERS: %s",
+        AUDIO_ENGINE_WORKERS,
+    )
+    logger.info(
+        "AUDIO MAX TRACKS PER RECORD: %s",
+        AUDIO_MAX_TRACKS_PER_CHANNEL or "ALL",
     )
     logger.info(
         "DEDUPLICATION: DISABLED",
@@ -6165,6 +6545,9 @@ def main():
         parser_workers=PARSER_WORKERS,
         check_workers=CHECK_WORKERS,
         audio_language_workers=AUDIO_LANGUAGE_WORKERS,
+        audio_track_workers=AUDIO_TRACK_WORKERS,
+        audio_engine_workers=AUDIO_ENGINE_WORKERS,
+        audio_max_tracks_per_record=AUDIO_MAX_TRACKS_PER_CHANNEL or "ALL",
         deduplication=DEDUPLICATE_STREAMS,
         analyzers_enabled={
             "ffmpeg_ffprobe": True,
