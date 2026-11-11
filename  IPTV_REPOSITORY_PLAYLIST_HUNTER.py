@@ -22,18 +22,18 @@ INDEPENDENT DIAGNOSTICS:
     HTTP HEAD / GET
     HLS manifest and segment analysis
     TSDuck / tsanalyze
-    TShark (local capture only, opt-in)
+    TShark (bounded per-stream local packet capture)
     PyAV
     faster-whisper language identification
     SpeechBrain VoxLingua107 (optional independent confirmation)
 
 INSTALLATION:
-    requests
-    Optional: ffmpeg/ffprobe, TSDuck, TShark, PyAV
+    requests, faster-whisper, SpeechBrain, PyAV (auto-installed when missing)
+    FFmpeg/FFprobe, TSDuck, TShark (auto-installed when missing)
 
 IMPORTANT:
     HTTP response time is not live broadcast latency.
-    TShark cannot measure packet loss on an arbitrary remote URL.
+    TShark analyzes locally captured TCP/UDP packets; it does not infer media loss from HTTP timings.
     TSDuck and PyAV failures do not invalidate FFprobe results.
 """
 
@@ -109,6 +109,13 @@ AUDIO_MAX_TRACKS_PER_CHANNEL = max(1, int(os.getenv("IPTV_AUDIO_MAX_TRACKS", "4"
 AUDIO_LANGUAGE_ENABLED = os.getenv("IPTV_AUDIO_LANGUAGE_ENABLED", "1").lower() not in ("0", "false", "no")
 WHISPER_MODEL_SIZE = os.getenv("IPTV_WHISPER_MODEL", "small").strip() or "small"
 ENABLE_SPEECHBRAIN = os.getenv("IPTV_ENABLE_SPEECHBRAIN", "1").lower() not in ("0", "false", "no")
+# All available analyzers are enabled by default. Environment overrides are
+# retained only as emergency switches for constrained runners.
+ENABLE_PYAV = os.getenv("IPTV_ENABLE_PYAV", "1").lower() not in ("0", "false", "no")
+ENABLE_TSDUCK = os.getenv("IPTV_ENABLE_TSDUCK", "1").lower() not in ("0", "false", "no")
+ENABLE_TSHARK = os.getenv("IPTV_ENABLE_TSHARK", "1").lower() not in ("0", "false", "no")
+ENABLE_WHISPER = os.getenv("IPTV_ENABLE_WHISPER", "1").lower() not in ("0", "false", "no")
+AUTO_INSTALL_PYTHON_ANALYZERS = os.getenv("IPTV_AUTO_INSTALL_PYTHON", "1").lower() not in ("0", "false", "no")
 SPEECHBRAIN_THRESHOLD = float(os.getenv("IPTV_SPEECHBRAIN_THRESHOLD", "0.55"))
 WHISPER_THRESHOLD = float(os.getenv("IPTV_WHISPER_THRESHOLD", "0.60"))
 
@@ -157,19 +164,18 @@ AUTO_INSTALL_TOOLS = (
     not in ("0", "false", "no")
 )
 
-# TShark capture is disabled by default.
-# It requires local visibility of the traffic and often privileges.
+# TShark capture is enabled by default. It captures TCP and UDP traffic
+# for every checked stream host, subject to a bounded capture semaphore.
+# Set IPTV_TSHARK_CAPTURE=0 only when the runner cannot capture packets.
 TSHARK_CAPTURE_ENABLED = (
-    os.getenv("IPTV_TSHARK_CAPTURE", "0").lower()
-    in ("1", "true", "yes")
+    os.getenv("IPTV_TSHARK_CAPTURE", "1").lower()
+    not in ("0", "false", "no")
 )
-
-TSHARK_INTERFACE = os.getenv(
-    "IPTV_TSHARK_INTERFACE",
-    "any",
-)
-
-TSHARK_CAPTURE_SECONDS = 8
+TSHARK_INTERFACE = os.getenv("IPTV_TSHARK_INTERFACE", "any")
+TSHARK_CAPTURE_SECONDS = max(2, int(os.getenv("IPTV_TSHARK_CAPTURE_SECONDS", "8")))
+TSHARK_CAPTURE_WORKERS = max(1, int(os.getenv("IPTV_TSHARK_CAPTURE_WORKERS", "6")))
+TSHARK_CAPTURE_MAX_KB = max(256, int(os.getenv("IPTV_TSHARK_CAPTURE_MAX_KB", "4096")))
+TSHARK_KEEP_PCAP = os.getenv("IPTV_TSHARK_KEEP_PCAP", "0").lower() in ("1", "true", "yes")
 
 GITHUB_TOKEN = os.getenv(
     "GITHUB_TOKEN",
@@ -225,12 +231,17 @@ TOOLS_DIR = os.path.join(
     "tools",
 )
 
+TSHARK_DIR = os.path.join(OUTPUT_DIR, "tshark")
+TSHARK_PCAP_DIR = os.path.join(TSHARK_DIR, "pcap")
+
 for directory in (
     OUTPUT_DIR,
     PLAYLIST_DIR,
     DATABASE_DIR,
     LOG_DIR,
     TOOLS_DIR,
+    TSHARK_DIR,
+    TSHARK_PCAP_DIR,
 ):
     os.makedirs(directory, exist_ok=True)
 
@@ -279,6 +290,11 @@ logger = logging.getLogger("IPTV_HUNTER")
 audit_lock = threading.Lock()
 tool_lock = threading.Lock()
 _thread_local = threading.local()
+_TSHARK_SEMAPHORE = threading.BoundedSemaphore(max(1, TSHARK_CAPTURE_WORKERS))
+_TSHARK_RECORDS = []
+_TSHARK_RECORDS_LOCK = threading.Lock()
+_TSHARK_SEQUENCE = 0
+_TSHARK_SEQUENCE_LOCK = threading.Lock()
 
 
 def log_event(event, **data):
@@ -705,6 +721,8 @@ def run_install_command(command, label):
     )
 
     try:
+        install_env = os.environ.copy()
+        install_env.setdefault("DEBIAN_FRONTEND", "noninteractive")
         process = subprocess.run(
             command,
             capture_output=True,
@@ -712,6 +730,7 @@ def run_install_command(command, label):
             timeout=600,
             encoding="utf-8",
             errors="replace",
+            env=install_env,
         )
 
         logger.info(
@@ -981,6 +1000,35 @@ def download_ffprobe_bundle():
         return False
 
 
+def install_python_analyzers():
+    """Install all required Python-side analyzers when they are missing."""
+    if not AUTO_INSTALL_PYTHON_ANALYZERS:
+        logger.warning("[PYTHON ANALYZERS] Automatic installation disabled by IPTV_AUTO_INSTALL_PYTHON=0")
+        return
+
+    required = [
+        ("av", "av>=12.0.0", ENABLE_PYAV),
+        ("faster_whisper", "faster-whisper>=1.1.0", ENABLE_WHISPER),
+        ("speechbrain", "speechbrain>=1.0.0", ENABLE_SPEECHBRAIN),
+    ]
+    missing = [package for module, package, enabled in required
+               if enabled and importlib.util.find_spec(module) is None]
+    if not missing:
+        logger.info("[PYTHON ANALYZERS] PyAV, faster-whisper and SpeechBrain dependencies are available.")
+        return
+
+    logger.info("[PYTHON ANALYZERS] Installing missing packages: %s", ", ".join(missing))
+    command = [sys.executable, "-m", "pip", "install", "--disable-pip-version-check", *missing]
+    ok = run_install_command(command, "Python media/audio analyzers")
+    importlib.invalidate_caches()
+    still_missing = [module for module, _package, enabled in required
+                     if enabled and importlib.util.find_spec(module) is None]
+    if still_missing:
+        logger.error("[PYTHON ANALYZERS] Still unavailable after installation: %s", ", ".join(still_missing))
+    else:
+        logger.info("[PYTHON ANALYZERS] All requested Python analyzers are installed.")
+
+
 def install_optional_tools():
     if not AUTO_INSTALL_TOOLS:
         logger.info(
@@ -1053,21 +1101,24 @@ def install_optional_tools():
                         packages.append("ffmpeg")
 
                     if "tsanalyze" in missing:
-                        packages.append("tstools")
+                        packages.append("tsduck")
 
                     if "tshark" in missing:
                         packages.append("tshark")
 
                     if packages:
-                        run_install_command(
-                            prefix + [
-                                apt,
-                                "install",
-                                "-y",
-                                *packages,
-                            ],
-                            "apt packages",
-                        )
+                        # Install packages independently: an unavailable TSDuck
+                        # package must not prevent FFmpeg or TShark installation.
+                        if "tshark" in packages:
+                            run_install_command(
+                                prefix + [apt, "install", "-y", "libcap2-bin"],
+                                "install packet-capture capabilities helper",
+                            )
+                        for package in packages:
+                            run_install_command(
+                                prefix + [apt, "install", "-y", package],
+                                f"apt package {package}",
+                            )
 
         elif system == "darwin":
             brew = shutil.which("brew")
@@ -1079,7 +1130,7 @@ def install_optional_tools():
                     packages.append("ffmpeg")
 
                 if "tsanalyze" in missing:
-                    packages.append("tstools")
+                    packages.append("tsduck")
 
                 if "tshark" in missing:
                     packages.append("wireshark")
@@ -1133,6 +1184,31 @@ def install_optional_tools():
         )
 
 
+def configure_tshark_capture_permissions():
+    """Best-effort configure dumpcap capabilities for non-root TShark capture."""
+    if not (ENABLE_TSHARK and TSHARK_CAPTURE_ENABLED):
+        return False
+    dumpcap = shutil.which("dumpcap")
+    setcap = shutil.which("setcap")
+    if not dumpcap or not setcap:
+        logger.warning("[TSHARK PERMISSIONS] dumpcap/setcap unavailable; capture may require elevated privileges.")
+        return False
+    command_prefix = []
+    if hasattr(os, "geteuid") and os.geteuid() != 0:
+        sudo = shutil.which("sudo")
+        if not sudo:
+            logger.warning("[TSHARK PERMISSIONS] sudo unavailable; cannot grant dumpcap capabilities.")
+            return False
+        command_prefix = [sudo]
+    ok = run_install_command(
+        command_prefix + [setcap, "cap_net_raw,cap_net_admin+eip", dumpcap],
+        "configure TShark dumpcap capabilities",
+    )
+    if ok:
+        logger.info("[TSHARK PERMISSIONS] dumpcap packet capture capabilities configured.")
+    return ok
+
+
 def tool_inventory():
     inventory = {}
 
@@ -1153,6 +1229,14 @@ def tool_inventory():
     inventory["speechbrain"] = bool(
         importlib.util.find_spec("speechbrain")
     )
+    inventory["enabled"] = {
+        "tshark": ENABLE_TSHARK and TSHARK_CAPTURE_ENABLED,
+        "tsduck": ENABLE_TSDUCK,
+        "pyav": ENABLE_PYAV,
+        "whisper": ENABLE_WHISPER,
+        "speechbrain": ENABLE_SPEECHBRAIN,
+        "audio_language": AUDIO_LANGUAGE_ENABLED,
+    }
 
     for name, path in inventory.items():
         logger.info(
@@ -1298,6 +1382,9 @@ def discover_playlists(tree):
 
 
 def save_playlist_index(playlists):
+    if not playlists:
+        logger.info("[OUTPUT] Playlist index skipped: no playlists discovered")
+        return
     filename = os.path.join(
         OUTPUT_DIR,
         "All_Playlists.txt",
@@ -2834,7 +2921,7 @@ def run_tsanalyze(url, channel_name, ffprobe_result):
     A remote URL is not assumed to be supported by every build.
     """
 
-    tool = find_tool("tsanalyze")
+    tool = find_tool("tsanalyze") if ENABLE_TSDUCK else None
 
     result = {
         "available": bool(tool),
@@ -3017,14 +3104,16 @@ def run_tsanalyze(url, channel_name, ffprobe_result):
 # ============================================================
 
 def run_tshark_capture(url, channel_name):
+    """Capture and analyze real local packets for this stream host.
+
+    A bounded semaphore prevents 45 validation workers from launching 45
+    simultaneous packet captures. Both TCP and UDP are captured. The pcap is
+    retained only when requested; otherwise it is parsed and removed.
     """
-    Optional local capture.
-    It can only inspect traffic visible on the selected interface.
-    It does not claim packet loss/jitter for an arbitrary URL.
-    """
+    global _TSHARK_SEQUENCE
 
     tool = find_tool("tshark")
-
+    recorded = False
     result = {
         "available": bool(tool),
         "attempted": False,
@@ -3032,152 +3121,289 @@ def run_tshark_capture(url, channel_name):
         "success": False,
         "interface": TSHARK_INTERFACE,
         "capture_seconds": TSHARK_CAPTURE_SECONDS,
+        "capture_workers": TSHARK_CAPTURE_WORKERS,
         "packet_count": 0,
-        "rtp_streams": "",
+        "tcp_conversations": 0,
+        "udp_conversations": 0,
+        "tcp_retransmissions": 0,
+        "tcp_duplicate_acks": 0,
+        "tcp_resets": 0,
+        "tcp_zero_windows": 0,
+        "pcap_file": "",
+        "pcap_bytes": 0,
+        "statistics": "",
         "jitter": "NOT_MEASURED",
         "packet_loss": "NOT_MEASURED",
-        "output": "",
         "error": "",
     }
 
-    if not TSHARK_CAPTURE_ENABLED:
-        result["error"] = "Capture disabled by configuration."
-        return result
+    def store_record():
+        nonlocal recorded
+        if recorded or not TSHARK_CAPTURE_ENABLED:
+            return
+        with _TSHARK_RECORDS_LOCK:
+            _TSHARK_RECORDS.append({
+                "timestamp": now_string(),
+                "channel": channel_name,
+                "url": safe_url(url),
+                **{key: value for key, value in result.items() if key != "statistics"},
+                "statistics": result.get("statistics", ""),
+            })
+        recorded = True
 
+    if not TSHARK_CAPTURE_ENABLED:
+        result["error"] = "Capture disabled by IPTV_TSHARK_CAPTURE=0"
+        return result
     if not tool:
-        result["error"] = "tshark not installed"
+        result["error"] = "tshark executable not found"
+        store_record()
         return result
 
     parsed = urlparse(url)
-
     if not parsed.hostname:
-        result["error"] = "Cannot resolve stream host."
+        result["error"] = "Cannot resolve stream hostname"
+        store_record()
         return result
 
+    temporary_pcap = None
+    retained_pcap = None
     try:
-        resolved = socket.gethostbyname(
-            parsed.hostname
-        )
+        addresses = socket.getaddrinfo(parsed.hostname, parsed.port or (443 if parsed.scheme == "https" else 80), type=socket.SOCK_STREAM)
+        resolved = []
+        for item in addresses:
+            address = item[4][0]
+            if address not in resolved:
+                resolved.append(address)
+        if not resolved:
+            raise RuntimeError("DNS returned no usable addresses")
 
-        capture_filter = (
-            f"host {resolved} and udp"
-        )
-
-        command = [
-            tool,
-            "-i",
-            TSHARK_INTERFACE,
-            "-a",
-            f"duration:{TSHARK_CAPTURE_SECONDS}",
-            "-f",
-            capture_filter,
-            "-q",
-            "-z",
-            "io,stat,1",
-            "-z",
-            "rtp,streams",
-        ]
+        # Capture filter accepts both TCP and UDP. Use the first resolved
+        # address to keep the BPF filter precise and avoid unrelated traffic.
+        capture_filter = f"host {resolved[0]}"
+        with _TSHARK_SEQUENCE_LOCK:
+            _TSHARK_SEQUENCE += 1
+            sequence = _TSHARK_SEQUENCE
+        identity = hashlib.sha256(
+            (str(sequence) + "|" + channel_name + "|" + safe_url(url)).encode("utf-8", errors="replace")
+        ).hexdigest()[:12]
+        safe_channel = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(channel_name)).strip("._-")[:48] or "channel"
+        temporary_pcap = os.path.join(tempfile.gettempdir(), f"iptv_tshark_{sequence:07d}_{identity}.pcapng")
 
         result["attempted"] = True
-
+        result["resolved_ip"] = resolved[0]
         logger.info(
-            "[TSHARK START] %s | interface=%s | host=%s",
-            channel_name,
-            TSHARK_INTERFACE,
-            resolved,
+            "[TSHARK START] #%s | %s | interface=%s | host=%s | filter=%s",
+            sequence, channel_name, TSHARK_INTERFACE, resolved[0], capture_filter,
         )
 
-        process = subprocess.run(
-            command,
-            capture_output=True,
-            text=True,
-            timeout=TSHARK_CAPTURE_SECONDS + 20,
-            encoding="utf-8",
-            errors="replace",
-        )
+        capture_command = [
+            tool, "-i", TSHARK_INTERFACE,
+            "-f", capture_filter,
+            "-s", "256",
+            "-a", f"duration:{TSHARK_CAPTURE_SECONDS}",
+            "-a", f"filesize:{TSHARK_CAPTURE_MAX_KB}",
+            "-w", temporary_pcap,
+        ]
 
-        output_text = (
-            process.stdout
-            + "\n"
-            + process.stderr
-        ).strip()
-
-        result["output"] = output_text[-12000:]
-
-        result["success"] = (
-            process.returncode == 0
-        )
-
-        # This is a textual packet count estimate only.
-        # It is not an RTP loss calculation.
-        packet_match = re.search(
-            r"(\d+)\s+packets?",
-            output_text,
-            re.IGNORECASE,
-        )
-
-        if packet_match:
-            result["packet_count"] = safe_int(
-                packet_match.group(1)
+        with _TSHARK_SEMAPHORE:
+            process = subprocess.run(
+                capture_command,
+                capture_output=True,
+                text=True,
+                timeout=TSHARK_CAPTURE_SECONDS + 25,
+                encoding="utf-8",
+                errors="replace",
             )
+            first_error = (process.stderr or "").lower()
+            if (
+                process.returncode != 0
+                and os.name == "posix"
+                and shutil.which("sudo")
+                and any(token in first_error for token in ("permission denied", "operation not permitted", "you don't have permission"))
+            ):
+                logger.warning("[TSHARK] Capture permissions denied; retrying with sudo -n")
+                process = subprocess.run(
+                    ["sudo", "-n"] + capture_command,
+                    capture_output=True,
+                    text=True,
+                    timeout=TSHARK_CAPTURE_SECONDS + 25,
+                    encoding="utf-8",
+                    errors="replace",
+                )
 
-        if "RTP Streams" in output_text or "SSRC" in output_text:
-            result["rtp_streams"] = "RTP DETECTED"
-        else:
-            result["rtp_streams"] = "RTP NOT CONFIRMED"
+        capture_stderr = (process.stderr or "").strip()
+        if process.returncode != 0:
+            result["error"] = redact_text(capture_stderr[-3000:] or f"tshark exit code {process.returncode}")
+            if not os.path.exists(temporary_pcap):
+                temporary_pcap = None
+                return result
 
-        result["jitter"] = (
-            "NOT_MEASURED_UNLESS_RTP_STATS_AVAILABLE"
+        if not temporary_pcap or not os.path.isfile(temporary_pcap):
+            result["error"] = result["error"] or "TShark did not create a capture file"
+            return result
+
+        result["pcap_bytes"] = os.path.getsize(temporary_pcap)
+        if result["pcap_bytes"] <= 24:
+            result["error"] = result["error"] or "Capture file contains no packet data"
+            return result
+
+        # Count frames directly from the capture; this is not inferred from
+        # text output or HTTP response timing.
+        count_command = [tool, "-r", temporary_pcap, "-T", "fields", "-e", "frame.number"]
+        count_process = subprocess.run(
+            count_command, capture_output=True, text=True,
+            timeout=30, encoding="utf-8", errors="replace",
         )
+        packet_count = sum(1 for line in (count_process.stdout or "").splitlines() if line.strip())
+        result["packet_count"] = packet_count
+        if packet_count <= 0:
+            result["error"] = "No packets matched the stream host capture filter"
+            return result
 
-        result["packet_loss"] = (
-            "NOT_MEASURED_UNLESS_RTP_STATS_AVAILABLE"
+        stats_command = [
+            tool, "-r", temporary_pcap, "-q",
+            "-z", "io,stat,1",
+            "-z", "conv,tcp",
+            "-z", "conv,udp",
+            "-z", "expert,tcp",
+        ]
+        stats_process = subprocess.run(
+            stats_command, capture_output=True, text=True,
+            timeout=45, encoding="utf-8", errors="replace",
         )
+        stats_text = ((stats_process.stdout or "") + "\n" + (stats_process.stderr or "")).strip()
+        result["statistics"] = stats_text[-16000:]
+        if stats_process.returncode != 0:
+            result["error"] = redact_text((stats_process.stderr or "TShark statistics command failed")[-3000:])
+
+        # Parse actual Wireshark expert labels and conversation sections.
+        for key, pattern in {
+            "tcp_retransmissions": r"TCP Retransmission",
+            "tcp_duplicate_acks": r"TCP Dup ACK",
+            "tcp_resets": r"TCP RST",
+            "tcp_zero_windows": r"TCP ZeroWindow",
+        }.items():
+            result[key] = len(re.findall(pattern, stats_text, re.IGNORECASE))
+        tcp_section = re.split(r"UDP Conversations", stats_text, maxsplit=1, flags=re.IGNORECASE)[0]
+        udp_section = stats_text.split("UDP Conversations", 1)[-1] if "UDP Conversations" in stats_text else ""
+        result["tcp_conversations"] = len(re.findall(r"<->", tcp_section))
+        result["udp_conversations"] = len(re.findall(r"<->", udp_section))
+        result["success"] = bool(packet_count > 0 and stats_process.returncode == 0)
+
+        if TSHARK_KEEP_PCAP:
+            retained_pcap = os.path.join(TSHARK_PCAP_DIR, f"{sequence:07d}_{safe_channel}_{identity}.pcapng")
+            shutil.move(temporary_pcap, retained_pcap)
+            temporary_pcap = None
+            result["pcap_file"] = os.path.relpath(retained_pcap, OUTPUT_DIR)
+            result["pcap_bytes"] = os.path.getsize(retained_pcap)
 
         logger.info(
-            "[TSHARK RESULT] %s | success=%s | RTP=%s | packets=%s",
-            channel_name,
-            result["success"],
-            result["rtp_streams"],
-            result["packet_count"],
+            "[TSHARK RESULT] #%s | success=%s | packets=%s | tcp_retrans=%s | dup_ack=%s | tcp_rst=%s | pcap=%s",
+            sequence, result["success"], result["packet_count"],
+            result["tcp_retransmissions"], result["tcp_duplicate_acks"],
+            result["tcp_resets"], result["pcap_file"] or "temporary capture removed",
         )
-
         log_event(
             "TSHARK_CAPTURE",
             channel=channel_name,
             url=safe_url(url),
-            **result,
+            **{key: value for key, value in result.items() if key != "statistics"},
         )
-
         return result
 
     except subprocess.TimeoutExpired:
-        result["error"] = "TShark capture timeout"
-
-        logger.warning(
-            "[TSHARK TIMEOUT] %s",
-            channel_name,
-        )
-
+        result["error"] = "TShark capture or analysis timed out"
+        logger.warning("[TSHARK TIMEOUT] %s", channel_name)
         return result
-
     except Exception as error:
-        result["error"] = str(error)
-
-        logger.warning(
-            "[TSHARK ERROR] %s | %s",
-            channel_name,
-            error,
-        )
-
-        log_event(
-            "TSHARK_ERROR",
-            channel=channel_name,
-            url=safe_url(url),
-            error=str(error),
-        )
-
+        result["error"] = redact_text(str(error))
+        logger.warning("[TSHARK ERROR] %s | %s", channel_name, result["error"])
+        log_event("TSHARK_ERROR", channel=channel_name, url=safe_url(url), error=result["error"])
         return result
+    finally:
+        if temporary_pcap and os.path.exists(temporary_pcap):
+            try:
+                os.remove(temporary_pcap)
+            except OSError:
+                logger.warning("[TSHARK] Could not remove temporary capture: %s", temporary_pcap)
+        store_record()
+
+
+def export_tshark_reports():
+    """Write non-empty TShark reports only when captures were attempted."""
+    with _TSHARK_RECORDS_LOCK:
+        records = list(_TSHARK_RECORDS)
+    if not records:
+        logger.info("[TSHARK EXPORT] Skipped: no stream records were supplied to TShark")
+        return []
+
+    csv_path = os.path.join(TSHARK_DIR, "TShark_Network_Audit.csv")
+    json_path = os.path.join(TSHARK_DIR, "TShark_Network_Audit.json")
+    jsonl_path = os.path.join(TSHARK_DIR, "TShark_Network_Audit.jsonl")
+    log_path = os.path.join(TSHARK_DIR, "TShark_Network_Audit.log")
+    summary_path = os.path.join(TSHARK_DIR, "TShark_Summary.txt")
+
+    fields = [
+        "timestamp", "channel", "url", "available", "attempted", "enabled",
+        "success", "interface", "resolved_ip", "capture_seconds", "capture_workers",
+        "packet_count", "tcp_conversations", "udp_conversations",
+        "tcp_retransmissions", "tcp_duplicate_acks", "tcp_resets", "tcp_zero_windows",
+        "pcap_file", "pcap_bytes", "jitter", "packet_loss", "error",
+    ]
+    with open(csv_path, "w", newline="", encoding="utf-8-sig") as file:
+        writer = csv.DictWriter(file, fieldnames=fields, extrasaction="ignore")
+        writer.writeheader()
+        for record in records:
+            writer.writerow(record)
+
+    safe_records = _sanitize_audit_value(records)
+    with open(json_path, "w", encoding="utf-8") as file:
+        json.dump(safe_records, file, ensure_ascii=False, indent=2, default=str)
+    with open(jsonl_path, "w", encoding="utf-8") as file:
+        for record in safe_records:
+            file.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
+
+    successful = [record for record in records if record.get("success")]
+    packet_total = sum(safe_int(record.get("packet_count")) for record in records)
+    lines = [
+        "TSHARK NETWORK AUDIT",
+        "=" * 76,
+        f"Generated: {now_string()}",
+        f"Stream capture requests: {len(records)}",
+        f"Actual capture attempts: {sum(1 for record in records if record.get('attempted'))}",
+        f"Successful captures: {len(successful)}",
+        f"Unavailable/failed/no-packet records: {len(records) - len(successful)}",
+        f"Total captured packets: {packet_total}",
+        f"Capture workers: {TSHARK_CAPTURE_WORKERS}",
+        f"Capture duration per stream: {TSHARK_CAPTURE_SECONDS}s",
+        f"PCAP retention enabled: {TSHARK_KEEP_PCAP}",
+        "",
+        "PER-STREAM RESULTS",
+        "-" * 76,
+    ]
+    for record in records:
+        lines.append(
+            f"{record.get('channel')} | packets={record.get('packet_count')} | "
+            f"success={record.get('success')} | retrans={record.get('tcp_retransmissions')} | "
+            f"dup_ack={record.get('tcp_duplicate_acks')} | rst={record.get('tcp_resets')} | "
+            f"zero_window={record.get('tcp_zero_windows')} | error={record.get('error', '')}"
+        )
+    lines.extend([
+        "",
+        "INTERPRETATION",
+        "-" * 76,
+        "Packet counts and TCP events are taken from captured packets.",
+        "TCP retransmissions, duplicate ACKs and resets are transport diagnostics, not proof of media loss.",
+        "RTP jitter/loss are not claimed unless a valid RTP stream analysis provides them.",
+        "Encrypted TLS payload contents are not decoded by this report.",
+    ])
+    with open(log_path, "w", encoding="utf-8") as file:
+        file.write("\n".join(lines) + "\n")
+    with open(summary_path, "w", encoding="utf-8") as file:
+        file.write("\n".join(lines[:12]) + "\n")
+
+    logger.info("[TSHARK EXPORT] attempts=%s success=%s reports=%s", len(records), len(successful), TSHARK_DIR)
+    return [csv_path, json_path, jsonl_path, log_path, summary_path]
 
 
 # ============================================================
@@ -3194,6 +3420,10 @@ def run_pyav(url, channel_name, request_headers=None):
         "packets_checked": 0,
         "error": "",
     }
+
+    if not ENABLE_PYAV:
+        result["error"] = "PyAV disabled by IPTV_ENABLE_PYAV=0"
+        return result
 
     if not importlib.util.find_spec("av"):
         result["error"] = "PyAV not installed"
@@ -3514,6 +3744,8 @@ def _get_whisper_model():
             return None
 
         try:
+            if not ENABLE_WHISPER:
+                raise RuntimeError("Whisper disabled by IPTV_ENABLE_WHISPER=0")
             from faster_whisper import WhisperModel
 
             model_cache = os.path.join(MODEL_CACHE_DIR, "faster-whisper")
@@ -4025,6 +4257,9 @@ def classify_channel_region(channel):
 
 
 def export_language_reports(channels):
+    if not channels:
+        logger.info("[LANGUAGE EXPORT] Skipped: no channel records")
+        return
     csv_path = os.path.join(DATABASE_DIR, "Language_Detection.csv")
     json_path = os.path.join(DATABASE_DIR, "Language_Detection.json")
     jsonl_path = os.path.join(LOG_DIR, "Audio_Language_Audit.jsonl")
@@ -4085,32 +4320,35 @@ def export_language_reports(channels):
         "combined_language", "combined_confidence",
         "language_status", "error",
     ]
-    with open(tracks_csv_path, "w", newline="", encoding="utf-8-sig") as file:
-        writer = csv.DictWriter(file, fieldnames=track_fields)
-        writer.writeheader()
-        for index, channel in enumerate(channels, 1):
-            detection = (
-                channel.get("validation", {}) or {}
-            ).get("language_detection", {}) or {}
-            for track in detection.get("track_results", []):
-                whisper = track.get("whisper", {}) or {}
-                speechbrain = track.get("speechbrain", {}) or {}
-                writer.writerow({
-                    "record_number": index,
-                    "channel": channel.get("name", ""),
-                    "playlist": channel.get("playlist", ""),
-                    "url": safe_url(channel.get("url", "")),
-                    "audio_stream_index": track.get("stream_index", ""),
-                    "metadata_language": track.get("metadata_language", ""),
-                    "whisper_language": whisper.get("language", ""),
-                    "whisper_confidence": whisper.get("confidence", ""),
-                    "speechbrain_language": speechbrain.get("language", ""),
-                    "speechbrain_confidence": speechbrain.get("confidence", ""),
-                    "combined_language": track.get("detected_language", ""),
-                    "combined_confidence": track.get("confidence", ""),
-                    "language_status": track.get("status", ""),
-                    "error": redact_text(track.get("error", "")),
-                })
+    track_rows = []
+    for index, channel in enumerate(channels, 1):
+        detection = (channel.get("validation", {}) or {}).get("language_detection", {}) or {}
+        for track in detection.get("track_results", []):
+            whisper = track.get("whisper", {}) or {}
+            speechbrain = track.get("speechbrain", {}) or {}
+            track_rows.append({
+                "record_number": index,
+                "channel": channel.get("name", ""),
+                "playlist": channel.get("playlist", ""),
+                "url": safe_url(channel.get("url", "")),
+                "audio_stream_index": track.get("stream_index", ""),
+                "metadata_language": track.get("metadata_language", ""),
+                "whisper_language": whisper.get("language", ""),
+                "whisper_confidence": whisper.get("confidence", ""),
+                "speechbrain_language": speechbrain.get("language", ""),
+                "speechbrain_confidence": speechbrain.get("confidence", ""),
+                "combined_language": track.get("detected_language", ""),
+                "combined_confidence": track.get("confidence", ""),
+                "language_status": track.get("status", ""),
+                "error": redact_text(track.get("error", "")),
+            })
+    if track_rows:
+        with open(tracks_csv_path, "w", newline="", encoding="utf-8-sig") as file:
+            writer = csv.DictWriter(file, fieldnames=track_fields)
+            writer.writeheader()
+            writer.writerows(track_rows)
+    elif os.path.exists(tracks_csv_path):
+        os.remove(tracks_csv_path)
 
     with open(jsonl_path, "w", encoding="utf-8") as file:
         for row in rows:
@@ -4716,9 +4954,10 @@ def export_m3u(channels, filename, mode="all"):
     )
 
     count = 0
+    temporary_path = output_path + ".tmp"
 
     with open(
-        output_path,
+        temporary_path,
         "w",
         encoding="utf-8",
         newline="\n",
@@ -4808,11 +5047,22 @@ def export_m3u(channels, filename, mode="all"):
 
             count += 1
 
+    if count:
+        os.replace(temporary_path, output_path)
+    else:
+        try:
+            os.remove(temporary_path)
+        except OSError:
+            pass
+        if os.path.exists(output_path):
+            os.remove(output_path)
+
     logger.info(
-        "[EXPORT M3U] %s | records=%s | mode=%s",
+        "[EXPORT M3U] %s | records=%s | mode=%s | %s",
         output_path,
         count,
         mode,
+        "written" if count else "skipped: no matching records",
     )
 
 
@@ -4821,6 +5071,9 @@ def export_m3u(channels, filename, mode="all"):
 # ============================================================
 
 def export_csv(channels):
+    if not channels:
+        logger.info("[EXPORT CSV] Skipped: no channel records")
+        return
     filename = os.path.join(
         DATABASE_DIR,
         "channels.csv",
@@ -4980,6 +5233,9 @@ def export_csv(channels):
 # ============================================================
 
 def export_json(channels):
+    if not channels:
+        logger.info("[EXPORT JSON] Skipped: no channel records")
+        return
     filename = os.path.join(
         DATABASE_DIR,
         "channels.json",
@@ -5039,6 +5295,14 @@ def export_json(channels):
 # ============================================================
 
 def export_track_report(channels):
+    track_total = sum(
+        len((channel.get("validation", {}) or {}).get(f"{kind}_tracks", []) or [])
+        for channel in channels
+        for kind in ("video", "audio", "subtitle", "data")
+    )
+    if not track_total:
+        logger.info("[EXPORT TRACK REPORT] Skipped: no media tracks")
+        return
     filename = os.path.join(
         DATABASE_DIR,
         "Stream_Tracks.csv",
@@ -5147,6 +5411,9 @@ def export_track_report(channels):
 # ============================================================
 
 def export_playlist_report(playlist_results):
+    if not playlist_results:
+        logger.info("[EXPORT PLAYLIST REPORT] Skipped: no playlist results")
+        return
     filename = os.path.join(
         OUTPUT_DIR,
         "Playlist_Report.csv",
@@ -5211,6 +5478,9 @@ def export_check_report(
     unique_results,
     playlist_results,
 ):
+    if not channels and not unique_results and not playlist_results:
+        logger.info("[EXPORT CHECK REPORT] Skipped: no diagnostic records")
+        return
     filename = os.path.join(
         OUTPUT_DIR,
         "Check_Report.txt",
@@ -5747,12 +6017,87 @@ def print_final_statistics(
     )
 
 
+def write_output_manifest():
+    """Index only real, non-empty files produced in the audit directory."""
+    manifest_path = os.path.join(OUTPUT_DIR, "OUTPUT_FILES_MANIFEST.json")
+    entries = []
+    for root, dirs, files in os.walk(OUTPUT_DIR):
+        # Model/tool caches are not generated audit outputs.
+        dirs[:] = [name for name in dirs if not (root == OUTPUT_DIR and name == "tools")]
+        for name in sorted(files):
+            path = os.path.join(root, name)
+            if os.path.abspath(path) == os.path.abspath(manifest_path):
+                continue
+            try:
+                size = os.path.getsize(path)
+                if size <= 0:
+                    continue
+                digest = hashlib.sha256()
+                with open(path, "rb") as source:
+                    for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                        digest.update(chunk)
+                entries.append({
+                    "path": os.path.relpath(path, OUTPUT_DIR).replace(os.sep, "/"),
+                    "size_bytes": size,
+                    "sha256": digest.hexdigest(),
+                })
+            except OSError as error:
+                logger.warning("[MANIFEST] Cannot inspect %s: %s", path, error)
+
+    payload = {
+        "generated_at": now_string(),
+        "repository": f"{OWNER}/{REPOSITORY}",
+        "branch": BRANCH,
+        "deduplication_enabled": False,
+        "tshark_enabled": TSHARK_CAPTURE_ENABLED,
+        "tshark_capture_workers": TSHARK_CAPTURE_WORKERS,
+        "non_empty_files_count": len(entries),
+        "files": sorted(entries, key=lambda item: item["path"]),
+    }
+    with open(manifest_path, "w", encoding="utf-8") as file:
+        json.dump(payload, file, ensure_ascii=False, indent=2)
+    return manifest_path
+
+
+def clean_previous_outputs():
+    """Remove stale generated reports while preserving downloaded tool/model caches."""
+    keep_paths = {os.path.abspath(LOG_FILE), os.path.abspath(AUDIT_JSONL)}
+    for root, dirs, files in os.walk(OUTPUT_DIR, topdown=True):
+        if os.path.abspath(root) == os.path.abspath(OUTPUT_DIR):
+            dirs[:] = [name for name in dirs if name != "tools"]
+        for name in files:
+            path = os.path.abspath(os.path.join(root, name))
+            try:
+                if path in keep_paths:
+                    # Stream_Audit FileHandler already has this file open.
+                    with open(path, "w", encoding="utf-8"):
+                        pass
+                else:
+                    os.remove(path)
+            except OSError as error:
+                logger.warning("[CLEANUP] Could not remove stale output %s: %s", path, error)
+    for root, dirs, files in os.walk(OUTPUT_DIR, topdown=False):
+        try:
+            if os.path.commonpath([os.path.abspath(root), os.path.abspath(TOOLS_DIR)]) == os.path.abspath(TOOLS_DIR):
+                continue
+        except ValueError:
+            pass
+        try:
+            if not os.listdir(root):
+                os.rmdir(root)
+        except OSError:
+            pass
+    for directory in (PLAYLIST_DIR, DATABASE_DIR, LOG_DIR, TSHARK_DIR, TSHARK_PCAP_DIR):
+        os.makedirs(directory, exist_ok=True)
+
+
 # ============================================================
 # MAIN PIPELINE
 # ============================================================
 
 def main():
     started = time.perf_counter()
+    clean_previous_outputs()
 
     logger.info("")
     logger.info("#" * 85)
@@ -5788,6 +6133,11 @@ def main():
         "DEDUPLICATION: DISABLED",
     )
     logger.info(
+        "TSHARK: enabled=%s | interface=%s | capture_workers=%s | duration=%ss | keep_pcap=%s",
+        TSHARK_CAPTURE_ENABLED, TSHARK_INTERFACE, TSHARK_CAPTURE_WORKERS,
+        TSHARK_CAPTURE_SECONDS, TSHARK_KEEP_PCAP,
+    )
+    logger.info(
         "CINERAMA URL REWRITE: %s -> %s",
         CINERAMA_OLD_HOST,
         CINERAMA_NEW_HOST,
@@ -5802,6 +6152,8 @@ def main():
     )
 
     install_optional_tools()
+    configure_tshark_capture_permissions()
+    install_python_analyzers()
     inventory = tool_inventory()
 
     log_event(
@@ -5814,6 +6166,22 @@ def main():
         check_workers=CHECK_WORKERS,
         audio_language_workers=AUDIO_LANGUAGE_WORKERS,
         deduplication=DEDUPLICATE_STREAMS,
+        analyzers_enabled={
+            "ffmpeg_ffprobe": True,
+            "tsduck": ENABLE_TSDUCK,
+            "tshark": ENABLE_TSHARK and TSHARK_CAPTURE_ENABLED,
+            "pyav": ENABLE_PYAV,
+            "whisper": ENABLE_WHISPER,
+            "speechbrain": ENABLE_SPEECHBRAIN,
+            "audio_language": AUDIO_LANGUAGE_ENABLED,
+        },
+        tshark={
+            "enabled": TSHARK_CAPTURE_ENABLED,
+            "interface": TSHARK_INTERFACE,
+            "capture_workers": TSHARK_CAPTURE_WORKERS,
+            "capture_seconds": TSHARK_CAPTURE_SECONDS,
+            "keep_pcap": TSHARK_KEEP_PCAP,
+        },
         cinerama_rewrite={
             "from": CINERAMA_OLD_HOST,
             "to": CINERAMA_NEW_HOST,
@@ -5844,11 +6212,7 @@ def main():
     save_playlist_index(playlists)
 
     if not playlists:
-        logger.warning(
-            "[MAIN] No playlists found."
-        )
-
-        return
+        logger.warning("[MAIN] No playlists found; continuing to final diagnostics without creating empty playlist outputs.")
 
     # --------------------------------------------------------
     # STEP 3: PARALLEL DOWNLOAD - 28 WORKERS
@@ -5868,17 +6232,7 @@ def main():
     )
 
     if not downloaded:
-        logger.warning(
-            "[MAIN] No playlists downloaded successfully."
-        )
-
-        export_check_report(
-            [],
-            {},
-            playlist_results,
-        )
-
-        return
+        logger.warning("[MAIN] No playlists downloaded successfully; channel parsing will be skipped.")
 
     # --------------------------------------------------------
     # STEP 4: PARALLEL PARSING - 34 WORKERS
@@ -5891,7 +6245,7 @@ def main():
 
     all_channels = parse_all_playlists(
         downloaded
-    )
+    ) if downloaded else []
 
     logger.info(
         "[MAIN] Channel records collected: %s",
@@ -5899,17 +6253,7 @@ def main():
     )
 
     if not all_channels:
-        logger.warning(
-            "[MAIN] No channel entries found."
-        )
-
-        export_check_report(
-            [],
-            {},
-            playlist_results,
-        )
-
-        return
+        logger.warning("[MAIN] No channel entries found; skipping channel-level analysis and exports.")
 
     # --------------------------------------------------------
     # STEP 5: STREAM VALIDATION - 45 WORKERS
@@ -5922,7 +6266,7 @@ def main():
 
     unique_results = validate_unique_streams(
         all_channels
-    )
+    ) if all_channels else {}
 
     # --------------------------------------------------------
     # STEP 6: UNIQUE DATABASE
@@ -5934,7 +6278,7 @@ def main():
 
     unique_channels = build_channel_database(
         all_channels
-    )
+    ) if all_channels else []
 
     # --------------------------------------------------------
     # STEP 7: M3U EXPORT
@@ -5993,6 +6337,7 @@ def main():
     )
 
     export_language_reports(all_channels)
+    export_tshark_reports()
 
     # --------------------------------------------------------
     # STEP 10: PLAYLIST REPORT
@@ -6093,3 +6438,8 @@ if __name__ == "__main__":
         )
 
         raise
+    finally:
+        try:
+            write_output_manifest()
+        except Exception:
+            logger.exception("[MANIFEST] Failed to write output manifest")
