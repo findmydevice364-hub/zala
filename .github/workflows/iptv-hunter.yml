@@ -1,4 +1,3 @@
-
 name: IPTV Repository Playlist Hunter
 
 on:
@@ -7,12 +6,8 @@ on:
   schedule:
     - cron: "0 2 * * *"
 
-  push:
-    branches:
-      - main
-    paths:
-      - "**IPTV_REPOSITORY_PLAYLIST_HUNTER.py"
-      - ".github/workflows/iptv-hunter.yml"
+# НЕТ push-триггера:
+# изменение Python-кода и YAML не запускает workflow.
 
 permissions:
   contents: write
@@ -27,118 +22,450 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
 
+    env:
+      PYTHONUNBUFFERED: "1"
+      PYTHONIOENCODING: "utf-8"
+      PYTHONUTF8: "1"
+      HF_HOME: ${{ github.workspace }}/IPTV_REPOSITORY_AUDIT/tools/models/huggingface
+      TORCH_HOME: ${{ github.workspace }}/IPTV_REPOSITORY_AUDIT/tools/models/torch
+      XDG_CACHE_HOME: ${{ github.workspace }}/IPTV_REPOSITORY_AUDIT/tools/models/cache
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
+      # ============================================================
+      # 1. CHECKOUT
+      # ============================================================
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: true
 
+      # ============================================================
+      # 2. PYTHON
+      # ============================================================
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install system dependencies
+      - name: Show Python environment
         run: |
+          python --version
+          python -m pip --version
+          git --version
+
+      # ============================================================
+      # 3. SYSTEM DEPENDENCIES
+      # ============================================================
+
+      - name: Install system dependencies
+        shell: bash
+        run: |
+          set -e
+
+          export DEBIAN_FRONTEND=noninteractive
+
           sudo apt-get update
+
           sudo apt-get install -y \
             ffmpeg \
             curl \
             wget \
             jq \
             unzip \
-            ca-certificates
+            ca-certificates \
+            tshark \
+            libcap2-bin \
+            git \
+            build-essential \
+            pkg-config
+
+          echo "========================================"
+          echo "FFMPEG"
+          echo "========================================"
 
           ffmpeg -version
           ffprobe -version
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip setuptools wheel
+          echo "========================================"
+          echo "TSHARK"
+          echo "========================================"
 
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
+          tshark --version
+
+          echo "========================================"
+          echo "DUMPCAP PERMISSIONS"
+          echo "========================================"
+
+          if command -v dumpcap >/dev/null 2>&1; then
+            DUMPCAP_PATH="$(command -v dumpcap)"
+
+            sudo setcap cap_net_raw,cap_net_admin+eip "$DUMPCAP_PATH" || true
+
+            getcap "$DUMPCAP_PATH" || true
+            dumpcap -D || true
           else
-            pip install requests aiohttp tqdm colorama
+            echo "::warning::dumpcap not found"
           fi
+
+          echo "========================================"
+          echo "TSDUCK"
+          echo "========================================"
+
+          if apt-cache show tsduck >/dev/null 2>&1; then
+            sudo apt-get install -y tsduck || \
+              echo "::warning::TSDuck installation failed"
+          else
+            echo "::warning::TSDuck package is unavailable in current apt repositories"
+          fi
+
+          if command -v tsanalyze >/dev/null 2>&1; then
+            tsanalyze --version || true
+          else
+            echo "::warning::tsanalyze is unavailable"
+          fi
+
+      # ============================================================
+      # 4. MODEL CACHE
+      # ============================================================
+
+      - name: Restore Whisper and SpeechBrain model cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            IPTV_REPOSITORY_AUDIT/tools/models
+          key: iptv-models-${{ runner.os }}-python311-v2
+          restore-keys: |
+            iptv-models-${{ runner.os }}-python311-
+
+      # ============================================================
+      # 5. PYTHON DEPENDENCIES
+      # ============================================================
+
+      - name: Install Python dependencies
+        shell: bash
+        run: |
+          set -e
+
+          python -m pip install --upgrade \
+            pip \
+            setuptools \
+            wheel
+
+          if [ -f requirements-full.txt ]; then
+            echo "Installing full IPTV analyzer requirements"
+            python -m pip install -r requirements-full.txt
+
+          elif [ -f requirements.txt ]; then
+            echo "Installing repository requirements"
+            python -m pip install -r requirements.txt
+
+            python -m pip install \
+              faster-whisper \
+              av \
+              speechbrain
+
+          else
+            echo "Installing full analyzer dependencies"
+
+            python -m pip install \
+              requests \
+              aiohttp \
+              tqdm \
+              colorama \
+              faster-whisper \
+              av \
+              speechbrain
+          fi
+
+          echo "========================================"
+          echo "PYTHON ANALYZER CHECK"
+          echo "========================================"
+
+          python - <<'PY'
+          import importlib.util
+
+          modules = {
+              "requests": "requests",
+              "PyAV": "av",
+              "faster-whisper": "faster_whisper",
+              "SpeechBrain": "speechbrain",
+          }
+
+          failed = []
+
+          for label, module in modules.items():
+              available = importlib.util.find_spec(module) is not None
+
+              print(f"{label}: {'AVAILABLE' if available else 'MISSING'}")
+
+              if not available:
+                  failed.append(label)
+
+          if failed:
+              raise SystemExit(
+                  "Required Python analyzers are missing: "
+                  + ", ".join(failed)
+              )
+          PY
+
+      # ============================================================
+      # 6. TOOL INVENTORY
+      # ============================================================
+
+      - name: Verify diagnostic tools
+        shell: bash
+        run: |
+          echo "========================================"
+          echo "IPTV DIAGNOSTIC TOOL INVENTORY"
+          echo "========================================"
+
+          for TOOL in \
+            ffmpeg \
+            ffprobe \
+            tshark \
+            dumpcap \
+            tsanalyze \
+            curl \
+            wget
+          do
+            if command -v "$TOOL" >/dev/null 2>&1; then
+              echo "[AVAILABLE] $TOOL"
+            else
+              echo "[UNAVAILABLE] $TOOL"
+            fi
+          done
+
+          python - <<'PY'
+          import importlib.util
+
+          for module in (
+              "av",
+              "faster_whisper",
+              "speechbrain",
+              "requests",
+          ):
+              print(
+                  f"[{'AVAILABLE' if importlib.util.find_spec(module) else 'UNAVAILABLE'}] "
+                  f"{module}"
+              )
+          PY
+
+      # ============================================================
+      # 7. LOCATE IPTV HUNTER
+      # ============================================================
 
       - name: Locate IPTV Hunter script
         id: hunter
         shell: bash
         run: |
-          SCRIPT="$(find . -type f \
-            -name '*IPTV_REPOSITORY_PLAYLIST_HUNTER.py' \
+          set -e
+
+          SCRIPT=""
+
+          SCRIPT="$(find . \
+            -type f \
+            -name 'IPTV_REPOSITORY_PLAYLIST_HUNTER.py' \
+            -not -path './.git/*' \
             -print -quit)"
 
           if [ -z "$SCRIPT" ]; then
-            echo "::error::IPTV_REPOSITORY_PLAYLIST_HUNTER.py not found"
+            SCRIPT="$(find . \
+              -type f \
+              -name '*IPTV_REPOSITORY_PLAYLIST_HUNTER*.py' \
+              -not -path './.git/*' \
+              -not -path './.venv/*' \
+              -print -quit)"
+          fi
+
+          if [ -z "$SCRIPT" ]; then
+            echo "::error::IPTV Repository Playlist Hunter script not found"
             exit 1
           fi
 
           echo "script=$SCRIPT" >> "$GITHUB_OUTPUT"
-          echo "Found script: $SCRIPT"
+
+          echo "========================================"
+          echo "FOUND IPTV HUNTER"
+          echo "========================================"
+
+          echo "$SCRIPT"
+          wc -l "$SCRIPT"
+          sha256sum "$SCRIPT"
+
+      # ============================================================
+      # 8. RUN IPTV HUNTER
+      # ============================================================
 
       - name: Run IPTV Repository Playlist Hunter
+        id: run_hunter
+        shell: bash
         env:
           PYTHONUNBUFFERED: "1"
           PYTHONIOENCODING: "utf-8"
           PYTHONUTF8: "1"
+          HF_HOME: ${{ env.HF_HOME }}
+          TORCH_HOME: ${{ env.TORCH_HOME }}
+          XDG_CACHE_HOME: ${{ env.XDG_CACHE_HOME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
         run: |
+          set -e
+
           echo "========================================"
           echo " IPTV REPOSITORY PLAYLIST HUNTER"
           echo "========================================"
 
+          echo "Started: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+
+          echo "========================================"
+          echo "DIAGNOSTIC ENGINES"
+          echo "========================================"
+
+          ffmpeg -version | head -n 1
+          ffprobe -version | head -n 1
+          tshark --version | head -n 1
+
+          if command -v tsanalyze >/dev/null 2>&1; then
+            echo "TSDuck: ENABLED"
+          else
+            echo "TSDuck: UNAVAILABLE"
+          fi
+
+          echo "========================================"
+          echo "STARTING HUNTER"
+          echo "========================================"
+
           python -u "${{ steps.hunter.outputs.script }}"
 
-      - name: Prepare generated results
-        if: always()
-        run: |
-          mkdir -p channel_database logs
+          echo "========================================"
+          echo "HUNTER FINISHED"
+          echo "========================================"
 
-          echo "Generated files:"
+          echo "Finished: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+
+      # ============================================================
+      # 9. PREPARE GENERATED RESULTS
+      # ============================================================
+
+      - name: Prepare generated results
+        if: always() && !cancelled()
+        shell: bash
+        run: |
+          echo "========================================"
+          echo "GENERATED IPTV RESULTS"
+          echo "========================================"
+
           find . -type f \
-            \( -name '*.m3u' \
-            -o -name '*.m3u8' \
-            -o -name '*.csv' \
-            -o -name '*.json' \
-            -o -name '*.jsonl' \
-            -o -name '*.txt' \
-            -o -name '*.log' \) \
+            \( \
+              -name '*.m3u' \
+              -o -name '*.m3u8' \
+              -o -name '*.csv' \
+              -o -name '*.json' \
+              -o -name '*.jsonl' \
+              -o -name '*.txt' \
+              -o -name '*.log' \
+              -o -name '*.pcap' \
+              -o -name '*.pcapng' \
+            \) \
             -not -path './.git/*' \
-            -printf '%p (%s bytes)\n' | sort
+            -not -path './IPTV_REPOSITORY_AUDIT/tools/models/*' \
+            -printf '%p (%s bytes)\n' \
+            | sort
+
+          echo "========================================"
+          echo "EMPTY FILE CHECK"
+          echo "========================================"
+
+          find . -type f \
+            \( \
+              -name '*.m3u' \
+              -o -name '*.m3u8' \
+              -o -name '*.csv' \
+              -o -name '*.json' \
+              -o -name '*.jsonl' \
+              -o -name '*.txt' \
+              -o -name '*.log' \
+            \) \
+            -not -path './.git/*' \
+            -size 0 \
+            -print
+
+          echo "========================================"
+          echo "MODEL CACHE"
+          echo "========================================"
+
+          du -sh IPTV_REPOSITORY_AUDIT/tools/models 2>/dev/null || true
+
+      # ============================================================
+      # 10. PUBLISH GENERATED RESULTS
+      # ============================================================
 
       - name: Publish results to repository
-        if: always()
+        if: always() && !cancelled()
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -e
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          echo "========================================"
+          echo "STAGING GENERATED RESULTS"
+          echo "========================================"
+
           git add -A -- \
-            '*.m3u' \
-            '*.m3u8' \
-            '*.csv' \
-            '*.json' \
-            '*.jsonl' \
-            '*.txt' \
-            '*.log' \
-            'channel_database/' \
-            'logs/'
+            ':(glob)**/*.m3u' \
+            ':(glob)**/*.m3u8' \
+            ':(glob)**/*.csv' \
+            ':(glob)**/*.json' \
+            ':(glob)**/*.jsonl' \
+            ':(glob)**/*.txt' \
+            ':(glob)**/*.log' \
+            ':(glob)**/*.pcap' \
+            ':(glob)**/*.pcapng'
+
+          while IFS= read -r -d '' FILE; do
+            if [ -f "$FILE" ] && [ ! -s "$FILE" ]; then
+              echo "Skipping empty result: $FILE"
+              git reset -q -- "$FILE" || true
+            fi
+          done < <(
+            git diff --cached --name-only -z
+          )
 
           if git diff --cached --quiet; then
             echo "No generated changes to publish."
             exit 0
           fi
 
+          echo "========================================"
+          echo "COMMITTING RESULTS"
+          echo "========================================"
+
+          git diff --cached --stat
+
           git commit -m "Update IPTV playlists and audit reports"
+
+          echo "========================================"
+          echo "PUSHING RESULTS TO MAIN"
+          echo "========================================"
 
           git push origin HEAD:main
 
+          echo "Results successfully published."
+
+      # ============================================================
+      # 11. UPLOAD ALL RESULTS
+      # ============================================================
+
       - name: Upload all results as artifacts
-        if: always()
+        if: always() && !cancelled()
         uses: actions/upload-artifact@v4
         with:
           name: IPTV-Repository-Playlist-Hunter-Results
@@ -150,6 +477,8 @@ jobs:
             **/*.jsonl
             **/*.txt
             **/*.log
+            **/*.pcap
+            **/*.pcapng
           if-no-files-found: warn
           compression-level: 6
           retention-days: 30
