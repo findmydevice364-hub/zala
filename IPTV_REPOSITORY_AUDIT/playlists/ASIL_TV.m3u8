@@ -61,13 +61,13 @@ https://fl.biztv.media/biz_tv_720_uni8jhub4h8fub4idejswh8dh3j94finbu4nidj39inwsj
 https://stream1.cinerama.uz/1220/tracks-v1a1/mono.m3u8
 #EXTINF:-1 tvg-logo="https://files.itv.uz/uploads/iptv/channels/2024/10/15//75b4b090cb1f5663d7eb0373c1fb1a80-q-500x500.jpeg" group-title="📺O'zbekiston Telekanallari📺",Jizzax TV
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1488/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1488/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="📺O'zbekiston Telekanallari📺" tvg-logo="https://files.itv.uz/uploads/iptv/channels/2023/06/02//d1498a17fd6850c0e7404e9487353cfc-q-500x500.jpeg", Gold Television
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/4007/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/4007/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="📺O'zbekiston Telekanallari📺" tvg-logo="https://files.itv.uz/uploads/iptv/channels/2024/10/16//bffc77f6b96e90ba72634340afe2d28f-q-500x500.jpeg", Amudaryo TV
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1491/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1491/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="📺O'zbekiston Telekanallari📺" tvg-logo="https://files.itv.uz/uploads/iptv/channels/2024/10/16//5e1500c4d1b9595a50ad350cee8cd647-q-500x500.jpeg", Ellikqala TV
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://s7.iptv-24.net/blocked/index.m3u8
@@ -79,7 +79,7 @@ https://s7.iptv-24.net/blocked/index.m3u8
 https://stream1.cinerama.uz/1475/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="📺O'zbekiston Telekanallari📺" tvg-logo="https://files.itv.uz/uploads/iptv/channels/2024/10/17//1f68774291aa8afc63a9696929ffbbee-q-500x500.jpeg", Jaslar TV
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1490/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1490/tracks-v1a1/mono.m3u8
 #EXTINF:-1 tvg-logo="https://i.postimg.cc/J4wRwcQn/i-TV-Cinema-Logo.png" group-title="📺O'zbekiston Telekanallari📺",ITV Cinema
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://s7.iptv-24.net/blocked/index.m3u8
@@ -157,13 +157,13 @@ http://brics.bonus-tv.ru/cdn/brics/russian/tracks-v1a1/mono.m3u8
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",НТВ
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1023/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1023/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",Первый каналь
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1019/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1019/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",Россия 1
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1020/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1020/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",ТВ-3
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://s7.iptv-24.net/blocked/index.m3u8
@@ -175,7 +175,7 @@ https://s7.iptv-24.net/blocked/index.m3u8
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",Мужское кино
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1237/tracks-v2a1/mono.m3u8
+https://stream1.cinerama.uz/1237/tracks-v2a1/mono.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",Euronews
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://stream2.cinerama.uz/1024/tracks-v1a1/mono.m3u8
@@ -184,31 +184,31 @@ https://stream2.cinerama.uz/1024/tracks-v1a1/mono.m3u8
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",Кинопремьера HD
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1207/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1207/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",Родное кино
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1052/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1052/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",Индийское кино
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",Наше новое кино
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1051/tracks-v2a1/mono.m3u8
+https://stream1.cinerama.uz/1051/tracks-v2a1/mono.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",Киносерия
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",Киномикс
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1233/tracks-v2a1/mono.m3u8
+https://stream1.cinerama.uz/1233/tracks-v2a1/mono.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",Киносведание
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1203/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1203/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",viju+ TV1000
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 group-title="📺Rossiya Telekanallari📺",Кинокомедия
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1232/tracks-v2a1/mono.m3u8
+https://stream1.cinerama.uz/1232/tracks-v2a1/mono.m3u8
 #EXTINF:-1 group-title="🏆Sport Telekanallari🏆" tvg-logo="https://tricolor-38.ru/KANALY_3/Eurosport-1-HD.png",Eurosport 1 HD
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://s7.iptv-24.net/blocked/index.m3u8

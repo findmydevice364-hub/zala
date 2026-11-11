@@ -34,7 +34,7 @@ http://vgtrkregion-reg.cdnvideo.ru/vgtrk/7/kultura-hd/index.m3u8
 http://vod.tuva.ru:8080/zvezda/index.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Мир 24 HD.png" group-title="Российские",Мир 24 HD
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/blocked/index.m3u8
+https://stream1.cinerama.uz/blocked/index.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/russia.png" group-title="Российские",Arktika 24
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 http://vgtrkregion-reg.cdnvideo.ru/vgtrk/arhangelsk/arktika24-hd/index.m3u8

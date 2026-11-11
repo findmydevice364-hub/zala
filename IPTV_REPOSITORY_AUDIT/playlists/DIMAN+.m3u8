@@ -64,7 +64,7 @@ http://edge-tv-ll.facecast.io/evacoder_hls_hi/UBZfFgtKB1JwTwoDERNQVGGs/1080.m3u8
 https://raw.githubusercontent.com/UzunMuhalefet/streams/main/myvideo-az/cbc.m3u8
 #EXTINF:-1 group-title="2.НОВОСТИ 🌐",EuroNews
 #EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
-https://stream8.cinerama.uz/1024/index.m3u8
+https://stream1.cinerama.uz/1024/index.m3u8
 #EXTINF:-1 tvg-logo="http://epg.one/img2/2265.png" group-title="2.НОВОСТИ 🌐",360.RU НОВОСТИᴴᴰ
 #EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
 https://edge-tv-ll.facecast.io/evacoder_hls_hi/UBZfFgtKB1JwTwoDERNQVGGs/0.m3u8
@@ -286,7 +286,7 @@ https://player.smotrim.ru/iframe/stream/live_id/683d9649-a96c-4a4d-b468-91c0ee2b
 https://player.smotrim.ru/iframe/stream/live_id/683d9649-a96c-4a4d-b468-91c0ee2bf363?&s=596
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/ТВЦ International.png" group-title="6.ЭФИРНЫЕ Int. 🧿",ТВЦ International
 #EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
-https://stream8.cinerama.uz/1281/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1281/tracks-v1a1/mono.m3u8
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/RTR-Planeta_Logo.svg/512px-RTR-Planeta_Logo.svg.png" group-title="6.ЭФИРНЫЕ Int. 🧿",РОССИЯ РТР СНГ SD
 #EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
 https://player.smotrim.ru/iframe/stream/live_id/3b73bf76-7245-4981-a865-38478e21df1f
@@ -553,7 +553,7 @@ https://fl.biztv.media/TabiatTV_1080/tracks-v1a1/mono.m3u8
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 tvg-logo="https://biztv.uz/static/media/logo.5f993187.png" group-title="12.УЗБЕКИСТАН 🇺🇿",BIZ TV FD
 #EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
-https://stream8.cinerama.uz/1211/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1211/tracks-v1a1/mono.m3u8
 #EXTINF:-1 tvg-logo="https://biztv.uz/static/media/biz-cinema.286b83dc.png" group-title="12.УЗБЕКИСТАН 🇺🇿",BIZ CINEMA SD
 #EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
 https://fl.biztv.media/cinema_720_EMfSyXgoRdiIHgldXTZICucKTIeCKO/tracks-v1a1/mono.m3u8
@@ -568,13 +568,13 @@ https://fl.biztv.media/biz_tv_720_uni8jhub4h8fub4idejswh8dh3j94finbu4nidj39inwsj
 https://fl.biztv.media/biz_tv_720_uni8jhub4h8fub4idejswh8dh3j94finbu4nidj39inwsj92in3d/index.m3u8
 #EXTINF:-1 tvg-logo="https://files.cinerama.uz/images/tv_channels/2025/03/24/e242bb73-9172-4461-8ae3-f812ad7392db.jpeg" group-title="12.УЗБЕКИСТАН 🇺🇿", Amudaryo TV FD
 #EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
-https://stream8.cinerama.uz/1491/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1491/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="12.УЗБЕКИСТАН 🇺🇿",Gold TV
 #EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
-https://stream8.cinerama.uz/4007/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/4007/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="12.УЗБЕКИСТАН 🇺🇿",Eliqqala TV SD
 #EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
-https://stream8.cinerama.uz/1495/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1495/tracks-v1a1/mono.m3u8
 #EXTINF:-1 group-title="12.УЗБЕКИСТАН 🇺🇿",Doira HD
 #EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
 https://fl.biztv.media/BiznesTV_1080/tracks-v1a1/mono.m3u8
@@ -589,4 +589,4 @@ http://fl.biztv.media/cheksiz_tv_480_unif7hujidth7f4du83jrhuid3k94j8hfj8d93eubyc
 https://s07.watcher.uz/162/video.m3u8?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb250cmFjdF9pZCI6MjcwMTc3LCJsb2dpbiI6InR2LTI3MDE3NyIsInRlbXBvcmFyeSI6ZmFsc2UsImlzX29hdXRoIjpmYWxzZSwiY3JlYXRlZF90aW1lIjoxNjUwMjgzMDI3fQ.LadLj4b6plIxTGCWntQQqsQGZ3R9EsvwhaXQd1sur2g%3A15
 #EXTINF:-1 group-title="12.УЗБЕКИСТАН 🇺🇿",Jaslar TV SD
 #EXTVLCOPT:http-user-agent=TiviMate/2.8.0 (Linux; Android 11)
-https://stream8.cinerama.uz/1490/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1490/tracks-v1a1/mono.m3u8

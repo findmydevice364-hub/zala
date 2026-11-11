@@ -1,7 +1,7 @@
 #EXTM3U url-tvg="http://epg.one/epg.xml; http://rafail1982.uz/uzbekistan1.xml; http://uztv.su/uploads/channelsarch/channels.xml; https://iptvx.one/EPG_NOARCH; http://gabbarit.drm-play.com/epg_lite.xml.gz; http://epg.cdntv.online/lite.xml; http://epg.it999.ru/epg.xml; http://iptv-content.rv77.pw/guide-lite.xml" tvg-shift="+5" refresh="86400"
 #EXTINF:-1 group-title="Российские",Planeta-RTR
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/blocked/index.m3u8
+https://stream1.cinerama.uz/blocked/index.m3u8
 #EXTINF:-1 group-title="Российские",Вести ФМ
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://player.smotrim.ru/iframe/stream/live_id/0487fd79-60e6-4333-a545-909d6e015173

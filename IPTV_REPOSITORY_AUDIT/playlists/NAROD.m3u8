@@ -67,7 +67,7 @@ http://rafail1982.uz/NexoIPTV.mp4
 http://rafail1982.uz/IPTV.mp4
 #EXTINF:-1 group-title="NEXO",Salut (Joe Dassin Cover)_v2
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/blocked/index.m3u8
+https://stream1.cinerama.uz/blocked/index.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/NEXO.png" group-title="NEXO",NEXO
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 http://rafail1982.uz/nexo2.mp4

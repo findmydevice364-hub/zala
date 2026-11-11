@@ -28,7 +28,7 @@ https://cdn.ntv.ru/ntv1/playlist.m3u8
 https://cdn.ntv.ru/ntv7/playlist.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1.png" group-title="Российские",Россия 1
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/blocked/index.m3u8
+https://stream1.cinerama.uz/blocked/index.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/НТВ +4.png" group-title="Российские",НТВ +4
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://cdn.ntv.ru/ntv4/playlist.m3u8

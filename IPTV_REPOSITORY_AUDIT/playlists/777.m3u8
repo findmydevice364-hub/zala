@@ -1,7 +1,7 @@
 #EXTM3U url-tvg="http://epg.one/epg.xml; http://rafail1982.uz/uzbekistan1.xml; http://uztv.su/uploads/channelsarch/channels.xml; https://iptvx.one/EPG_NOARCH; http://gabbarit.drm-play.com/epg_lite.xml.gz; http://epg.cdntv.online/lite.xml; http://epg.it999.ru/epg.xml; http://iptv-content.rv77.pw/guide-lite.xml" tvg-shift="+5" refresh="86400"
 #EXTINF:-1 group-title="Rutube",Rutube TV
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/blocked/index.m3u8
+https://stream1.cinerama.uz/blocked/index.m3u8
 #EXTINF:-1 group-title="Rutube",Первый канал HD
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://bl.rutube.ru/livestream/c58f502c7bb34a8fcdd976b221fca292/index.m3u8?s=lmXcLXuG86134J5a9fUHtQ&e=2068506931&scheme=https

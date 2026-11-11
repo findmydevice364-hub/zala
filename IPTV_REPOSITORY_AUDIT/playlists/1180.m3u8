@@ -61,7 +61,7 @@ https://cdn.ntv.ru/th_hit/playlist.m3u8
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 group-title="NEXO",NEXO
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/blocked/index.m3u8
+https://stream1.cinerama.uz/blocked/index.m3u8
 #EXTINF:-1 group-title="Новости",ВМЕСТЕ:РФ HD
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 http://qcpdqumitwf.a.trbcdn.net/livemastersrt/pr4mw_lvie-vmesterf-srt.smil/playlist.m3u8

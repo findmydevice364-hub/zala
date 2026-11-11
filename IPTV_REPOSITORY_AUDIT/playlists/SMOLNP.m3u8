@@ -61,7 +61,7 @@ http://dmi3y-tv6.ru/hls/T2/CH_ZVEZDA_4.m3u8
 http://195.26.83.96:7007/play/a008/index.m3u8?token=test
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/favicon.png" group-title="NEXO",NexoIPTV
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/blocked/index.m3u8
+https://stream1.cinerama.uz/blocked/index.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/favicon.png" group-title="NEXO",NEXO
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 http://rafail1982.uz/nexo2.mp4

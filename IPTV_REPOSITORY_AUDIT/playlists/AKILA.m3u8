@@ -1,7 +1,7 @@
 #EXTM3U url-tvg="http://epg.one/epg.xml; http://rafail1982.uz/uzbekistan1.xml; http://uztv.su/uploads/channelsarch/channels.xml; https://iptvx.one/EPG_NOARCH; http://gabbarit.drm-play.com/epg_lite.xml.gz; http://epg.cdntv.online/lite.xml; http://epg.it999.ru/epg.xml; http://iptv-content.rv77.pw/guide-lite.xml" tvg-shift="+5" refresh="86400"
 #EXTINF:-1 group-title="ЭФИРНЫЕ",PLANETA RTR
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/blocked/index.m3u8
+https://stream1.cinerama.uz/blocked/index.m3u8
 #EXTINF:-1 group-title="ЭФИРНЫЕ",Регион 67
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 http://212.3.155.126:8181/udp/233.67.67.177:5510

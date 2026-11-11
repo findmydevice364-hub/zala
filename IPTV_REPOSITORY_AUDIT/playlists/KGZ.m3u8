@@ -7,7 +7,7 @@ http://176.126.166.43:1935/live/312musik/playlist.m3u8
 http://212.42.111.152:8080/hls/manas.m3u8
 #EXTINF:-1 tvg-id="NextTV.kg@SD" group-title="KGZ",Next TV
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/blocked/index.m3u8
+https://stream1.cinerama.uz/blocked/index.m3u8
 #EXTINF:-1 tvg-id="312Kino.kg@SD" tvg-logo="https://i.ibb.co/3m9LrLj/k7gIibH.png" group-title="KGZ",312 Кино
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 http://176.126.166.43:1935/live/312kino/playlist.m3u8

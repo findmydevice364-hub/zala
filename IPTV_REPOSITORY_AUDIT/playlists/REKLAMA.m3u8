@@ -1,13 +1,13 @@
 #EXTM3U url-tvg="http://epg.one/epg.xml; http://rafail1982.uz/uzbekistan1.xml; http://uztv.su/uploads/channelsarch/channels.xml; https://iptvx.one/EPG_NOARCH; http://gabbarit.drm-play.com/epg_lite.xml.gz; http://epg.cdntv.online/lite.xml; http://epg.it999.ru/epg.xml; http://iptv-content.rv77.pw/guide-lite.xml" tvg-shift="+5" refresh="86400"
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Dunyo bo`ylab UZ.png" group-title="Turon Media😎",Dunyo bo`ylab UZ
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1006/tracks-v1a2/mono.m3u8
+https://stream1.cinerama.uz/1006/tracks-v1a2/mono.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Nurafshon TV UZ.png" group-title="Turon Media😎",Nurafshon TV UZ
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1220/tracks-v1a2/mono.m3u8
+https://stream1.cinerama.uz/1220/tracks-v1a2/mono.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/turon.png" group-title="Turon Media😎",Zor TV HD
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1016/tracks-v1a2/mono.m3u8
+https://stream1.cinerama.uz/1016/tracks-v1a2/mono.m3u8
 #EXTINF:-1 tvg-logo="https://rafail1982.uz/logo/turon.png" group-title="Turon Media😎",Mahalla
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://s7.iptv-24.net/blocked/index.m3u8
@@ -22,13 +22,13 @@ https://s7.iptv-24.net/blocked/index.m3u8
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Kinoteatr.png" group-title="Turon Media😎",Kinoteatr
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1009/tracks-v1a2/mono.m3u8
+https://stream1.cinerama.uz/1009/tracks-v1a2/mono.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/turon.png" group-title="Turon Media😎",Mahalla
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1013/tracks-v1a2/mono.m3u8
+https://stream1.cinerama.uz/1013/tracks-v1a2/mono.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/turon.png" group-title="Turon Media😎",Uzbekiston
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1001/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1001/tracks-v1a1/mono.m3u8
 #EXTINF:-1 tvg-logo="https://rafail1982.uz/logo/turon.png" group-title="Turon Media😎",Zor TV HD
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://s7.iptv-24.net/blocked/index.m3u8
@@ -43,19 +43,19 @@ https://s7.iptv-24.net/blocked/index.m3u8
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Navo.png" group-title="Turon Media😎",Navo
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1008/tracks-v1a2/mono.m3u8
+https://stream1.cinerama.uz/1008/tracks-v1a2/mono.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Uzbekistan 24.png" group-title="Turon Media😎",Uzbekistan 24
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1011/tracks-v1a2/mono.m3u8
+https://stream1.cinerama.uz/1011/tracks-v1a2/mono.m3u8
 #EXTINF:-1 tvg-logo="https://rafail1982.uz/logo/Dunyo bo`ylab UZ.png" group-title="Turon Media😎",Dunyo bo`ylab UZ
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Yoshlar.png" group-title="Turon Media😎",Yoshlar
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1002/tracks-v1a2/mono.m3u8
+https://stream1.cinerama.uz/1002/tracks-v1a2/mono.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/My5 UZ.png" group-title="Turon Media😎",My5 UZ
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1217/tracks-v1a1/mono.m3u8
+https://stream1.cinerama.uz/1217/tracks-v1a1/mono.m3u8
 #EXTINF:-1 tvg-logo="https://rafail1982.uz/logo/Yoshlar.png" group-title="Turon Media😎",Yoshlar
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://s7.iptv-24.net/blocked/index.m3u8
@@ -130,7 +130,7 @@ http://vod.tuva.ru:8080/zvezda/index.m3u8
 http://vgtrkregion-reg.cdnvideo.ru/vgtrk/1/russia1-hd/index.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Россия-24.png" group-title="SMOTRIM VPN",Россия-24
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/1021/tracks-v1a1a1/mono.m3u8
+https://stream1.cinerama.uz/1021/tracks-v1a1a1/mono.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.uz/logo/Россия 1 +2.png" group-title="SMOTRIM VPN",Россия 1 +2
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 http://vgtrkregion-reg.cdnvideo.ru/vgtrk/2/russia1-hd/index.m3u8
@@ -229,7 +229,7 @@ https://s7.iptv-24.net/blocked/index.m3u8
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 group-title="RADIO",MARS FM
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-https://stream8.cinerama.uz/blocked/index.m3u8
+https://stream1.cinerama.uz/blocked/index.m3u8
 #EXTINF:-1 group-title="RADIO" tvg-logo="https://iptv.itv.uz/uploads/iptv/channels/2024/01/16//aaadc599fb30270cef0eb14b7d2570ad-q-500x500.jpeg", O'zbekiston 24 FM (Radio UZ)
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 https://s7.iptv-24.net/blocked/index.m3u8
@@ -337,10 +337,10 @@ https://s7.iptv-24.net/blocked/index.m3u8
 https://s7.iptv-24.net/blocked/index.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Setanta Sports 1 HD.png" group-title="SPORT 🏆 VPN" audio-track="rus",Setanta Sports 1 HD
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-http://stream8.cinerama.uz/1263/tracks-v1a1a1/mono.m3u8
+http://stream1.cinerama.uz/1263/tracks-v1a1a1/mono.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Setanta Sports 2 HD.png" group-title="SPORT 🏆 VPN" audio-track="rus",Setanta Sports 2 HD
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
-http://stream8.cinerama.uz/1264/tracks-v1a1a1/mono.m3u8
+http://stream1.cinerama.uz/1264/tracks-v1a1a1/mono.m3u8
 #EXTINF:-1 tvg-logo="http://rafail1982.ru/logo/Trace Sport Stars HD.png" group-title="SPORT 🏆 VPN" audio-track="rus",Trace Sport Stars HD
 #EXTVLCOPT:http-user-agent=Player (Linux; Android 11)
 http://s8.rafail1982.uz/1274/tracks-v1a1a1/mono.m3u8
