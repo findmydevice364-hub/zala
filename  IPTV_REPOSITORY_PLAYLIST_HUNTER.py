@@ -13,7 +13,9 @@ WORKERS:
     28 - playlist downloads
     34 - playlist parsing
     45 - per-record stream validation (no deduplication)
-    39 - concurrent audio-language analysis workers
+    50 - concurrent audio-language channel workers
+    50 - concurrent audio-track workers
+     4 - concurrent audio-engine workers
 
 MAIN ANALYZER:
     FFprobe
@@ -31,6 +33,12 @@ INSTALLATION:
     requests, faster-whisper, SpeechBrain, PyAV (auto-installed when missing)
     FFmpeg/FFprobe, TSDuck, TShark (auto-installed when missing)
 
+STAGED EXECUTION:
+    --phase prepare  : discover, download, parse and freeze the channel dataset
+    --phase validate : validate one resumable batch and persist completed records
+    --phase finalize : export only after every prepared record is validated
+    --phase full     : legacy one-shot execution (default)
+
 IMPORTANT:
     HTTP response time is not live broadcast latency.
     TShark analyzes locally captured TCP/UDP packets; it does not infer media loss from HTTP timings.
@@ -39,6 +47,8 @@ IMPORTANT:
 
 import os
 import re
+import argparse
+from pathlib import Path
 import io
 import csv
 import sys
@@ -4967,7 +4977,7 @@ def validate_url(url, channel_name, request_headers=None, record_id=None):
 # PARALLEL UNIQUE STREAM VALIDATION
 # ============================================================
 
-def validate_unique_streams(channels):
+def validate_unique_streams(channels, result_callback=None):
     """Validate every record independently and coordinate audio asynchronously."""
     global _AUDIO_EXECUTOR
     global _AUDIO_TRACK_EXECUTOR
@@ -4997,11 +5007,12 @@ def validate_unique_streams(channels):
     url_occurrences = defaultdict(int)
     record_context = []
 
-    for index, channel in enumerate(channels, 1):
+    for local_index, channel in enumerate(channels, 1):
         channel["url"] = rewrite_stream_url(channel.get("url", ""))
         url = channel["url"]
         url_occurrences[url] += 1
-        record_id = (
+        index = int(channel.get("_hunter_record_number", local_index))
+        record_id = channel.get("_hunter_record_id") or (
             f"{index:08d}:"
             + hashlib.sha256(
                 (
@@ -5025,6 +5036,7 @@ def validate_unique_streams(channels):
     )
 
     audio_pending = []
+    callback_ids = set()
     audio_completed = 0
     audio_failed = 0
     channels_by_record_id = {}
@@ -5102,8 +5114,11 @@ def validate_unique_streams(channels):
                         result["record_id"] = record_id
                         result["record_number"] = index
                         result["url"] = url
-                        result["duplicate_url_occurrences"] = (
-                            url_occurrences[url] - 1
+                        result["duplicate_url_occurrences"] = int(
+                            channel.get(
+                                "_hunter_duplicate_url_occurrences",
+                                url_occurrences[url] - 1,
+                            )
                         )
 
                         language_future = result.pop("_language_future", None)
@@ -5204,6 +5219,9 @@ def validate_unique_streams(channels):
                         track_count=len(language_result.get("track_results", [])),
                         error=language_result.get("error", ""),
                     )
+                    if result_callback is not None:
+                        result_callback(record_id, channel, result)
+                        callback_ids.add(record_id)
 
             _AUDIO_EXECUTOR = None
         _AUDIO_TRACK_EXECUTOR = None
@@ -5215,6 +5233,11 @@ def validate_unique_streams(channels):
         channel = channels_by_record_id.get(record_id)
         if channel is not None:
             result["region_class"] = classify_channel_region(channel)
+            # Audio records were journaled after their language result was
+            # attached. This final pass journals records without audio work.
+            if result_callback is not None and record_id not in callback_ids:
+                result_callback(record_id, channel, result)
+                callback_ids.add(record_id)
 
     verified = sum(
         1 for item in results.values()
@@ -6460,10 +6483,385 @@ def clean_previous_outputs():
 
 
 # ============================================================
+# STAGED EXECUTION / DURABLE CHECKPOINT
+# ============================================================
+
+CHECKPOINT_SCHEMA_VERSION = 1
+STATE_DIR = os.path.abspath(os.getenv(
+    "IPTV_STATE_DIR",
+    os.path.join(OUTPUT_DIR, "checkpoint"),
+))
+PREPARED_CHANNELS_FILE = os.path.join(STATE_DIR, "prepared_channels.json")
+PLAYLIST_RESULTS_FILE = os.path.join(STATE_DIR, "playlist_results.json")
+RUN_MANIFEST_FILE = os.path.join(STATE_DIR, "run_manifest.json")
+RESULTS_JOURNAL_FILE = os.path.join(STATE_DIR, "results.jsonl")
+CHECKPOINT_LOCK = threading.Lock()
+
+
+def _atomic_write_json(path, payload):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    temporary = path + ".tmp"
+    with open(temporary, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle, ensure_ascii=False, separators=(",", ":"))
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(temporary, path)
+
+
+def _read_json(path, default=None):
+    if not os.path.isfile(path):
+        return default
+    with open(path, "r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def _sha256_file(path):
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _prepare_record_identity(channels):
+    """Freeze stable IDs and global duplicate counts before any validation shard."""
+    counts = defaultdict(int)
+    for channel in channels:
+        channel["url"] = rewrite_stream_url(channel.get("url", ""))
+        counts[channel["url"]] += 1
+
+    for index, channel in enumerate(channels, 1):
+        url = channel["url"]
+        channel["_hunter_record_number"] = index
+        channel["_hunter_record_id"] = (
+            f"{index:08d}:"
+            + hashlib.sha256(
+                (
+                    str(channel.get("playlist", "")) + "|"
+                    + str(channel.get("line", "")) + "|"
+                    + str(channel.get("name", "")) + "|"
+                    + str(url)
+                ).encode("utf-8", errors="replace")
+            ).hexdigest()[:16]
+        )
+        channel["_hunter_duplicate_url_occurrences"] = counts[url] - 1
+
+
+def _load_result_journal():
+    """Read append-only results; tolerate only a torn, unterminated final line."""
+    results = {}
+    if not os.path.isfile(RESULTS_JOURNAL_FILE):
+        return results
+
+    raw_lines = Path(RESULTS_JOURNAL_FILE).read_bytes().splitlines(keepends=True)
+    for line_number, raw in enumerate(raw_lines, 1):
+        if not raw.strip():
+            continue
+        try:
+            item = json.loads(raw.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as error:
+            is_final_torn_line = (
+                line_number == len(raw_lines)
+                and not raw.endswith((b"\\n", b"\\r"))
+            )
+            if is_final_torn_line:
+                logger.warning(
+                    "[CHECKPOINT] Ignoring incomplete final journal line %s",
+                    line_number,
+                )
+                break
+            raise RuntimeError(
+                f"Checkpoint journal corruption at line {line_number}: {error}"
+            ) from error
+
+        if item.get("schema_version") != CHECKPOINT_SCHEMA_VERSION:
+            raise RuntimeError(
+                f"Unsupported journal schema at line {line_number}."
+            )
+        record_id = item.get("record_id")
+        result = item.get("result")
+        if not record_id or not isinstance(result, dict):
+            raise RuntimeError(
+                f"Invalid checkpoint record at journal line {line_number}."
+            )
+        results[record_id] = result
+    return results
+
+
+def _append_result_checkpoint(record_id, channel, result):
+    """Persist one fully completed channel result before reporting it complete."""
+    payload = {
+        "schema_version": CHECKPOINT_SCHEMA_VERSION,
+        "record_id": record_id,
+        "record_number": channel.get("_hunter_record_number"),
+        "result": result,
+    }
+    encoded = (
+        json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n"
+    ).encode("utf-8")
+    os.makedirs(STATE_DIR, exist_ok=True)
+    with CHECKPOINT_LOCK:
+        with open(RESULTS_JOURNAL_FILE, "ab") as handle:
+            handle.write(encoded)
+            handle.flush()
+            os.fsync(handle.fileno())
+
+
+def _write_run_manifest(channels, prepared_sha256, status):
+    previous = _read_json(RUN_MANIFEST_FILE, {}) or {}
+    manifest = {
+        "schema_version": CHECKPOINT_SCHEMA_VERSION,
+        "repository": f"{OWNER}/{REPOSITORY}",
+        "branch": BRANCH,
+        "created_at": previous.get("created_at", now_string()),
+        "updated_at": now_string(),
+        "status": status,
+        "total_records": len(channels),
+        "prepared_channels_sha256": prepared_sha256,
+        "deduplication_enabled": False,
+        "workers": {
+            "download": DOWNLOAD_WORKERS,
+            "parser": PARSER_WORKERS,
+            "check": CHECK_WORKERS,
+            "audio_language": AUDIO_LANGUAGE_WORKERS,
+            "audio_track": AUDIO_TRACK_WORKERS,
+            "audio_engine": AUDIO_ENGINE_WORKERS,
+        },
+    }
+    _atomic_write_json(RUN_MANIFEST_FILE, manifest)
+
+
+def _load_prepared_state():
+    manifest = _read_json(RUN_MANIFEST_FILE)
+    if not manifest:
+        raise RuntimeError(
+            "Checkpoint not found. Run --phase prepare before validation."
+        )
+    if manifest.get("schema_version") != CHECKPOINT_SCHEMA_VERSION:
+        raise RuntimeError("Unsupported checkpoint schema version.")
+    if manifest.get("repository") != f"{OWNER}/{REPOSITORY}" or manifest.get("branch") != BRANCH:
+        raise RuntimeError("Checkpoint belongs to a different repository or branch.")
+
+    channels = _read_json(PREPARED_CHANNELS_FILE)
+    if not isinstance(channels, list):
+        raise RuntimeError("Prepared channel dataset is missing or invalid.")
+    actual_hash = _sha256_file(PREPARED_CHANNELS_FILE)
+    if actual_hash != manifest.get("prepared_channels_sha256"):
+        raise RuntimeError("Prepared channel dataset checksum mismatch.")
+    if len(channels) != int(manifest.get("total_records", -1)):
+        raise RuntimeError("Prepared channel count does not match run manifest.")
+    return channels, manifest
+
+
+def prepare_phase():
+    """Discover, download and parse once; freeze the dataset for all later jobs."""
+    os.makedirs(STATE_DIR, exist_ok=True)
+    clean_previous_outputs()
+
+    logger.info("[PHASE PREPARE] Starting discovery/download/parse.")
+    install_optional_tools()
+    configure_tshark_capture_permissions()
+    install_python_analyzers()
+    inventory = tool_inventory()
+
+    log_event(
+        "RUN_STARTED",
+        owner=OWNER,
+        repository=REPOSITORY,
+        branch=BRANCH,
+        download_workers=DOWNLOAD_WORKERS,
+        parser_workers=PARSER_WORKERS,
+        check_workers=CHECK_WORKERS,
+        audio_language_workers=AUDIO_LANGUAGE_WORKERS,
+        audio_track_workers=AUDIO_TRACK_WORKERS,
+        audio_engine_workers=AUDIO_ENGINE_WORKERS,
+        deduplication=DEDUPLICATE_STREAMS,
+        tools=inventory,
+        execution_mode="staged",
+    )
+
+    tree = get_repository_tree()
+    playlists = discover_playlists(tree)
+    save_playlist_index(playlists)
+    downloaded, playlist_results = download_all_playlists(playlists)
+    export_playlist_report(playlist_results)
+    all_channels = parse_all_playlists(downloaded) if downloaded else []
+
+    _prepare_record_identity(all_channels)
+    _atomic_write_json(PREPARED_CHANNELS_FILE, all_channels)
+    _atomic_write_json(PLAYLIST_RESULTS_FILE, playlist_results)
+    prepared_hash = _sha256_file(PREPARED_CHANNELS_FILE)
+
+    # A fresh prepare phase always starts a fresh journal.
+    with open(RESULTS_JOURNAL_FILE, "w", encoding="utf-8") as handle:
+        handle.flush()
+        os.fsync(handle.fileno())
+
+    _write_run_manifest(all_channels, prepared_hash, "prepared")
+    _atomic_write_json(
+        os.path.join(STATE_DIR, "stage_status.json"),
+        {
+            "status": "prepared",
+            "total_records": len(all_channels),
+            "completed_records": 0,
+            "remaining_records": len(all_channels),
+        },
+    )
+    log_event(
+        "PHASE_PREPARE_FINISHED",
+        playlists=len(playlist_results),
+        channel_records=len(all_channels),
+        prepared_sha256=prepared_hash,
+    )
+    logger.info(
+        "[PHASE PREPARE COMPLETE] playlists=%s | channel_records=%s | state=%s",
+        len(playlist_results), len(all_channels), STATE_DIR,
+    )
+
+
+def validate_phase():
+    """Validate one bounded batch; completed records are skipped on later stages."""
+    # Every GitHub Actions job starts on a fresh runner. Recreate external
+    # analyzers/tools here; the model cache itself is restored by workflow cache.
+    install_optional_tools()
+    configure_tshark_capture_permissions()
+    install_python_analyzers()
+    inventory = tool_inventory()
+    log_event("VALIDATION_STAGE_TOOLS_READY", tools=inventory)
+
+    channels, manifest = _load_prepared_state()
+    journal = _load_result_journal()
+    for channel in channels:
+        record_id = channel.get("_hunter_record_id")
+        if record_id in journal:
+            channel["validation"] = journal[record_id]
+
+    pending = [
+        channel for channel in channels
+        if channel.get("_hunter_record_id") not in journal
+    ]
+    total = len(channels)
+    completed_before = total - len(pending)
+    batch_size = max(1, int(os.getenv("IPTV_VALIDATION_BATCH_SIZE", "1500")))
+    batch = pending[:batch_size]
+
+    logger.info(
+        "[PHASE VALIDATE] total=%s | completed=%s | pending=%s | batch=%s",
+        total, completed_before, len(pending), len(batch),
+    )
+    if not batch:
+        logger.info("[PHASE VALIDATE] No pending records; validation is complete.")
+        return
+
+    results = validate_unique_streams(batch, result_callback=_append_result_checkpoint)
+    # Verify that every submitted record made it into the durable journal.
+    journal_after = _load_result_journal()
+    missing = [
+        channel.get("_hunter_record_id")
+        for channel in batch
+        if channel.get("_hunter_record_id") not in journal_after
+    ]
+    if missing:
+        raise RuntimeError(
+            f"Checkpoint incomplete: {len(missing)} batch records were not persisted."
+        )
+
+    completed_after = len(journal_after)
+    status = "validated" if completed_after >= total else "validation_in_progress"
+    _write_run_manifest(
+        channels,
+        manifest["prepared_channels_sha256"],
+        status,
+    )
+    _atomic_write_json(
+        os.path.join(STATE_DIR, "stage_status.json"),
+        {
+            "status": status,
+            "total_records": total,
+            "completed_records": completed_after,
+            "remaining_records": max(0, total - completed_after),
+        },
+    )
+    log_event(
+        "PHASE_VALIDATE_FINISHED",
+        batch_records=len(batch),
+        completed_before=completed_before,
+        completed_after=completed_after,
+        total_records=total,
+        pending_records=max(0, total - completed_after),
+    )
+    logger.info(
+        "[PHASE VALIDATE COMPLETE] %s/%s | remaining=%s",
+        completed_after, total, max(0, total - completed_after),
+    )
+
+
+def finalize_phase():
+    """Rehydrate all completed records and run the original export/report pipeline."""
+    channels, manifest = _load_prepared_state()
+    journal = _load_result_journal()
+    total = len(channels)
+    missing = []
+    for channel in channels:
+        record_id = channel.get("_hunter_record_id")
+        result = journal.get(record_id)
+        if result is None:
+            missing.append(record_id)
+        else:
+            channel["record_id"] = record_id
+            channel["record_number"] = channel.get("_hunter_record_number")
+            channel["validation"] = result
+
+    if missing:
+        raise RuntimeError(
+            f"Refusing finalization: {len(missing)} of {total} records are not validated."
+        )
+
+    playlist_results = _read_json(PLAYLIST_RESULTS_FILE, [])
+    unique_channels = build_channel_database(channels)
+
+    export_m3u(channels, "All_Channels.m3u", mode="all")
+    export_m3u(channels, "Verified_Channels.m3u", mode="verified")
+    export_m3u(channels, "Failed_Channels.m3u", mode="failed")
+    export_regional_playlists(channels)
+    export_csv(unique_channels)
+    export_json(unique_channels)
+    export_track_report(unique_channels)
+    export_language_reports(channels)
+    export_tshark_reports()
+    export_playlist_report(playlist_results)
+    export_check_report(channels, journal, playlist_results)
+    print_final_statistics(channels, journal, playlist_results)
+
+    _write_run_manifest(
+        channels,
+        manifest["prepared_channels_sha256"],
+        "finished",
+    )
+    _atomic_write_json(
+        os.path.join(STATE_DIR, "stage_status.json"),
+        {
+            "status": "finished",
+            "total_records": total,
+            "completed_records": total,
+            "remaining_records": 0,
+        },
+    )
+    log_event(
+        "RUN_FINISHED",
+        execution_mode="staged",
+        total_records=total,
+        checked_records=len(journal),
+        output_directory=OUTPUT_DIR,
+    )
+    logger.info("[PHASE FINALIZE COMPLETE] All reports and playlists exported.")
+
+
+# ============================================================
 # MAIN PIPELINE
 # ============================================================
 
-def main():
+def main_full():
     started = time.perf_counter()
     clean_previous_outputs()
 
@@ -6793,8 +7191,30 @@ def main():
 
 
 # ============================================================
-# ENTRY POINT
+# ENTRY POINT / PHASE DISPATCHER
 # ============================================================
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="IPTV Repository Playlist Hunter staged runner"
+    )
+    parser.add_argument(
+        "--phase",
+        choices=("full", "prepare", "validate", "finalize"),
+        default=os.getenv("IPTV_PHASE", "full"),
+        help="full = legacy one-shot; prepare/validate/finalize = resumable workflow phases",
+    )
+    args = parser.parse_args()
+
+    if args.phase == "prepare":
+        prepare_phase()
+    elif args.phase == "validate":
+        validate_phase()
+    elif args.phase == "finalize":
+        finalize_phase()
+    else:
+        main_full()
+
 
 if __name__ == "__main__":
     try:
