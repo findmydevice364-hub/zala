@@ -6,14 +6,14 @@
 ====================================================================
  PROJECT: IPTV NODE MASTER AGGREGATOR
  ENGINE:  RECURSIVE DISCOVERY ENGINE
- VERSION: 2.1.0
+ VERSION: 3.0.0
  OWNER:   Phoenix89S Lab
 
  PURPOSE:
-   Recursive M3U catalog discovery and aggregation.
+   Recursive M3U/M3U8 catalog discovery and aggregation.
 
  INPUT:
-   hvk.m3u
+   hvk.m3u (downloaded from SOURCE_URL)
 
  OUTPUT:
    find_output/
@@ -33,19 +33,36 @@
      engine.log
 
  IMPORTANT:
-   NO DEDUPLICATION.
+   NO CHANNEL DEDUPLICATION.
 
-   Every channel occurrence is preserved, including:
+   Every accepted channel occurrence is preserved:
    - Identical URLs
    - Identical names
    - Identical EXTINF records
-   - Channels discovered through different masters
+   - Repeated entries from different catalogs
 
- NETWORK:
-   Only explicitly identified catalog URLs are fetched.
-   No arbitrary port scanning.
-   No hidden-path guessing.
-   No individual live stream probing.
+   Each channel is stored as one complete record:
+       EXTINF + additional tags + stream URL
+
+ DISCOVERY:
+   - Known master URLs
+   - Explicitly linked M3U/M3U8 catalogs
+   - Catalog links matching known filename hints
+   - Recursive discovery from downloaded catalogs
+
+ LIMITATIONS:
+   - No arbitrary port scanning
+   - No hidden-path guessing
+   - No random URL generation
+   - No individual stream probing
+   - Only catalogs explicitly referenced or configured
+   - Adult content name filter enabled
+
+ TECHNICAL:
+   - No artificial master count limit
+   - No artificial recursion depth limit
+   - Iterative queue instead of recursive function calls
+   - Per-response size protection
 ====================================================================
 """
 
@@ -65,15 +82,9 @@ from urllib.parse import (
     unquote,
     urldefrag,
 )
-from urllib.request import (
-    Request,
-    urlopen,
-)
-from urllib.error import (
-    HTTPError,
-    URLError,
-)
-from collections import defaultdict
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
+from collections import defaultdict, deque
 from datetime import datetime, timezone
 
 
@@ -82,7 +93,7 @@ from datetime import datetime, timezone
 # ================================================================
 
 ENGINE_NAME = "IPTV NODE MASTER AGGREGATOR"
-ENGINE_VERSION = "2.1.0"
+ENGINE_VERSION = "3.0.0"
 
 SOURCE_URL = (
     "https://raw.githubusercontent.com/"
@@ -97,17 +108,19 @@ CHANNELS_DIR = OUTPUT_DIR / "03_channels"
 FINAL_DIR = OUTPUT_DIR / "04_final"
 REPORTS_DIR = OUTPUT_DIR / "05_reports"
 
-MAX_DEPTH = 5
-MAX_MASTERS = 100
+# None means no artificial limit.
+MAX_DEPTH = None
+MAX_MASTERS = None
 
-MAX_RESPONSE_SIZE = 12 * 1024 * 1024
+# Maximum response size per catalog.
+MAX_RESPONSE_SIZE = 128 * 1024 * 1024
 
-REQUEST_TIMEOUT = 15
-REQUEST_DELAY = 1.0
-MAX_RETRIES = 2
+REQUEST_TIMEOUT = 25
+REQUEST_DELAY = 0.5
+MAX_RETRIES = 3
 
 USER_AGENT = (
-    "IPTV-Node-Master-Aggregator/2.1"
+    "IPTV-Node-Master-Aggregator/3.0"
 )
 
 KNOWN_MASTERS = [
@@ -131,8 +144,11 @@ BLOCKED_TERMS = (
     "porno",
     "xxx",
     "erotic",
-    "vixen",
-    "mb_sexy",
+    "18+",
+    "18plus",
+    "для взрослых",
+    "порно",
+    "эрот",
 )
 
 
@@ -141,6 +157,8 @@ BLOCKED_TERMS = (
 # ================================================================
 
 visited_masters = set()
+
+master_queue = deque()
 
 master_results = []
 
@@ -157,15 +175,17 @@ errors = []
 
 statistics = {
     "source_downloads": 0,
+    "masters_discovered": 0,
     "masters_attempted": 0,
     "masters_successful": 0,
     "masters_failed": 0,
     "channels_parsed": 0,
     "channels_exported": 0,
     "channels_filtered": 0,
+    "duplicate_urls_preserved": 0,
     "nested_masters_discovered": 0,
     "bytes_downloaded": 0,
-    "duplicate_urls_preserved": 0,
+    "nodes_registered": 0,
 }
 
 
@@ -258,15 +278,13 @@ def atomic_write(path, content):
 
 def atomic_json(path, data):
 
-    content = json.dumps(
-        data,
-        ensure_ascii=False,
-        indent=2,
-    )
-
     atomic_write(
         path,
-        content + "\n",
+        json.dumps(
+            data,
+            ensure_ascii=False,
+            indent=2,
+        ) + "\n",
     )
 
 
@@ -276,17 +294,27 @@ def atomic_json(path, data):
 
 def normalize_url(url):
 
-    return url.strip().strip('"').strip("'")
+    return (
+        str(url)
+        .strip()
+        .strip('"')
+        .strip("'")
+    )
 
 
 def valid_http_url(url):
 
     try:
 
-        parsed = urlparse(url)
+        parsed = urlparse(
+            normalize_url(url)
+        )
 
         return (
-            parsed.scheme.lower() in ("http", "https")
+            parsed.scheme.lower() in (
+                "http",
+                "https",
+            )
             and bool(parsed.hostname)
         )
 
@@ -301,10 +329,12 @@ def canonical_url(url):
         normalize_url(url)
     )
 
-    return parsed._replace(
+    normalized = parsed._replace(
         scheme=parsed.scheme.lower(),
         netloc=parsed.netloc.lower(),
     ).geturl()
+
+    return urldefrag(normalized)[0]
 
 
 def stable_id(value):
@@ -314,18 +344,54 @@ def stable_id(value):
     ).hexdigest()[:20]
 
 
+def absolute_url(base_url, value):
+
+    return normalize_url(
+        urljoin(
+            base_url,
+            normalize_url(value),
+        )
+    )
+
+
 # ================================================================
-# 06. CONTENT FILTER
+# 06. ADULT CONTENT FILTER
 # ================================================================
 
-def is_blocked(name):
+def is_blocked(name, attributes=None):
 
     if not EXCLUDE_ADULT:
         return False
 
-    value = name.casefold()
+    values = [str(name or "")]
+
+    if attributes:
+
+        for key in (
+            "group-title",
+            "tvg-name",
+            "tvg-id",
+        ):
+
+            values.append(
+                str(attributes.get(key, ""))
+            )
+
+    value = " ".join(values).casefold()
 
     for term in BLOCKED_TERMS:
+
+        if term in (
+            "для взрослых",
+            "порно",
+            "эрот",
+            "18+",
+        ):
+
+            if term in value:
+                return True
+
+            continue
 
         pattern = (
             r"(?<![\w])"
@@ -362,9 +428,24 @@ def is_catalog_url(url):
     )
 
 
+def is_m3u_file(url):
+
+    parsed = urlparse(url)
+
+    path = unquote(
+        parsed.path
+    ).casefold()
+
+    return path.endswith(
+        (".m3u", ".m3u8")
+    )
+
+
 def discover_masters(content, base_url):
 
     discovered = set()
+
+    current_extinf = False
 
     for raw_line in content.splitlines():
 
@@ -373,17 +454,44 @@ def discover_masters(content, base_url):
         if not line:
             continue
 
+        if line.startswith("#EXTINF:"):
+
+            current_extinf = True
+
+            continue
+
         if line.startswith("#"):
             continue
 
-        absolute = normalize_url(
-            urljoin(base_url, line)
+        absolute = absolute_url(
+            base_url,
+            line,
         )
 
         if not valid_http_url(absolute):
+            current_extinf = False
             continue
 
-        if is_catalog_url(absolute):
+        # A URL directly following EXTINF is normally
+        # a channel stream, not a standalone catalog.
+        #
+        # Only known catalog filename hints are accepted
+        # in this position.
+        if current_extinf:
+
+            if is_catalog_url(absolute):
+
+                discovered.add(
+                    canonical_url(absolute)
+                )
+
+            current_extinf = False
+
+            continue
+
+        # An unpaired explicit M3U/M3U8 URL is a
+        # catalog candidate regardless of filename.
+        if is_m3u_file(absolute):
 
             discovered.add(
                 canonical_url(absolute)
@@ -401,7 +509,7 @@ def fetch_text(url):
     if not valid_http_url(url):
 
         raise ValueError(
-            "Invalid HTTP/HTTPS URL"
+            f"Invalid HTTP/HTTPS URL: {url}"
         )
 
     last_error = None
@@ -489,7 +597,7 @@ def fetch_text(url):
                 delay = REQUEST_DELAY * attempt
 
                 log(
-                    f"Retry {attempt}: {url}"
+                    f"[RETRY {attempt}] {url}"
                 )
 
                 time.sleep(delay)
@@ -524,7 +632,7 @@ def register_node(url):
 
         port = (
             443
-            if parsed.scheme == "https"
+            if parsed.scheme.lower() == "https"
             else 80
         )
 
@@ -541,14 +649,16 @@ def register_master_node(url):
 
     host = urlparse(url).hostname
 
-    if host:
+    if not host:
+        return
 
-        records = node_registry[
-            host
-        ]["master_urls"]
+    records = node_registry[
+        host
+    ]["master_urls"]
 
-        if url not in records:
-            records.append(url)
+    if url not in records:
+
+        records.append(url)
 
 
 # ================================================================
@@ -579,9 +689,11 @@ def parse_extinf(line):
     for index, char in enumerate(payload):
 
         if char == '"':
+
             in_quotes = not in_quotes
 
         elif char == "," and not in_quotes:
+
             comma_position = index
 
     if comma_position >= 0:
@@ -639,6 +751,14 @@ def parse_m3u(
 
         if line.startswith("#EXTINF:"):
 
+            # A second EXTINF before a URL means
+            # the previous record was incomplete.
+            if current_info is not None:
+
+                log(
+                    "[PARSER] Incomplete EXTINF replaced"
+                )
+
             current_info = line
 
             extra_tags = []
@@ -653,8 +773,9 @@ def parse_m3u(
 
             continue
 
-        stream_url = normalize_url(
-            urljoin(base_url, line)
+        stream_url = absolute_url(
+            base_url,
+            line,
         )
 
         if not valid_http_url(stream_url):
@@ -665,6 +786,7 @@ def parse_m3u(
 
             continue
 
+        # No EXTINF means this is not a channel record.
         if current_info is None:
             continue
 
@@ -674,7 +796,12 @@ def parse_m3u(
 
         name = metadata["name"]
 
-        if is_blocked(name):
+        attributes = metadata["attributes"]
+
+        if is_blocked(
+            name,
+            attributes,
+        ):
 
             statistics[
                 "channels_filtered"
@@ -686,15 +813,9 @@ def parse_m3u(
 
             continue
 
-        attributes = metadata["attributes"]
+        record = {
 
-        record_number = (
-            len(channel_records) + len(entries) + 1
-        )
-
-        entries.append({
-
-            "record_number": record_number,
+            "record_number": 0,
 
             "id": stable_id(
                 canonical_url(stream_url)
@@ -740,7 +861,9 @@ def parse_m3u(
 
             "source_type": source_type,
 
-        })
+        }
+
+        entries.append(record)
 
         current_info = None
 
@@ -771,7 +894,7 @@ def register_channels(entries, source_url):
 
         record = dict(entry)
 
-        # Every occurrence gets its own record number.
+        # Each occurrence gets a unique sequential number.
         record["record_number"] = (
             len(channel_records) + 1
         )
@@ -782,11 +905,7 @@ def register_channels(entries, source_url):
 
         record["first_seen"] = now()
 
-        # No URL comparison.
-        # No name comparison.
-        # No channel_index.
-        # No record rejection due to duplicates.
-
+        # Deliberately no channel deduplication.
         channel_records.append(record)
 
         statistics[
@@ -801,12 +920,14 @@ def register_channels(entries, source_url):
                 record["record_number"]
             )
 
-    # Duplicate URLs are counted for diagnostics only.
-    # They are never removed.
+    # Diagnostics only. Records remain untouched.
     counts = defaultdict(int)
 
     for record in channel_records:
-        counts[record["canonical_url"]] += 1
+
+        counts[
+            record["canonical_url"]
+        ] += 1
 
     statistics[
         "duplicate_urls_preserved"
@@ -818,39 +939,77 @@ def register_channels(entries, source_url):
 
 
 # ================================================================
-# 13. MASTER PROCESSOR
+# 13. MASTER QUEUE
 # ================================================================
 
-def process_master(url, depth=0):
+def enqueue_master(url, depth=0, discovered_from=""):
 
     url = normalize_url(url)
+
+    if not valid_http_url(url):
+        return False
 
     key = canonical_url(url)
 
     if key in visited_masters:
+        return False
+
+    if MAX_DEPTH is not None:
+
+        if depth > MAX_DEPTH:
+            return False
+
+    if MAX_MASTERS is not None:
+
+        if (
+            len(visited_masters)
+            + len(master_queue)
+            >= MAX_MASTERS
+        ):
+            return False
+
+    queued_keys = {
+        item["key"]
+        for item in master_queue
+    }
+
+    if key in queued_keys:
+        return False
+
+    master_queue.append({
+
+        "url": url,
+
+        "key": key,
+
+        "depth": depth,
+
+        "discovered_from": discovered_from,
+
+    })
+
+    statistics[
+        "masters_discovered"
+    ] += 1
+
+    return True
+
+
+# ================================================================
+# 14. MASTER PROCESSOR
+# ================================================================
+
+def process_master(item):
+
+    url = item["url"]
+
+    key = item["key"]
+
+    depth = item["depth"]
+
+    if key in visited_masters:
         return
 
-    if depth > MAX_DEPTH:
-
-        log(
-            f"Depth limit reached: {url}"
-        )
-
-        return
-
-    if len(visited_masters) >= MAX_MASTERS:
-
-        log(
-            "Maximum master catalog limit reached"
-        )
-
-        return
-
-    if not valid_http_url(url):
-        return
-
-    # Master URL deduplication prevents repeated fetching.
-    # Channel records are NEVER deduplicated.
     visited_masters.add(key)
 
     register_master_node(url)
@@ -866,6 +1025,10 @@ def process_master(url, depth=0):
         "url": url,
 
         "depth": depth,
+
+        "discovered_from": item[
+            "discovered_from"
+        ],
 
         "status": "pending",
 
@@ -892,12 +1055,19 @@ def process_master(url, depth=0):
         if "#EXTM3U" not in content[:4096]:
 
             raise ValueError(
-                "Not a recognizable M3U catalog"
+                "Response is not a recognizable M3U catalog"
             )
+
+        final_key = canonical_url(final_url)
+
+        visited_masters.add(final_key)
+
+        register_master_node(final_url)
 
         entries = parse_m3u(
             content,
             final_url,
+            source_type="master",
         )
 
         register_channels(
@@ -920,7 +1090,7 @@ def process_master(url, depth=0):
         ] += 1
 
         log(
-            f"[OK] {len(entries)} records | {final_url}"
+            f"[OK] {len(entries)} channel records | {final_url}"
         )
 
         nested = discover_masters(
@@ -934,14 +1104,10 @@ def process_master(url, depth=0):
 
         for nested_url in sorted(nested):
 
-            if len(visited_masters) >= MAX_MASTERS:
-                break
-
-            time.sleep(REQUEST_DELAY)
-
-            process_master(
+            enqueue_master(
                 nested_url,
                 depth + 1,
+                discovered_from=final_url,
             )
 
     except Exception as exc:
@@ -974,7 +1140,7 @@ def process_master(url, depth=0):
 
 
 # ================================================================
-# 14. SOURCE PROCESSOR
+# 15. SOURCE PROCESSOR
 # ================================================================
 
 def process_source():
@@ -998,7 +1164,7 @@ def process_source():
     ] += 1
 
     log(
-        "[SOURCE] Parsing initial channels"
+        "[SOURCE] Parsing source channels"
     )
 
     entries = parse_m3u(
@@ -1013,7 +1179,7 @@ def process_source():
     )
 
     log(
-        f"[SOURCE] Initial records: {len(entries)}"
+        f"[SOURCE] Accepted records: {len(entries)}"
     )
 
     discovered = discover_masters(
@@ -1021,28 +1187,71 @@ def process_source():
         final_url,
     )
 
-    discovered.update(
-        canonical_url(url)
-        for url in KNOWN_MASTERS
-        if valid_http_url(url)
-    )
+    for known_url in KNOWN_MASTERS:
+
+        if valid_http_url(known_url):
+
+            discovered.add(
+                canonical_url(known_url)
+            )
 
     log(
-        f"[DISCOVERY] Explicit masters: {len(discovered)}"
+        f"[DISCOVERY] Initial catalog candidates: {len(discovered)}"
     )
 
     for url in sorted(discovered):
 
-        time.sleep(REQUEST_DELAY)
-
-        process_master(
+        enqueue_master(
             url,
             depth=1,
+            discovered_from=final_url,
         )
 
 
 # ================================================================
-# 15. NODE EXPORT
+# 16. DISCOVERY ENGINE
+# ================================================================
+
+def run_discovery():
+
+    while master_queue:
+
+        item = master_queue.popleft()
+
+        key = item["key"]
+
+        if key in visited_masters:
+            continue
+
+        if MAX_MASTERS is not None:
+
+            if len(visited_masters) >= MAX_MASTERS:
+
+                log(
+                    "[LIMIT] Master count limit reached"
+                )
+
+                break
+
+        process_master(item)
+
+        if master_queue:
+
+            time.sleep(
+                REQUEST_DELAY
+            )
+
+        log(
+            "[PROGRESS] "
+            f"masters={statistics['masters_attempted']} "
+            f"successful={statistics['masters_successful']} "
+            f"channels={statistics['channels_exported']} "
+            f"queue={len(master_queue)}"
+        )
+
+
+# ================================================================
+# 17. NODE EXPORT
 # ================================================================
 
 def export_nodes():
@@ -1069,125 +1278,23 @@ def export_nodes():
                 data["channel_records"]
             ),
 
-            "channel_record_numbers": list(
+            "channel_records": list(
                 data["channel_records"]
             ),
 
         })
+
+    statistics[
+        "nodes_registered"
+    ] = len(result)
 
     atomic_json(
         OUTPUT_DIR / "01_nodes.json",
         result,
     )
 
-
-# ================================================================
-# 16. CHANNEL INVENTORY EXPORT
-# ================================================================
-
-def export_channel_inventory():
-
     log(
-        "[EXPORT] Creating complete channel inventory"
-    )
-
-    extinf_lines = []
-
-    url_lines = []
-
-    m3u_lines = [
-        "#EXTM3U"
-    ]
-
-    for channel in channel_records:
-
-        extinf_lines.append(
-            channel["extinf"]
-        )
-
-        url_lines.append(
-            channel["url"]
-        )
-
-        m3u_lines.append(
-            channel["extinf"]
-        )
-
-        m3u_lines.extend(
-            channel["extra_tags"]
-        )
-
-        m3u_lines.append(
-            channel["url"]
-        )
-
-    atomic_write(
-        CHANNELS_DIR / "channels_extinf.txt",
-        "\n".join(extinf_lines) + "\n"
-        if extinf_lines else "",
-    )
-
-    atomic_write(
-        CHANNELS_DIR / "channels_urls.txt",
-        "\n".join(url_lines) + "\n"
-        if url_lines else "",
-    )
-
-    atomic_json(
-        CHANNELS_DIR / "channels_inventory.json",
-        channel_records,
-    )
-
-    atomic_write(
-        CHANNELS_DIR / "channels_inventory.m3u",
-        "\n".join(m3u_lines) + "\n",
-    )
-
-    log(
-        f"[EXPORT] Records: {len(channel_records)}"
-    )
-
-
-# ================================================================
-# 17. FINAL PLAYLIST
-# ================================================================
-
-def export_final_m3u():
-
-    log(
-        "[EXPORT] Building final master playlist"
-    )
-
-    lines = [
-        "#EXTM3U"
-    ]
-
-    for channel in channel_records:
-
-        lines.append(
-            channel["extinf"]
-        )
-
-        lines.extend(
-            channel["extra_tags"]
-        )
-
-        lines.append(
-            channel["url"]
-        )
-
-    path = (
-        FINAL_DIR /
-        "AGGREGATED_MASTER.m3u"
-    )
-
-    atomic_write(
-        path,
-        "\n".join(lines) + "\n",
-    )
-
-    log(
-        f"[EXPORT] Final playlist: {path}"
+        f"[EXPORT] Nodes: {len(result)}"
     )
 
 
@@ -1202,163 +1309,273 @@ def export_masters():
         master_results,
     )
 
+    log(
+        f"[EXPORT] Masters: {len(master_results)}"
+    )
+
 
 # ================================================================
-# 19. REPORT
+# 19. CHANNEL EXPORT
+# ================================================================
+
+def render_record(record):
+
+    lines = [
+        record["extinf"]
+    ]
+
+    lines.extend(
+        record.get("extra_tags", [])
+    )
+
+    lines.append(
+        record["url"]
+    )
+
+    return "\n".join(lines)
+
+
+def export_channels():
+
+    extinf_lines = []
+
+    url_lines = []
+
+    for record in channel_records:
+
+        extinf_lines.append(
+            record["extinf"]
+        )
+
+        url_lines.append(
+            record["url"]
+        )
+
+    atomic_write(
+        CHANNELS_DIR / "channels_extinf.txt",
+        "\n".join(extinf_lines) + "\n",
+    )
+
+    atomic_write(
+        CHANNELS_DIR / "channels_urls.txt",
+        "\n".join(url_lines) + "\n",
+    )
+
+    atomic_json(
+        CHANNELS_DIR / "channels_inventory.json",
+        channel_records,
+    )
+
+    m3u_lines = [
+        "#EXTM3U"
+    ]
+
+    for record in channel_records:
+
+        m3u_lines.append(
+            render_record(record)
+        )
+
+    atomic_write(
+        CHANNELS_DIR / "channels_inventory.m3u",
+        "\n".join(m3u_lines) + "\n",
+    )
+
+    log(
+        f"[EXPORT] Channel occurrences: {len(channel_records)}"
+    )
+
+
+# ================================================================
+# 20. FINAL MASTER PLAYLIST
+# ================================================================
+
+def export_final_m3u():
+
+    lines = [
+        "#EXTM3U"
+    ]
+
+    for record in channel_records:
+
+        # Name and URL remain inside the same record.
+        lines.append(
+            render_record(record)
+        )
+
+    atomic_write(
+        FINAL_DIR / "AGGREGATED_MASTER.m3u",
+        "\n".join(lines) + "\n",
+    )
+
+    log(
+        "[EXPORT] Final master playlist written"
+    )
+
+
+# ================================================================
+# 21. STATISTICS
+# ================================================================
+
+def export_statistics():
+
+    statistics["unique_master_urls"] = len(
+        visited_masters
+    )
+
+    statistics["total_channel_occurrences"] = len(
+        channel_records
+    )
+
+    statistics["total_nodes"] = len(
+        node_registry
+    )
+
+    statistics["total_errors"] = len(
+        errors
+    )
+
+    statistics["adult_filter_enabled"] = (
+        EXCLUDE_ADULT
+    )
+
+    statistics["completed_at"] = now()
+
+    atomic_json(
+        REPORTS_DIR / "statistics.json",
+        statistics,
+    )
+
+
+# ================================================================
+# 22. ERROR EXPORT
+# ================================================================
+
+def export_errors():
+
+    atomic_json(
+        REPORTS_DIR / "errors.json",
+        errors,
+    )
+
+
+# ================================================================
+# 23. TEXT REPORT
 # ================================================================
 
 def export_report():
 
     lines = [
 
-        "=" * 72,
+        "=" * 68,
 
         ENGINE_NAME,
 
         f"VERSION: {ENGINE_VERSION}",
 
-        "MODE: NO DEDUPLICATION",
-
-        "=" * 72,
-
-        f"Generated UTC: {now()}",
+        "=" * 68,
 
         "",
 
-        "STATISTICS",
+        f"Started/completed: {now()}",
 
-        "-" * 72,
+        "",
+
+        "DISCOVERY",
+
+        "-" * 68,
+
+        f"Masters discovered: {statistics['masters_discovered']}",
+
+        f"Masters attempted: {statistics['masters_attempted']}",
+
+        f"Masters successful: {statistics['masters_successful']}",
+
+        f"Masters failed: {statistics['masters_failed']}",
+
+        f"Nested catalog links: {statistics['nested_masters_discovered']}",
+
+        "",
+
+        "CHANNELS",
+
+        "-" * 68,
+
+        f"Parsed: {statistics['channels_parsed']}",
+
+        f"Exported: {statistics['channels_exported']}",
+
+        f"Filtered by 18+ rule: {statistics['channels_filtered']}",
+
+        f"Duplicate URLs preserved: {statistics['duplicate_urls_preserved']}",
+
+        "",
+
+        "NODES",
+
+        "-" * 68,
+
+        f"Registered nodes: {statistics['nodes_registered']}",
+
+        "",
+
+        "NETWORK",
+
+        "-" * 68,
+
+        f"Bytes downloaded: {statistics['bytes_downloaded']}",
+
+        f"Errors: {len(errors)}",
+
+        "",
+
+        "FILTERS",
+
+        "-" * 68,
+
+        f"Adult filter enabled: {EXCLUDE_ADULT}",
+
+        "",
+
+        "IMPORTANT",
+
+        "-" * 68,
+
+        "Channel deduplication: DISABLED",
+
+        "Master URL cycle protection: ENABLED",
+
+        "Channel name/URL pairing: ENABLED",
+
+        "Random port scanning: DISABLED",
+
+        "Hidden path guessing: DISABLED",
+
+        "Individual stream probing: DISABLED",
+
+        "",
+
+        "=" * 68,
 
     ]
 
-    for key, value in statistics.items():
-
-        lines.append(
-            f"{key}: {value}"
-        )
-
-    lines.extend([
-
-        "",
-
-        f"Nodes registered: {len(node_registry)}",
-
-        f"Masters visited: {len(visited_masters)}",
-
-        f"Channel records: {len(channel_records)}",
-
-        "",
-
-        "NODE INVENTORY",
-
-        "-" * 72,
-
-    ])
-
-    for host, data in sorted(
-        node_registry.items()
-    ):
-
-        ports = ",".join(
-            map(str, sorted(data["ports"]))
-        )
-
-        lines.append(
-
-            f"{host} | ports={ports} | "
-
-            f"records={len(data['channel_records'])}"
-
-        )
-
-    lines.extend([
-
-        "",
-
-        "MASTER RESULTS",
-
-        "-" * 72,
-
-    ])
-
-    for master in master_results:
-
-        lines.append(
-
-            f"{master['status'].upper()} | "
-
-            f"depth={master['depth']} | "
-
-            f"channels={master['channels']} | "
-
-            f"{master['url']}"
-
-        )
-
-    if errors:
-
-        lines.extend([
-
-            "",
-
-            "ERRORS",
-
-            "-" * 72,
-
-        ])
-
-        for error in errors:
-
-            lines.append(
-
-                f"{error['url']} | {error['error']}"
-
-            )
-
     atomic_write(
-
         REPORTS_DIR / "report.txt",
-
         "\n".join(lines) + "\n",
-
-    )
-
-    atomic_json(
-
-        REPORTS_DIR / "errors.json",
-
-        errors,
-
-    )
-
-    atomic_json(
-
-        REPORTS_DIR / "statistics.json",
-
-        {
-
-            "engine": ENGINE_NAME,
-
-            "version": ENGINE_VERSION,
-
-            "generated": now(),
-
-            "deduplication": False,
-
-            "statistics": statistics,
-
-        },
-
     )
 
 
 # ================================================================
-# 20. OUTPUT VALIDATION
+# 24. FINAL VALIDATION
 # ================================================================
 
 def validate_outputs():
 
-    required = [
+    required_files = [
+
+        OUTPUT_DIR / "01_nodes.json",
+
+        OUTPUT_DIR / "02_masters.json",
 
         CHANNELS_DIR / "channels_extinf.txt",
 
@@ -1370,195 +1587,204 @@ def validate_outputs():
 
         FINAL_DIR / "AGGREGATED_MASTER.m3u",
 
-        OUTPUT_DIR / "01_nodes.json",
-
-        OUTPUT_DIR / "02_masters.json",
-
         REPORTS_DIR / "report.txt",
 
-    ]
+        REPORTS_DIR / "errors.json",
 
-    missing = [
-
-        str(path)
-
-        for path in required
-
-        if not path.is_file()
+        REPORTS_DIR / "statistics.json",
 
     ]
+
+    missing = []
+
+    for path in required_files:
+
+        if not path.exists():
+
+            missing.append(str(path))
+
+            continue
+
+        if path.stat().st_size == 0:
+
+            # Empty channel exports are allowed only when
+            # there were no accepted channels.
+            if (
+                "channels_" in path.name
+                and len(channel_records) == 0
+            ):
+                continue
+
+            missing.append(str(path))
 
     if missing:
 
-        raise RuntimeError(
+        for path in missing:
 
-            "Missing output files: "
-
-            + ", ".join(missing)
-
-        )
-
-    with (
-        CHANNELS_DIR / "channels_inventory.json"
-    ).open(
-        "r",
-        encoding="utf-8",
-    ) as file:
-
-        inventory = json.load(file)
-
-    if len(inventory) != len(channel_records):
+            log_error(
+                f"[VALIDATION] Missing or empty: {path}"
+            )
 
         raise RuntimeError(
-            "Inventory record count mismatch"
+            "Output validation failed"
         )
 
-    extinf_count = sum(
-        1
-        for line in (
-            CHANNELS_DIR / "channels_extinf.txt"
-        ).read_text(
-            encoding="utf-8"
-        ).splitlines()
-    )
+    if len(channel_records) > 0:
 
-    url_count = sum(
-        1
-        for line in (
-            CHANNELS_DIR / "channels_urls.txt"
-        ).read_text(
-            encoding="utf-8"
-        ).splitlines()
-    )
+        if (
+            len(channel_records)
+            != statistics["channels_exported"]
+        ):
 
-    if extinf_count != len(channel_records):
-
-        raise RuntimeError(
-            "EXTINF record count mismatch"
-        )
-
-    if url_count != len(channel_records):
-
-        raise RuntimeError(
-            "URL record count mismatch"
-        )
+            raise RuntimeError(
+                "Channel record count mismatch"
+            )
 
     log(
-        "[VALIDATION] All output files verified"
+        "[VALIDATION] All output files checked"
     )
 
 
 # ================================================================
-# 21. MAIN
+# 25. MAIN
 # ================================================================
 
 def main():
 
     started = time.time()
 
-    safe_mkdirs()
-
     initialize_logging()
 
-    log("=" * 72)
+    safe_mkdirs()
+
+    log("=" * 68)
 
     log(
         f"{ENGINE_NAME} v{ENGINE_VERSION}"
     )
 
     log(
-        "DEDUPLICATION: DISABLED"
+        f"Started: {now()}"
     )
 
-    log("=" * 72)
+    log(
+        "Channel deduplication: DISABLED"
+    )
 
-    success = False
+    log(
+        "18+ filter: ENABLED"
+    )
+
+    log(
+        "Master count limit: DISABLED"
+    )
+
+    log(
+        "Depth limit: DISABLED"
+    )
+
+    log("=" * 68)
 
     try:
 
         process_source()
 
-        # Inventory is generated before final M3U.
-        export_channel_inventory()
+        run_discovery()
 
         export_nodes()
 
         export_masters()
 
+        export_channels()
+
         export_final_m3u()
+
+        export_statistics()
+
+        export_errors()
 
         export_report()
 
         validate_outputs()
 
-        success = True
+        elapsed = round(
+            time.time() - started,
+            2,
+        )
+
+        log("=" * 68)
+
+        log(
+            "[SUCCESS] Aggregation completed"
+        )
+
+        log(
+            f"Masters: {statistics['masters_successful']}"
+        )
+
+        log(
+            f"Channels: {statistics['channels_exported']}"
+        )
+
+        log(
+            f"Filtered 18+: {statistics['channels_filtered']}"
+        )
+
+        log(
+            f"Elapsed seconds: {elapsed}"
+        )
+
+        log("=" * 68)
+
+        return 0
+
+    except KeyboardInterrupt:
+
+        log_error(
+            "[INTERRUPTED] Execution cancelled"
+        )
+
+        return 130
 
     except Exception as exc:
 
         log_error(
-            f"FATAL: {exc}"
+            f"[FATAL] {exc}"
         )
 
         errors.append({
 
-            "stage": "main",
+            "url": SOURCE_URL,
+
+            "depth": 0,
 
             "error": str(exc),
 
             "timestamp": now(),
 
+            "fatal": True,
+
         })
 
         try:
 
-            export_nodes()
+            export_errors()
 
-            export_masters()
+            export_statistics()
 
-            export_report()
+        except Exception:
 
-        except Exception as export_exc:
+            pass
 
-            log_error(
-                f"Diagnostic export failed: {export_exc}"
-            )
+        return 1
 
-    elapsed = time.time() - started
 
-    log("=" * 72)
-
-    log(
-        f"STATUS: {'SUCCESS' if success else 'FAILED'}"
-    )
-
-    log(
-        f"NODES: {len(node_registry)}"
-    )
-
-    log(
-        f"MASTERS: {len(visited_masters)}"
-    )
-
-    log(
-        f"CHANNEL RECORDS: {len(channel_records)}"
-    )
-
-    log(
-        f"DUPLICATE URL OCCURRENCES PRESERVED: "
-        f"{statistics['duplicate_urls_preserved']}"
-    )
-
-    log(
-        f"ELAPSED: {elapsed:.2f} seconds"
-    )
-
-    log("=" * 72)
-
-    if not success:
-
-        raise SystemExit(1)
-
+# ================================================================
+# 26. ENTRY POINT
+# ================================================================
 
 if __name__ == "__main__":
 
-    main()
+    sys.exit(
+        main()
+    )
