@@ -1,0 +1,18 @@
+{
+  "engine": "IPTV NODE MASTER AGGREGATOR",
+  "version": "2.1.0",
+  "generated": "2026-11-15T14:36:41.733649+00:00",
+  "deduplication": false,
+  "statistics": {
+    "source_downloads": 1,
+    "masters_attempted": 1,
+    "masters_successful": 1,
+    "masters_failed": 0,
+    "channels_parsed": 243,
+    "channels_exported": 243,
+    "channels_filtered": 3,
+    "nested_masters_discovered": 0,
+    "bytes_downloaded": 19067,
+    "duplicate_urls_preserved": 31
+  }
+}

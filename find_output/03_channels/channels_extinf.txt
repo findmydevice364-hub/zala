@@ -1,0 +1,243 @@
+#EXTINF:-1,tlc
+#EXTINF:-1,ard
+#EXTINF:-1,n24
+#EXTINF:-1,six
+#EXTINF:-1,dmax
+#EXTINF:-1,gold
+#EXTINF:-1,viva
+#EXTINF:-1,super
+#EXTINF:-1,disney
+#EXTINF:-1,ntv
+#EXTINF:-1,KANAL D HD
+#EXTINF:-1,STAR TV HD
+#EXTINF:-1,ATV HD
+#EXTINF:-1,SHOW TV HD
+#EXTINF:-1,NOW HD
+#EXTINF:-1,TV8 HD
+#EXTINF:-1,TLC HD
+#EXTINF:-1,DMAX HD
+#EXTINF:-1,HALK TV HD
+#EXTINF:-1,SZC TV HD
+#EXTINF:-1,KOZA TV HD
+#EXTINF:-1,CARTOON NETWORK HD
+#EXTINF:-1,TRT COCUK HD
+#EXTINF:-1,minikaCOCUK HD
+#EXTINF:-1,minikaGO HD
+#EXTINF:-1,STOON TV HD
+#EXTINF:-1,TRT SPOR HD
+#EXTINF:-1,TRT SPOR YILDIZ HD
+#EXTINF:-1,HABER HD (название скрыто в посте)
+#EXTINF:-1,HT SPOR HD
+#EXTINF:-1,A SPOR HD
+#EXTINF:-1,KANAL7 HD
+#EXTINF:-1,360 HD
+#EXTINF:-1,TV4 HD
+#EXTINF:-1,NTV HD
+#EXTINF:-1,CNN TÜRK HD
+#EXTINF:-1,HABER GLOBAL HD
+#EXTINF:-1,HABERTURK HD
+#EXTINF:-1,A HABER HD
+#EXTINF:-1,24 TV HD
+#EXTINF:-1,TV100 HD
+#EXTINF:-1,TGRT HABER HD
+#EXTINF:-1,TVNET HD
+#EXTINF:-1,TYT TURK HD
+#EXTINF:-1,CNBC-E HD
+#EXTINF:-1,BLOOMBERGHT HD
+#EXTINF:-1,A PARA HD
+#EXTINF:-1,EKOTURK HD
+#EXTINF:-1,LİDER HABER HD
+#EXTINF:-1,BEYAZ TV HD
+#EXTINF:-1,AKIT TV HD
+#EXTINF:-1,BENGİ TURK HD
+#EXTINF:-1,cartoon_classic
+#EXTINF:-1,detective_jam HD
+#EXTINF:-1,explorers HD
+#EXTINF:-1,magnat HD
+#EXTINF:-1,Scream HD
+#EXTINF:-1,Еда
+#EXTINF:-1,romance HD
+#EXTINF:-1,Старт Триумф
+#EXTINF:-1,suspense HD
+#EXTINF:-1,kinoman
+#EXTINF:-1,pes-i-ko
+#EXTINF:-1,0001.Հ1 HD
+#EXTINF:-1,0002.Շողակաթ
+#EXTINF:-1,0003.Արմենիա HD
+#EXTINF:-1,0004.Շանթ HD
+#EXTINF:-1,0005.ԱՏՎ HD
+#EXTINF:-1,0006.Կենտրոն HD
+#EXTINF:-1,0007.Erkir MEDIA HD
+#EXTINF:-1,0008.ԿՈՏԱՅՔ HD
+#EXTINF:-1,0021.ՏԱՎՈՒՇ HD
+#EXTINF:-1,0022.ԼՈՌԻ HD
+#EXTINF:-1,0023.Ցայգ HD
+#EXTINF:-1,0024.Դելտա HD
+#EXTINF:-1,0025.ՖՈՐՏՈՒՆԱ HD
+#EXTINF:-1,0026.ABN HD
+#EXTINF:-1,0027.Ազատություն HD (UCOM)
+#EXTINF:-1,0046.ПЕРЕЦ
+#EXTINF:-1,0047.ЧЕ
+#EXTINF:-1,0048.Ю-ТВ
+#EXTINF:-1,0049.ТВЦ
+#EXTINF:-1,0050.ЗВЕЗДА
+#EXTINF:-1,0051.ПОБЕДА
+#EXTINF:-1,0052.РОССИЯ К
+#EXTINF:-1,0053.CTC KIDS
+#EXTINF:-1,0081.Թավա TV HD
+#EXTINF:-1,0082.ТЕЛЕКАФЕ
+#EXTINF:-1,0083.НТВ СТИЛЬ
+#EXTINF:-1,0084.НТВ ПРАВО
+#EXTINF:-1,0085.НТВ СЕРИАЛ
+#EXTINF:-1,0086.Շանթ сериал
+#EXTINF:-1,0087.Բազմոց TV
+#EXTINF:-1,REN_INT
+#EXTINF:-1,STS_INT
+#EXTINF:-1,STS_KIDS_INT
+#EXTINF:-1,ОБЩИЙ СПИСОК (~135 каналов целиком)
+#EXTINF:-1,mb_dance
+#EXTINF:-1,mb_hits
+#EXTINF:-1,sporty_tv
+#EXTINF:-1,lifetv
+#EXTINF:-1,utv
+#EXTINF:-1,prime
+#EXTINF:-1,mb_classic
+#EXTINF:-1,retro
+#EXTINF:-1,mb_dance
+#EXTINF:-1,mb_hits
+#EXTINF:-1,dom
+#EXTINF:-1,gntv
+#EXTINF:-1,atv
+#EXTINF:-1,cam2
+#EXTINF:-1,ptv
+#EXTINF:-1,nick_jr
+#EXTINF:-1,utv
+#EXTINF:-1,v1
+#EXTINF:-1 group-title="-",0001.Հ1 HD -(82)
+#EXTINF:-1 group-title="-",0003.Արմենիա HD -(82)
+#EXTINF:-1 group-title="-",0004.Շանթ HD -(83)
+#EXTINF:-1 group-title="-",0005.ԱՏՎ HD -(82)
+#EXTINF:-1 group-title="-",0006.Կենտրոն HD -(83)
+#EXTINF:-1 group-title="-",0007.Erkir MEDIA HD
+#EXTINF:-1 group-title="-",0009.РТР ПЛАНЕТА -(82)
+#EXTINF:-1 group-title="-",0010.ՍՅՈՒՆԻՔ HD -(84)
+#EXTINF:-1 group-title="-",0011.ՆՈՒՌ HD -(82)
+#EXTINF:-1 group-title="-",0012.5 ալիք HD -(82)
+#EXTINF:-1 group-title="-",0013.5 պլյուս HD -(82)
+#EXTINF:-1 group-title="-",0014.Հ2 HD -(82)
+#EXTINF:-1 group-title="-",0015.Դար 21 HD -(82)
+#EXTINF:-1 group-title="-",0016.Նոր Հայաստան HD-(UCOM)
+#EXTINF:-1 group-title="-",0017.ՆՈՅԱՆ ՏԱՊԱՆ HD -(83)
+#EXTINF:-1 group-title="-",0018.Շանթ Գյումրի HD -(82)
+#EXTINF:-1 group-title="-",0019.ԱՌՄԱ HD -(83)
+#EXTINF:-1 group-title="-",0020.Գեղամա HD-(82)
+#EXTINF:-1 group-title="-",0021.ՏԱՎՈՒՇ ՏՎ HD -(82)
+#EXTINF:-1 group-title="-",0022.ԼՈՌԻ HD-(82)
+#EXTINF:-1 group-title="-",0023.Ցայգ HD-(83)
+#EXTINF:-1 group-title="-",0024.Դելտա HD -(82)
+#EXTINF:-1 group-title="-",0025.ՖՈՐՏՈՒՆԱ HD
+#EXTINF:-1 group-title="-",0026.ABN HD-(82)
+#EXTINF:-1 group-title="-",0028.FREE NEWS HD -(82)
+#EXTINF:-1 group-title="-",0029.1 Լրատվական HD -(83)
+#EXTINF:-1 group-title="-",0030.EURONEWS -(83)
+#EXTINF:-1 group-title="-",0033.РБК -(82)
+#EXTINF:-1 group-title="-",0034.МИР 24 -(82)
+#EXTINF:-1 group-title="-",0035.МИР -(84)
+#EXTINF:-1 group-title="-",0036.РОССИЯ 24 -(84)
+#EXTINF:-1 group-title="-",0037.ПЕРВЫЙ КАНАЛ HD -(83)
+#EXTINF:-1 group-title="-",0038.НТВ HD -(83)
+#EXTINF:-1 group-title="-",0039.РЕН ТВ -(83)
+#EXTINF:-1 group-title="-",0040.ТНТ HD -(82)
+#EXTINF:-1 group-title="-",0041.THT4 -(82)
+#EXTINF:-1 group-title="-",0042.СТС -(82)
+#EXTINF:-1 group-title="-",0043.ПЯТНИЦА -(84)
+#EXTINF:-1 group-title="-",0044.ДОМАШНИЙ -(82)
+#EXTINF:-1 group-title="-",0045.5 КАНАЛ -(83)
+#EXTINF:-1 group-title="-",0046.ПЕРЕЦ -(84)
+#EXTINF:-1 group-title="-",0047.ЧЕ -(84)
+#EXTINF:-1 group-title="-",0048.Ю-ТВ -(82)
+#EXTINF:-1 group-title="-",0049.ТВЦ -(84)
+#EXTINF:-1 group-title="-",0050.ЗВЕЗДА
+#EXTINF:-1 group-title="-",0051.ПОБЕДА
+#EXTINF:-1 group-title="-",0052.РОССИЯ К -(84)
+#EXTINF:-1 group-title="-",0053.CTC KIDS -(82)
+#EXTINF:-1 group-title="-",0054.Շանթ Kids HD -(82)
+#EXTINF:-1 group-title="-",0055.Խաղալիք HD -(83)
+#EXTINF:-1 group-title="-",0056.ARMTOON HD -(84)
+#EXTINF:-1 group-title="-",0057.КАРУСЕЛЬ -(84)
+#EXTINF:-1 group-title="-",0058.BABY TV -(82)
+#EXTINF:-1 group-title="-",0059.NICK JR -(83)
+#EXTINF:-1 group-title="-",0060.NICKELODEON HD -(84)
+#EXTINF:-1 group-title="-",0061.Հայ ՏՎ HD -(83)
+#EXTINF:-1 group-title="-",0062.VELARY HD -(84)
+#EXTINF:-1 group-title="-",0063.SONG TV ARMENIA HD -(83)
+#EXTINF:-1 group-title="-",0064.ՇԱՆԹ Music HD -(84)
+#EXTINF:-1 group-title="-",0065.Шансон ТВ -(84)
+#EXTINF:-1 group-title="-",0066.SONG TV Russia HD -(UCOM)
+#EXTINF:-1 group-title="-",0067.Музыка первого HD -(UCOM)
+#EXTINF:-1 group-title="-",0068.Մուզզոն HD -(84)
+#EXTINF:-1 group-title="-",0070.Լայֆ Հաք HD  FILMZONE -(84)
+#EXTINF:-1 group-title="-",0072.DISCOVERY CHANEL HD -(82)
+#EXTINF:-1 group-title="-",0073.NATIONAL GEOGRAPHIC -(82)
+#EXTINF:-1 group-title="-",0074.DELTA TRAVEL -(Inet)
+#EXTINF:-1 group-title="-",0075.АВТО ПЛЮС -(82)
+#EXTINF:-1 group-title="-",0076.TLC HD - (84)
+#EXTINF:-1 group-title="-",0077.Охотник и рыболов HD -(82)
+#EXTINF:-1 group-title="-",0078.ANIMAL PLANET HD -(83)
+#EXTINF:-1 group-title="-",0079.NAT.GEO.WILD HD -(82)
+#EXTINF:-1 group-title="-",0080.КУХНЯ ТВ -(84)
+#EXTINF:-1 group-title="-",0081. Թավա ՏՎ HD -(83)
+#EXTINF:-1 group-title="-",0082. ТЕЛЕКАФЕ -(84)
+#EXTINF:-1 group-title="-",0083.НТВ СТИЛЬ -(82)
+#EXTINF:-1 group-title="-",0084.НТВ ПРАВО -(82)
+#EXTINF:-1 group-title="-",0085.НТВ СЕРИАЛ -(82)
+#EXTINF:-1 group-title="-",0086.Շանթ սերիալ -(82)
+#EXTINF:-1 group-title="-",0087.Բազմոց ՏՎ HD -(82)
+#EXTINF:-1 group-title="-",0088.VIJU TV 1000 HD -(84)
+#EXTINF:-1 group-title="-",0089.КИНОМИКС HD -(82)
+#EXTINF:-1 group-title="-",0090.Կինոման HD -(83)
+#EXTINF:-1 group-title="-",0091.КИНОПРЕМЬЕРА HD -(82)
+#EXTINF:-1 group-title="-",0092.МУЖСКОЕ КИНО HD
+#EXTINF:-1 group-title="-",0093.ЕВРОКИНО HD -(84)
+#EXTINF:-1 group-title="-",0094.ТВ 3 -(94)
+#EXTINF:-1 group-title="-",0095.ИНДИЙСКОЕ КИНО -(84)
+#EXTINF:-1 group-title="-",0096.ИНДИЯ -(82)
+#EXTINF:-1 group-title="-",0097.МАТЧ БОЕЦ -(84)
+#EXTINF:-1 group-title="-",0098.FAST SPORT HD -(84)
+#EXTINF:-1 group-title="-",0099.МАТЧ ПЛАНЕТА
+#EXTINF:-1 group-title="-",0100.EUROSPORT 1  HD -(82)
+#EXTINF:-1 group-title="-",0101.EUROSPORT 2 HD -(TEAM)
+#EXTINF:-1 group-title="-",0102.Ֆիթնես ՏՎ HD
+#EXTINF:-1 group-title="-",0103.VIJU+SPORT-(82)
+#EXTINF:-1 group-title="-",0104.МАТЧ ФУТБОЛ 1 HD -(84)
+#EXTINF:-1 group-title="-",0105.МАТЧ ФУТБОЛ 2 HD -(84)
+#EXTINF:-1 group-title="-",0106.PLAYBOY -(84)
+#EXTINF:-1 group-title="-",0107.EROX
+#EXTINF:-1 group-title="-",0108.Русская ночь -(84)
+#EXTINF:-1 group-title="-",0110.Delta-Music
+#EXTINF:-1 group-title="-",0111.Top Music
+#EXTINF:-1 group-title="-",0112.Top Film
+#EXTINF:-1 group-title="-",0113.Top Mult
+#EXTINF:-1 group-title="-",0114.Top DOC
+#EXTINF:-1 group-title="-",0115.Bun TV
+#EXTINF:-1 group-title="-",0116.Top Wild
+#EXTINF:-1 group-title="-",0117.Romance
+#EXTINF:-1 group-title="-",0118.Наше Новое кино
+#EXTINF:-1 group-title="-",0119.MATCH PREMYER
+#EXTINF:-1 group-title="-",0120.Exxxotika
+#EXTINF:-1 group-title="-",0121.Ararat TV
+#EXTINF:-1 group-title="-",0122.ITC
+#EXTINF:-1 group-title="-",0123.Bari
+#EXTINF:-1 group-title="-",0124.Kino
+#EXTINF:-1 group-title="-",129.PREMIUM-1
+#EXTINF:-1 group-title="-",130.PREMIUM-2
+#EXTINF:-1 group-title="-",131.PREMIUM-3
+#EXTINF:-1 group-title="-",132.PREMIUM-4
+#EXTINF:-1 group-title="-",133.PREMIUM-5
+#EXTINF:-1 group-title="-",134.PREMIUM-6
+#EXTINF:-1 group-title="-",135.ArmountTV
+#EXTINF:-1 group-title="-",5_INT
+#EXTINF:-1 group-title="-",DOM_INT
+#EXTINF:-1 group-title="-",REN_INT
+#EXTINF:-1 group-title="-",STS_INT
+#EXTINF:-1 group-title="-",STS_KIDS_INT

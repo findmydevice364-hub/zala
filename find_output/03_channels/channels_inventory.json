@@ -1,0 +1,5361 @@
+[
+  {
+    "record_number": 1,
+    "id": "392219b58eba57181978",
+    "name": "tlc",
+    "url": "http://62.204.50.170:80/tlcX/index.m3u8",
+    "canonical_url": "http://62.204.50.170:80/tlcX/index.m3u8",
+    "extinf": "#EXTINF:-1,tlc",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299645+00:00"
+  },
+  {
+    "record_number": 2,
+    "id": "259e4f51ce34aaf2a1fd",
+    "name": "ard",
+    "url": "http://62.204.50.170:80/ardX/index.m3u8",
+    "canonical_url": "http://62.204.50.170:80/ardX/index.m3u8",
+    "extinf": "#EXTINF:-1,ard",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299694+00:00"
+  },
+  {
+    "record_number": 3,
+    "id": "ea73bde19eb2444622fb",
+    "name": "n24",
+    "url": "http://62.204.50.170:80/n24X/index.m3u8",
+    "canonical_url": "http://62.204.50.170:80/n24X/index.m3u8",
+    "extinf": "#EXTINF:-1,n24",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299714+00:00"
+  },
+  {
+    "record_number": 4,
+    "id": "0cf4a3c5a574ca53a711",
+    "name": "six",
+    "url": "http://62.204.50.170:80/sixX/index.m3u8",
+    "canonical_url": "http://62.204.50.170:80/sixX/index.m3u8",
+    "extinf": "#EXTINF:-1,six",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299730+00:00"
+  },
+  {
+    "record_number": 5,
+    "id": "114d6a8ff1731e958f3e",
+    "name": "dmax",
+    "url": "http://62.204.50.170:80/dmaxX/index.m3u8",
+    "canonical_url": "http://62.204.50.170:80/dmaxX/index.m3u8",
+    "extinf": "#EXTINF:-1,dmax",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299746+00:00"
+  },
+  {
+    "record_number": 6,
+    "id": "95deddcb7c3410a55630",
+    "name": "gold",
+    "url": "http://62.204.50.170:80/goldX/index.m3u8",
+    "canonical_url": "http://62.204.50.170:80/goldX/index.m3u8",
+    "extinf": "#EXTINF:-1,gold",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299772+00:00"
+  },
+  {
+    "record_number": 7,
+    "id": "d2236a97760036267d98",
+    "name": "viva",
+    "url": "http://62.204.50.170:80/vivaX/index.m3u8",
+    "canonical_url": "http://62.204.50.170:80/vivaX/index.m3u8",
+    "extinf": "#EXTINF:-1,viva",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299789+00:00"
+  },
+  {
+    "record_number": 8,
+    "id": "7b56cfd20d736ecf6507",
+    "name": "super",
+    "url": "http://62.204.50.170:80/superX/index.m3u8",
+    "canonical_url": "http://62.204.50.170:80/superX/index.m3u8",
+    "extinf": "#EXTINF:-1,super",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299805+00:00"
+  },
+  {
+    "record_number": 9,
+    "id": "ab9f92707025beb8c48e",
+    "name": "disney",
+    "url": "http://62.204.50.170:80/disneyX/index.m3u8",
+    "canonical_url": "http://62.204.50.170:80/disneyX/index.m3u8",
+    "extinf": "#EXTINF:-1,disney",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299820+00:00"
+  },
+  {
+    "record_number": 10,
+    "id": "1e3326ee0c4e8f9bb47a",
+    "name": "ntv",
+    "url": "http://62.204.50.170:80/ntvX/index.m3u8",
+    "canonical_url": "http://62.204.50.170:80/ntvX/index.m3u8",
+    "extinf": "#EXTINF:-1,ntv",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299834+00:00"
+  },
+  {
+    "record_number": 11,
+    "id": "577e8fffd70f487c233a",
+    "name": "KANAL D HD",
+    "url": "http://176.65.153.12:6002/play/a05s/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6002/play/a05s/index.m3u8",
+    "extinf": "#EXTINF:-1,KANAL D HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299850+00:00"
+  },
+  {
+    "record_number": 12,
+    "id": "1c157e813a330130f84f",
+    "name": "STAR TV HD",
+    "url": "http://176.65.153.66:6001/play/a01u/index.m3u8",
+    "canonical_url": "http://176.65.153.66:6001/play/a01u/index.m3u8",
+    "extinf": "#EXTINF:-1,STAR TV HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299865+00:00"
+  },
+  {
+    "record_number": 13,
+    "id": "7674ab30418f8097b499",
+    "name": "ATV HD",
+    "url": "http://176.65.153.66:6001/play/a01r/index.m3u8",
+    "canonical_url": "http://176.65.153.66:6001/play/a01r/index.m3u8",
+    "extinf": "#EXTINF:-1,ATV HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299879+00:00"
+  },
+  {
+    "record_number": 14,
+    "id": "0c5e498f8b9986077af8",
+    "name": "SHOW TV HD",
+    "url": "http://176.65.153.12:6002/play/a05m/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6002/play/a05m/index.m3u8",
+    "extinf": "#EXTINF:-1,SHOW TV HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299894+00:00"
+  },
+  {
+    "record_number": 15,
+    "id": "8aa7f33c499e9b6b2c1a",
+    "name": "NOW HD",
+    "url": "http://176.65.153.12:6002/play/a05l/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6002/play/a05l/index.m3u8",
+    "extinf": "#EXTINF:-1,NOW HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299908+00:00"
+  },
+  {
+    "record_number": 16,
+    "id": "d785f05030b8852ef681",
+    "name": "TV8 HD",
+    "url": "http://176.65.153.40:6003/play/a01q/index.m3u8",
+    "canonical_url": "http://176.65.153.40:6003/play/a01q/index.m3u8",
+    "extinf": "#EXTINF:-1,TV8 HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299926+00:00"
+  },
+  {
+    "record_number": 17,
+    "id": "604ac9c4372cae3eaa0e",
+    "name": "TLC HD",
+    "url": "http://176.65.153.49:6004/play/a003/index.m3u8",
+    "canonical_url": "http://176.65.153.49:6004/play/a003/index.m3u8",
+    "extinf": "#EXTINF:-1,TLC HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299943+00:00"
+  },
+  {
+    "record_number": 18,
+    "id": "186dd01244d10fa54329",
+    "name": "DMAX HD",
+    "url": "http://176.65.153.12:6004/play/a01p/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6004/play/a01p/index.m3u8",
+    "extinf": "#EXTINF:-1,DMAX HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299956+00:00"
+  },
+  {
+    "record_number": 19,
+    "id": "7bc1b990523f5d465537",
+    "name": "HALK TV HD",
+    "url": "http://176.65.153.35:6005/play/a026/index.m3u8",
+    "canonical_url": "http://176.65.153.35:6005/play/a026/index.m3u8",
+    "extinf": "#EXTINF:-1,HALK TV HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.299988+00:00"
+  },
+  {
+    "record_number": 20,
+    "id": "5c2eb3b8498bf6f5b9da",
+    "name": "SZC TV HD",
+    "url": "http://176.65.153.12:6001/play/a04u/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6001/play/a04u/index.m3u8",
+    "extinf": "#EXTINF:-1,SZC TV HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300001+00:00"
+  },
+  {
+    "record_number": 21,
+    "id": "e1473d45e605cfe19125",
+    "name": "KOZA TV HD",
+    "url": "http://176.65.153.40:6004/play/a01i/index.m3u8",
+    "canonical_url": "http://176.65.153.40:6004/play/a01i/index.m3u8",
+    "extinf": "#EXTINF:-1,KOZA TV HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300015+00:00"
+  },
+  {
+    "record_number": 22,
+    "id": "ae6f02eb00ebed428c7e",
+    "name": "CARTOON NETWORK HD",
+    "url": "http://176.65.153.12:6002/play/a05x/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6002/play/a05x/index.m3u8",
+    "extinf": "#EXTINF:-1,CARTOON NETWORK HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300028+00:00"
+  },
+  {
+    "record_number": 23,
+    "id": "a10b02f704462d809d58",
+    "name": "TRT COCUK HD",
+    "url": "http://176.65.153.12:6001/play/a04e/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6001/play/a04e/index.m3u8",
+    "extinf": "#EXTINF:-1,TRT COCUK HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300041+00:00"
+  },
+  {
+    "record_number": 24,
+    "id": "cb88bda15b800dee5b78",
+    "name": "minikaCOCUK HD",
+    "url": "http://176.65.153.12:6005/play/a033/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6005/play/a033/index.m3u8",
+    "extinf": "#EXTINF:-1,minikaCOCUK HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300054+00:00"
+  },
+  {
+    "record_number": 25,
+    "id": "04256de0b3fb080684f6",
+    "name": "minikaGO HD",
+    "url": "http://176.65.153.12:6005/play/a034/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6005/play/a034/index.m3u8",
+    "extinf": "#EXTINF:-1,minikaGO HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300067+00:00"
+  },
+  {
+    "record_number": 26,
+    "id": "99f73ac3e77206c5dd10",
+    "name": "STOON TV HD",
+    "url": "http://176.65.153.49:6005/play/a002/index.m3u8",
+    "canonical_url": "http://176.65.153.49:6005/play/a002/index.m3u8",
+    "extinf": "#EXTINF:-1,STOON TV HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300084+00:00"
+  },
+  {
+    "record_number": 27,
+    "id": "c6490a75c427c3dcfe90",
+    "name": "TRT SPOR HD",
+    "url": "http://176.65.153.66:6001/play/a01y/index.m3u8",
+    "canonical_url": "http://176.65.153.66:6001/play/a01y/index.m3u8",
+    "extinf": "#EXTINF:-1,TRT SPOR HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300099+00:00"
+  },
+  {
+    "record_number": 28,
+    "id": "40c900ed1b1f51e22e68",
+    "name": "TRT SPOR YILDIZ HD",
+    "url": "http://176.65.153.49:6002/play/a003/index.m3u8",
+    "canonical_url": "http://176.65.153.49:6002/play/a003/index.m3u8",
+    "extinf": "#EXTINF:-1,TRT SPOR YILDIZ HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300114+00:00"
+  },
+  {
+    "record_number": 29,
+    "id": "b5e069714f8c6619a6d8",
+    "name": "HABER HD (название скрыто в посте)",
+    "url": "http://176.65.153.66:6003/play/a00y/index.m3u8",
+    "canonical_url": "http://176.65.153.66:6003/play/a00y/index.m3u8",
+    "extinf": "#EXTINF:-1,HABER HD (название скрыто в посте)",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300128+00:00"
+  },
+  {
+    "record_number": 30,
+    "id": "c4bc019bdb08e51488ea",
+    "name": "HT SPOR HD",
+    "url": "http://176.65.153.40:6002/play/a01k/index.m3u8",
+    "canonical_url": "http://176.65.153.40:6002/play/a01k/index.m3u8",
+    "extinf": "#EXTINF:-1,HT SPOR HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300143+00:00"
+  },
+  {
+    "record_number": 31,
+    "id": "ad911bc9b9de96663b4e",
+    "name": "A SPOR HD",
+    "url": "http://176.65.153.66:6001/play/a01t/index.m3u8",
+    "canonical_url": "http://176.65.153.66:6001/play/a01t/index.m3u8",
+    "extinf": "#EXTINF:-1,A SPOR HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300158+00:00"
+  },
+  {
+    "record_number": 32,
+    "id": "8b1c57feb495b06767fc",
+    "name": "KANAL7 HD",
+    "url": "http://176.65.153.12:6001/play/a04n/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6001/play/a04n/index.m3u8",
+    "extinf": "#EXTINF:-1,KANAL7 HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300173+00:00"
+  },
+  {
+    "record_number": 33,
+    "id": "04371c5871555042e8cc",
+    "name": "360 HD",
+    "url": "http://176.65.153.40:6002/play/a01m/index.m3u8",
+    "canonical_url": "http://176.65.153.40:6002/play/a01m/index.m3u8",
+    "extinf": "#EXTINF:-1,360 HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300186+00:00"
+  },
+  {
+    "record_number": 34,
+    "id": "9bd45e66b2a07b824cbb",
+    "name": "TV4 HD",
+    "url": "http://176.65.153.40:6002/play/a01n/index.m3u8",
+    "canonical_url": "http://176.65.153.40:6002/play/a01n/index.m3u8",
+    "extinf": "#EXTINF:-1,TV4 HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300199+00:00"
+  },
+  {
+    "record_number": 35,
+    "id": "d7f7a390863ce9b39886",
+    "name": "NTV HD",
+    "url": "http://176.65.153.66:6001/play/a01w/index.m3u8",
+    "canonical_url": "http://176.65.153.66:6001/play/a01w/index.m3u8",
+    "extinf": "#EXTINF:-1,NTV HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300212+00:00"
+  },
+  {
+    "record_number": 36,
+    "id": "8dd614873ca2f7334094",
+    "name": "CNN TÜRK HD",
+    "url": "http://176.65.153.12:6004/play/a01r/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6004/play/a01r/index.m3u8",
+    "extinf": "#EXTINF:-1,CNN TÜRK HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300228+00:00"
+  },
+  {
+    "record_number": 37,
+    "id": "e79cbd8dbdbea048209d",
+    "name": "HABER GLOBAL HD",
+    "url": "http://176.65.153.12:6004/play/a01x/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6004/play/a01x/index.m3u8",
+    "extinf": "#EXTINF:-1,HABER GLOBAL HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300241+00:00"
+  },
+  {
+    "record_number": 38,
+    "id": "47055517e93b79957457",
+    "name": "HABERTURK HD",
+    "url": "http://176.65.153.40:6002/play/a01b/index.m3u8",
+    "canonical_url": "http://176.65.153.40:6002/play/a01b/index.m3u8",
+    "extinf": "#EXTINF:-1,HABERTURK HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300254+00:00"
+  },
+  {
+    "record_number": 39,
+    "id": "40fb39269c47e663f6b1",
+    "name": "A HABER HD",
+    "url": "http://176.65.153.66:6001/play/a01s/index.m3u8",
+    "canonical_url": "http://176.65.153.66:6001/play/a01s/index.m3u8",
+    "extinf": "#EXTINF:-1,A HABER HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300271+00:00"
+  },
+  {
+    "record_number": 40,
+    "id": "6f63f916ea996dbb75bb",
+    "name": "24 TV HD",
+    "url": "http://176.65.153.40:6002/play/a01l/index.m3u8",
+    "canonical_url": "http://176.65.153.40:6002/play/a01l/index.m3u8",
+    "extinf": "#EXTINF:-1,24 TV HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300284+00:00"
+  },
+  {
+    "record_number": 41,
+    "id": "de2352be1eff93f5acfa",
+    "name": "TV100 HD",
+    "url": "http://176.65.153.12:6003/play/a02h/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6003/play/a02h/index.m3u8",
+    "extinf": "#EXTINF:-1,TV100 HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300298+00:00"
+  },
+  {
+    "record_number": 42,
+    "id": "864635093513803e9378",
+    "name": "TGRT HABER HD",
+    "url": "http://canli.tgrthaber.com/tgrt.m3u8",
+    "canonical_url": "http://canli.tgrthaber.com/tgrt.m3u8",
+    "extinf": "#EXTINF:-1,TGRT HABER HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300314+00:00"
+  },
+  {
+    "record_number": 43,
+    "id": "131e5729164e2c80fe7c",
+    "name": "TVNET HD",
+    "url": "http://176.65.153.12:6003/play/a02c/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6003/play/a02c/index.m3u8",
+    "extinf": "#EXTINF:-1,TVNET HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300328+00:00"
+  },
+  {
+    "record_number": 44,
+    "id": "d41e9e2a3c8f4cea3e5e",
+    "name": "TYT TURK HD",
+    "url": "http://tytturk-live.ercdn.net/tytturk/ty",
+    "canonical_url": "http://tytturk-live.ercdn.net/tytturk/ty",
+    "extinf": "#EXTINF:-1,TYT TURK HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300345+00:00"
+  },
+  {
+    "record_number": 45,
+    "id": "91505a35f21999d5570a",
+    "name": "CNBC-E HD",
+    "url": "http://176.65.153.66:6002/play/a01e/index.m3u8",
+    "canonical_url": "http://176.65.153.66:6002/play/a01e/index.m3u8",
+    "extinf": "#EXTINF:-1,CNBC-E HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300359+00:00"
+  },
+  {
+    "record_number": 46,
+    "id": "795366f8d038de0eca2e",
+    "name": "BLOOMBERGHT HD",
+    "url": "http://176.65.153.12:6002/play/a05o/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6002/play/a05o/index.m3u8",
+    "extinf": "#EXTINF:-1,BLOOMBERGHT HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300374+00:00"
+  },
+  {
+    "record_number": 47,
+    "id": "faa8870c956034b412f0",
+    "name": "A PARA HD",
+    "url": "http://176.65.153.12:6005/play/a030/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6005/play/a030/index.m3u8",
+    "extinf": "#EXTINF:-1,A PARA HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300388+00:00"
+  },
+  {
+    "record_number": 48,
+    "id": "397fe096822a36073682",
+    "name": "EKOTURK HD",
+    "url": "http://176.65.153.3:8042/play/a017/index.m3u8",
+    "canonical_url": "http://176.65.153.3:8042/play/a017/index.m3u8",
+    "extinf": "#EXTINF:-1,EKOTURK HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300403+00:00"
+  },
+  {
+    "record_number": 49,
+    "id": "363a8dcb68751220dea0",
+    "name": "LİDER HABER HD",
+    "url": "http://176.65.153.12:6002/play/a05y/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6002/play/a05y/index.m3u8",
+    "extinf": "#EXTINF:-1,LİDER HABER HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300415+00:00"
+  },
+  {
+    "record_number": 50,
+    "id": "6d25805df21b00792544",
+    "name": "BEYAZ TV HD",
+    "url": "http://176.65.153.3:8042/play/a02p/index.m3u8",
+    "canonical_url": "http://176.65.153.3:8042/play/a02p/index.m3u8",
+    "extinf": "#EXTINF:-1,BEYAZ TV HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300429+00:00"
+  },
+  {
+    "record_number": 51,
+    "id": "661ca5a731923985c695",
+    "name": "AKIT TV HD",
+    "url": "http://176.65.153.12:6004/play/a020/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6004/play/a020/index.m3u8",
+    "extinf": "#EXTINF:-1,AKIT TV HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300442+00:00"
+  },
+  {
+    "record_number": 52,
+    "id": "4df68f852cd451e31ef7",
+    "name": "BENGİ TURK HD",
+    "url": "http://176.65.153.12:6004/play/a01z/index.m3u8",
+    "canonical_url": "http://176.65.153.12:6004/play/a01z/index.m3u8",
+    "extinf": "#EXTINF:-1,BENGİ TURK HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300455+00:00"
+  },
+  {
+    "record_number": 53,
+    "id": "07ca5bfe4d26908e25fb",
+    "name": "cartoon_classic",
+    "url": "http://88.218.242.237:8001/Cartoon_Classics",
+    "canonical_url": "http://88.218.242.237:8001/Cartoon_Classics",
+    "extinf": "#EXTINF:-1,cartoon_classic",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300469+00:00"
+  },
+  {
+    "record_number": 54,
+    "id": "94add23c601957c32742",
+    "name": "detective_jam HD",
+    "url": "http://88.218.242.237:8001/DetectiveJam_HD",
+    "canonical_url": "http://88.218.242.237:8001/DetectiveJam_HD",
+    "extinf": "#EXTINF:-1,detective_jam HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300483+00:00"
+  },
+  {
+    "record_number": 55,
+    "id": "25188958a82bec7b0b4c",
+    "name": "explorers HD",
+    "url": "http://88.218.242.237:8001/The_Explorers_HD",
+    "canonical_url": "http://88.218.242.237:8001/The_Explorers_HD",
+    "extinf": "#EXTINF:-1,explorers HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300496+00:00"
+  },
+  {
+    "record_number": 56,
+    "id": "22e35179158bc5b5acc9",
+    "name": "magnat HD",
+    "url": "http://88.218.242.237:8001/Magnat_HD",
+    "canonical_url": "http://88.218.242.237:8001/Magnat_HD",
+    "extinf": "#EXTINF:-1,magnat HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300513+00:00"
+  },
+  {
+    "record_number": 57,
+    "id": "a3b08fadb9f8b71542b5",
+    "name": "Scream HD",
+    "url": "http://88.218.242.237:8001/Scream_HD",
+    "canonical_url": "http://88.218.242.237:8001/Scream_HD",
+    "extinf": "#EXTINF:-1,Scream HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300526+00:00"
+  },
+  {
+    "record_number": 58,
+    "id": "3939a1baacaab5e78385",
+    "name": "Еда",
+    "url": "http://88.218.242.237:8001/eda",
+    "canonical_url": "http://88.218.242.237:8001/eda",
+    "extinf": "#EXTINF:-1,Еда",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300540+00:00"
+  },
+  {
+    "record_number": 59,
+    "id": "af512c65dc1984276720",
+    "name": "romance HD",
+    "url": "http://88.218.242.237:8001/Romance_HD",
+    "canonical_url": "http://88.218.242.237:8001/Romance_HD",
+    "extinf": "#EXTINF:-1,romance HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300554+00:00"
+  },
+  {
+    "record_number": 60,
+    "id": "9a60979b1a41a73beb29",
+    "name": "Старт Триумф",
+    "url": "http://88.218.242.237:8001/Start_Triumf_HD",
+    "canonical_url": "http://88.218.242.237:8001/Start_Triumf_HD",
+    "extinf": "#EXTINF:-1,Старт Триумф",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300567+00:00"
+  },
+  {
+    "record_number": 61,
+    "id": "68e9ecbdd78e9ab477c3",
+    "name": "suspense HD",
+    "url": "http://88.218.242.237:8001/Suspense_HD",
+    "canonical_url": "http://88.218.242.237:8001/Suspense_HD",
+    "extinf": "#EXTINF:-1,suspense HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300581+00:00"
+  },
+  {
+    "record_number": 62,
+    "id": "f41848d0febc13eaf75b",
+    "name": "kinoman",
+    "url": "http://88.218.242.237:8001/kinoman",
+    "canonical_url": "http://88.218.242.237:8001/kinoman",
+    "extinf": "#EXTINF:-1,kinoman",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300596+00:00"
+  },
+  {
+    "record_number": 63,
+    "id": "3e1ccdb3e22ff20a2ae0",
+    "name": "pes-i-ko",
+    "url": "http://88.218.242.237:8001/pes-i-ko",
+    "canonical_url": "http://88.218.242.237:8001/pes-i-ko",
+    "extinf": "#EXTINF:-1,pes-i-ko",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300610+00:00"
+  },
+  {
+    "record_number": 64,
+    "id": "c32b5fad08687395607f",
+    "name": "0001.Հ1 HD",
+    "url": "http://91.205.196.7:8000/play/a004",
+    "canonical_url": "http://91.205.196.7:8000/play/a004",
+    "extinf": "#EXTINF:-1,0001.Հ1 HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300630+00:00"
+  },
+  {
+    "record_number": 65,
+    "id": "afcbff3396476ab82c87",
+    "name": "0002.Շողակաթ",
+    "url": "http://91.205.196.7:8000/play/a006",
+    "canonical_url": "http://91.205.196.7:8000/play/a006",
+    "extinf": "#EXTINF:-1,0002.Շողակաթ",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300646+00:00"
+  },
+  {
+    "record_number": 66,
+    "id": "786aac6676702d1624b7",
+    "name": "0003.Արմենիա HD",
+    "url": "http://91.205.196.7:8000/play/a005",
+    "canonical_url": "http://91.205.196.7:8000/play/a005",
+    "extinf": "#EXTINF:-1,0003.Արմենիա HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300660+00:00"
+  },
+  {
+    "record_number": 67,
+    "id": "df205e16164028dc52c2",
+    "name": "0004.Շանթ HD",
+    "url": "http://91.205.196.7:8000/play/a007",
+    "canonical_url": "http://91.205.196.7:8000/play/a007",
+    "extinf": "#EXTINF:-1,0004.Շանթ HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300672+00:00"
+  },
+  {
+    "record_number": 68,
+    "id": "fc48515aa399fd0f4722",
+    "name": "0005.ԱՏՎ HD",
+    "url": "http://91.205.196.7:8000/play/a008",
+    "canonical_url": "http://91.205.196.7:8000/play/a008",
+    "extinf": "#EXTINF:-1,0005.ԱՏՎ HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300686+00:00"
+  },
+  {
+    "record_number": 69,
+    "id": "38c9b872bf46e14f3bd6",
+    "name": "0006.Կենտրոն HD",
+    "url": "http://91.205.196.7:8000/play/a009",
+    "canonical_url": "http://91.205.196.7:8000/play/a009",
+    "extinf": "#EXTINF:-1,0006.Կենտրոն HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300700+00:00"
+  },
+  {
+    "record_number": 70,
+    "id": "4a5ea8f864791e017c90",
+    "name": "0007.Erkir MEDIA HD",
+    "url": "http://91.205.196.7:8000/play/a03t",
+    "canonical_url": "http://91.205.196.7:8000/play/a03t",
+    "extinf": "#EXTINF:-1,0007.Erkir MEDIA HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300714+00:00"
+  },
+  {
+    "record_number": 71,
+    "id": "89baced8be323ef485df",
+    "name": "0008.ԿՈՏԱՅՔ HD",
+    "url": "http://91.205.196.7:8000/play/…",
+    "canonical_url": "http://91.205.196.7:8000/play/…",
+    "extinf": "#EXTINF:-1,0008.ԿՈՏԱՅՔ HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300732+00:00"
+  },
+  {
+    "record_number": 72,
+    "id": "f4208e618c1706c314f1",
+    "name": "0021.ՏԱՎՈՒՇ HD",
+    "url": "http://91.205.196.7:8000/play/a00n",
+    "canonical_url": "http://91.205.196.7:8000/play/a00n",
+    "extinf": "#EXTINF:-1,0021.ՏԱՎՈՒՇ HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300748+00:00"
+  },
+  {
+    "record_number": 73,
+    "id": "e838561ed3a8478a97eb",
+    "name": "0022.ԼՈՌԻ HD",
+    "url": "http://91.205.196.7:8000/play/a00o",
+    "canonical_url": "http://91.205.196.7:8000/play/a00o",
+    "extinf": "#EXTINF:-1,0022.ԼՈՌԻ HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300763+00:00"
+  },
+  {
+    "record_number": 74,
+    "id": "880fdbe894f48521ba84",
+    "name": "0023.Ցայգ HD",
+    "url": "http://91.205.196.7:8000/play/a00p",
+    "canonical_url": "http://91.205.196.7:8000/play/a00p",
+    "extinf": "#EXTINF:-1,0023.Ցայգ HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300778+00:00"
+  },
+  {
+    "record_number": 75,
+    "id": "eb9c1162e364c678333c",
+    "name": "0024.Դելտա HD",
+    "url": "http://91.205.196.7:8000/play/a00q",
+    "canonical_url": "http://91.205.196.7:8000/play/a00q",
+    "extinf": "#EXTINF:-1,0024.Դելտա HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300796+00:00"
+  },
+  {
+    "record_number": 76,
+    "id": "c00c7d3a983a49d9a103",
+    "name": "0025.ՖՈՐՏՈՒՆԱ HD",
+    "url": "http://91.205.196.7:8000/play/a00r",
+    "canonical_url": "http://91.205.196.7:8000/play/a00r",
+    "extinf": "#EXTINF:-1,0025.ՖՈՐՏՈՒՆԱ HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300810+00:00"
+  },
+  {
+    "record_number": 77,
+    "id": "94a3ddd19e5545759733",
+    "name": "0026.ABN HD",
+    "url": "http://91.205.196.7:8000/play/a00s",
+    "canonical_url": "http://91.205.196.7:8000/play/a00s",
+    "extinf": "#EXTINF:-1,0026.ABN HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300825+00:00"
+  },
+  {
+    "record_number": 78,
+    "id": "e304b651ce3a85877a96",
+    "name": "0027.Ազատություն HD (UCOM)",
+    "url": "http://91.205.196.7:8000/play/a00t",
+    "canonical_url": "http://91.205.196.7:8000/play/a00t",
+    "extinf": "#EXTINF:-1,0027.Ազատություն HD (UCOM)",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300840+00:00"
+  },
+  {
+    "record_number": 79,
+    "id": "612f65d9b1a4be7cc5c2",
+    "name": "0046.ПЕРЕЦ",
+    "url": "http://91.205.196.7:8000/play/a01c",
+    "canonical_url": "http://91.205.196.7:8000/play/a01c",
+    "extinf": "#EXTINF:-1,0046.ПЕРЕЦ",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300854+00:00"
+  },
+  {
+    "record_number": 80,
+    "id": "fe49ba4ec80ce8c773ab",
+    "name": "0047.ЧЕ",
+    "url": "http://91.205.196.7:8000/play/a01d",
+    "canonical_url": "http://91.205.196.7:8000/play/a01d",
+    "extinf": "#EXTINF:-1,0047.ЧЕ",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300868+00:00"
+  },
+  {
+    "record_number": 81,
+    "id": "56b85d0e4fba2053b0c8",
+    "name": "0048.Ю-ТВ",
+    "url": "http://91.205.196.7:8000/play/a01e",
+    "canonical_url": "http://91.205.196.7:8000/play/a01e",
+    "extinf": "#EXTINF:-1,0048.Ю-ТВ",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300883+00:00"
+  },
+  {
+    "record_number": 82,
+    "id": "e3876ea199c2266c092e",
+    "name": "0049.ТВЦ",
+    "url": "http://91.205.196.7:8000/play/a01f",
+    "canonical_url": "http://91.205.196.7:8000/play/a01f",
+    "extinf": "#EXTINF:-1,0049.ТВЦ",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300896+00:00"
+  },
+  {
+    "record_number": 83,
+    "id": "8c8180c429fca81c4d24",
+    "name": "0050.ЗВЕЗДА",
+    "url": "http://91.205.196.7:8000/play/a01g",
+    "canonical_url": "http://91.205.196.7:8000/play/a01g",
+    "extinf": "#EXTINF:-1,0050.ЗВЕЗДА",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300910+00:00"
+  },
+  {
+    "record_number": 84,
+    "id": "baaadd9d0fa076f27677",
+    "name": "0051.ПОБЕДА",
+    "url": "http://91.205.196.7:8000/play/a01h",
+    "canonical_url": "http://91.205.196.7:8000/play/a01h",
+    "extinf": "#EXTINF:-1,0051.ПОБЕДА",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300925+00:00"
+  },
+  {
+    "record_number": 85,
+    "id": "fd999103019c40698bbc",
+    "name": "0052.РОССИЯ К",
+    "url": "http://91.205.196.7:8000/play/a01i",
+    "canonical_url": "http://91.205.196.7:8000/play/a01i",
+    "extinf": "#EXTINF:-1,0052.РОССИЯ К",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300949+00:00"
+  },
+  {
+    "record_number": 86,
+    "id": "85bc2141f2853ff704bd",
+    "name": "0053.CTC KIDS",
+    "url": "http://91.205.196.7:8000/play/a01j",
+    "canonical_url": "http://91.205.196.7:8000/play/a01j",
+    "extinf": "#EXTINF:-1,0053.CTC KIDS",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.300988+00:00"
+  },
+  {
+    "record_number": 87,
+    "id": "cb8185f71137ecbdf49a",
+    "name": "0081.Թավա TV HD",
+    "url": "http://91.205.196.7:8000/play/a02b",
+    "canonical_url": "http://91.205.196.7:8000/play/a02b",
+    "extinf": "#EXTINF:-1,0081.Թավա TV HD",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301005+00:00"
+  },
+  {
+    "record_number": 88,
+    "id": "1da036bbe9e2a7560368",
+    "name": "0082.ТЕЛЕКАФЕ",
+    "url": "http://91.205.196.7:8000/play/a02c",
+    "canonical_url": "http://91.205.196.7:8000/play/a02c",
+    "extinf": "#EXTINF:-1,0082.ТЕЛЕКАФЕ",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301021+00:00"
+  },
+  {
+    "record_number": 89,
+    "id": "2c43edbc848367fc4cdf",
+    "name": "0083.НТВ СТИЛЬ",
+    "url": "http://91.205.196.7:8000/play/a02d",
+    "canonical_url": "http://91.205.196.7:8000/play/a02d",
+    "extinf": "#EXTINF:-1,0083.НТВ СТИЛЬ",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301036+00:00"
+  },
+  {
+    "record_number": 90,
+    "id": "78662f549c5fd329fd34",
+    "name": "0084.НТВ ПРАВО",
+    "url": "http://91.205.196.7:8000/play/a02e",
+    "canonical_url": "http://91.205.196.7:8000/play/a02e",
+    "extinf": "#EXTINF:-1,0084.НТВ ПРАВО",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301056+00:00"
+  },
+  {
+    "record_number": 91,
+    "id": "b7aae55e99c81e868ee2",
+    "name": "0085.НТВ СЕРИАЛ",
+    "url": "http://91.205.196.7:8000/play/a02f",
+    "canonical_url": "http://91.205.196.7:8000/play/a02f",
+    "extinf": "#EXTINF:-1,0085.НТВ СЕРИАЛ",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301070+00:00"
+  },
+  {
+    "record_number": 92,
+    "id": "8d0ab3d46bf4f500198c",
+    "name": "0086.Շանթ сериал",
+    "url": "http://91.205.196.7:8000/play/a02g",
+    "canonical_url": "http://91.205.196.7:8000/play/a02g",
+    "extinf": "#EXTINF:-1,0086.Շանթ сериал",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301085+00:00"
+  },
+  {
+    "record_number": 93,
+    "id": "e1751647427329285571",
+    "name": "0087.Բազմոց TV",
+    "url": "http://91.205.196.7:8000/play/a02h",
+    "canonical_url": "http://91.205.196.7:8000/play/a02h",
+    "extinf": "#EXTINF:-1,0087.Բազմոց TV",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301100+00:00"
+  },
+  {
+    "record_number": 94,
+    "id": "d510c0d5f9bb96961f9d",
+    "name": "REN_INT",
+    "url": "http://91.205.196.7:8000/play/a038",
+    "canonical_url": "http://91.205.196.7:8000/play/a038",
+    "extinf": "#EXTINF:-1,REN_INT",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301116+00:00"
+  },
+  {
+    "record_number": 95,
+    "id": "de974d8698ad9b2e4779",
+    "name": "STS_INT",
+    "url": "http://91.205.196.7:8000/play/a036",
+    "canonical_url": "http://91.205.196.7:8000/play/a036",
+    "extinf": "#EXTINF:-1,STS_INT",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301133+00:00"
+  },
+  {
+    "record_number": 96,
+    "id": "83afe9d50fc9d909dfb2",
+    "name": "STS_KIDS_INT",
+    "url": "http://91.205.196.7:8000/play/a03a",
+    "canonical_url": "http://91.205.196.7:8000/play/a03a",
+    "extinf": "#EXTINF:-1,STS_KIDS_INT",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301147+00:00"
+  },
+  {
+    "record_number": 97,
+    "id": "5b678f69cfd64b96eadd",
+    "name": "ОБЩИЙ СПИСОК (~135 каналов целиком)",
+    "url": "http://91.205.196.7:8000/playlist.m3u8",
+    "canonical_url": "http://91.205.196.7:8000/playlist.m3u8",
+    "extinf": "#EXTINF:-1,ОБЩИЙ СПИСОК (~135 каналов целиком)",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301166+00:00"
+  },
+  {
+    "record_number": 98,
+    "id": "d9ccf98b430a1942b4a8",
+    "name": "mb_dance",
+    "url": "http://88.212.15.93:80/live/mb_dance/index.m3u8",
+    "canonical_url": "http://88.212.15.93:80/live/mb_dance/index.m3u8",
+    "extinf": "#EXTINF:-1,mb_dance",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301183+00:00"
+  },
+  {
+    "record_number": 99,
+    "id": "6d09d0606b34b3605c6c",
+    "name": "mb_hits",
+    "url": "http://88.212.15.93:80/live/mb_hits/index.m3u8",
+    "canonical_url": "http://88.212.15.93:80/live/mb_hits/index.m3u8",
+    "extinf": "#EXTINF:-1,mb_hits",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301197+00:00"
+  },
+  {
+    "record_number": 100,
+    "id": "9f3ddadac29f2c190c96",
+    "name": "sporty_tv",
+    "url": "http://88.212.15.93:80/live/sporty_tv/index.m3u8",
+    "canonical_url": "http://88.212.15.93:80/live/sporty_tv/index.m3u8",
+    "extinf": "#EXTINF:-1,sporty_tv",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301211+00:00"
+  },
+  {
+    "record_number": 101,
+    "id": "2fb4cbe1487923947067",
+    "name": "lifetv",
+    "url": "http://88.212.15.93:80/live/lifetv/index.m3u8",
+    "canonical_url": "http://88.212.15.93:80/live/lifetv/index.m3u8",
+    "extinf": "#EXTINF:-1,lifetv",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301225+00:00"
+  },
+  {
+    "record_number": 102,
+    "id": "b7454ddd3cefa6bf3da4",
+    "name": "utv",
+    "url": "http://88.212.15.93:80/live/utv/index.m3u8",
+    "canonical_url": "http://88.212.15.93:80/live/utv/index.m3u8",
+    "extinf": "#EXTINF:-1,utv",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301239+00:00"
+  },
+  {
+    "record_number": 103,
+    "id": "ffade18efbeafe5c1698",
+    "name": "prime",
+    "url": "http://88.212.15.93:80/live/prime/index.m3u8",
+    "canonical_url": "http://88.212.15.93:80/live/prime/index.m3u8",
+    "extinf": "#EXTINF:-1,prime",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301256+00:00"
+  },
+  {
+    "record_number": 104,
+    "id": "6ec14b91b9949af6ec3c",
+    "name": "mb_classic",
+    "url": "http://88.212.15.93:80/live/mb_classic/index.m3u8",
+    "canonical_url": "http://88.212.15.93:80/live/mb_classic/index.m3u8",
+    "extinf": "#EXTINF:-1,mb_classic",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301270+00:00"
+  },
+  {
+    "record_number": 105,
+    "id": "31fb3b0a5a72498abe74",
+    "name": "retro",
+    "url": "http://88.212.15.93:80/live/retro/index.m3u8",
+    "canonical_url": "http://88.212.15.93:80/live/retro/index.m3u8",
+    "extinf": "#EXTINF:-1,retro",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301283+00:00"
+  },
+  {
+    "record_number": 106,
+    "id": "63bdb630b7f45cef0774",
+    "name": "mb_dance",
+    "url": "http://88.212.15.35:80/mb_dance/index.m3u8",
+    "canonical_url": "http://88.212.15.35:80/mb_dance/index.m3u8",
+    "extinf": "#EXTINF:-1,mb_dance",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301293+00:00"
+  },
+  {
+    "record_number": 107,
+    "id": "4ea619774f5dcb1e4af1",
+    "name": "mb_hits",
+    "url": "http://88.212.15.35:80/mb_hits/index.m3u8",
+    "canonical_url": "http://88.212.15.35:80/mb_hits/index.m3u8",
+    "extinf": "#EXTINF:-1,mb_hits",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301303+00:00"
+  },
+  {
+    "record_number": 108,
+    "id": "18149b5986a7d57696f9",
+    "name": "dom",
+    "url": "http://88.212.15.35:80/dom/index.m3u8",
+    "canonical_url": "http://88.212.15.35:80/dom/index.m3u8",
+    "extinf": "#EXTINF:-1,dom",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301312+00:00"
+  },
+  {
+    "record_number": 109,
+    "id": "c05e770c8b3a46c85ff4",
+    "name": "gntv",
+    "url": "http://88.212.15.35:80/gntv/index.m3u8",
+    "canonical_url": "http://88.212.15.35:80/gntv/index.m3u8",
+    "extinf": "#EXTINF:-1,gntv",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301321+00:00"
+  },
+  {
+    "record_number": 110,
+    "id": "c0559637cd194009b12f",
+    "name": "atv",
+    "url": "http://88.212.15.35:80/atv/index.m3u8",
+    "canonical_url": "http://88.212.15.35:80/atv/index.m3u8",
+    "extinf": "#EXTINF:-1,atv",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301332+00:00"
+  },
+  {
+    "record_number": 111,
+    "id": "d90427bcb0928c8e0ac8",
+    "name": "cam2",
+    "url": "http://88.212.15.35:80/cam2/index.m3u8",
+    "canonical_url": "http://88.212.15.35:80/cam2/index.m3u8",
+    "extinf": "#EXTINF:-1,cam2",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301341+00:00"
+  },
+  {
+    "record_number": 112,
+    "id": "5cb698bc3203aa7ff82e",
+    "name": "ptv",
+    "url": "http://88.212.15.35:80/ptv/index.m3u8",
+    "canonical_url": "http://88.212.15.35:80/ptv/index.m3u8",
+    "extinf": "#EXTINF:-1,ptv",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301350+00:00"
+  },
+  {
+    "record_number": 113,
+    "id": "c1d589ae1d12c00d52c9",
+    "name": "nick_jr",
+    "url": "http://88.212.15.35:80/nick_jr/index.m3u8",
+    "canonical_url": "http://88.212.15.35:80/nick_jr/index.m3u8",
+    "extinf": "#EXTINF:-1,nick_jr",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301360+00:00"
+  },
+  {
+    "record_number": 114,
+    "id": "ddce0521f290fbfe8471",
+    "name": "utv",
+    "url": "http://88.212.15.35:80/utv/index.m3u8",
+    "canonical_url": "http://88.212.15.35:80/utv/index.m3u8",
+    "extinf": "#EXTINF:-1,utv",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301368+00:00"
+  },
+  {
+    "record_number": 115,
+    "id": "2d6239fecfd512f3beb7",
+    "name": "v1",
+    "url": "http://88.212.15.35:80/v1/index.m3u8",
+    "canonical_url": "http://88.212.15.35:80/v1/index.m3u8",
+    "extinf": "#EXTINF:-1,v1",
+    "duration": "-1",
+    "attributes": {},
+    "group_title": "",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
+    "source_type": "source",
+    "sources": [
+      "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u"
+    ],
+    "first_seen": "2026-11-15T14:36:40.301380+00:00"
+  },
+  {
+    "record_number": 116,
+    "id": "c32b5fad08687395607f",
+    "name": "0001.Հ1 HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a004",
+    "canonical_url": "http://91.205.196.7:8000/play/a004",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0001.Հ1 HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725173+00:00"
+  },
+  {
+    "record_number": 117,
+    "id": "786aac6676702d1624b7",
+    "name": "0003.Արմենիա HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a005",
+    "canonical_url": "http://91.205.196.7:8000/play/a005",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0003.Արմենիա HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725200+00:00"
+  },
+  {
+    "record_number": 118,
+    "id": "df205e16164028dc52c2",
+    "name": "0004.Շանթ HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a007",
+    "canonical_url": "http://91.205.196.7:8000/play/a007",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0004.Շանթ HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725211+00:00"
+  },
+  {
+    "record_number": 119,
+    "id": "fc48515aa399fd0f4722",
+    "name": "0005.ԱՏՎ HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a008",
+    "canonical_url": "http://91.205.196.7:8000/play/a008",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0005.ԱՏՎ HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725220+00:00"
+  },
+  {
+    "record_number": 120,
+    "id": "38c9b872bf46e14f3bd6",
+    "name": "0006.Կենտրոն HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a009",
+    "canonical_url": "http://91.205.196.7:8000/play/a009",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0006.Կենտրոն HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725229+00:00"
+  },
+  {
+    "record_number": 121,
+    "id": "4a5ea8f864791e017c90",
+    "name": "0007.Erkir MEDIA HD",
+    "url": "http://91.205.196.7:8000/play/a03t",
+    "canonical_url": "http://91.205.196.7:8000/play/a03t",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0007.Erkir MEDIA HD",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725237+00:00"
+  },
+  {
+    "record_number": 122,
+    "id": "eec567517f80dba46887",
+    "name": "0009.РТР ПЛАНЕТА -(82)",
+    "url": "http://91.205.196.7:8000/play/a00c",
+    "canonical_url": "http://91.205.196.7:8000/play/a00c",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0009.РТР ПЛАНЕТА -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725246+00:00"
+  },
+  {
+    "record_number": 123,
+    "id": "ec5bff735039daaf623b",
+    "name": "0010.ՍՅՈՒՆԻՔ HD -(84)",
+    "url": "http://91.205.196.7:8000/play/a00d",
+    "canonical_url": "http://91.205.196.7:8000/play/a00d",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0010.ՍՅՈՒՆԻՔ HD -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725254+00:00"
+  },
+  {
+    "record_number": 124,
+    "id": "e34f6137f0d4dbaf476d",
+    "name": "0011.ՆՈՒՌ HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a00e",
+    "canonical_url": "http://91.205.196.7:8000/play/a00e",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0011.ՆՈՒՌ HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725262+00:00"
+  },
+  {
+    "record_number": 125,
+    "id": "ec441bf00b2c36ee9a22",
+    "name": "0012.5 ալիք HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a00f",
+    "canonical_url": "http://91.205.196.7:8000/play/a00f",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0012.5 ալիք HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725270+00:00"
+  },
+  {
+    "record_number": 126,
+    "id": "827d449a05743e690e3e",
+    "name": "0013.5 պլյուս HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a00g",
+    "canonical_url": "http://91.205.196.7:8000/play/a00g",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0013.5 պլյուս HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725278+00:00"
+  },
+  {
+    "record_number": 127,
+    "id": "63ba2896cdc0a381ddd6",
+    "name": "0014.Հ2 HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a00h",
+    "canonical_url": "http://91.205.196.7:8000/play/a00h",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0014.Հ2 HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725288+00:00"
+  },
+  {
+    "record_number": 128,
+    "id": "ab560f2284e8005959f5",
+    "name": "0015.Դար 21 HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a00i",
+    "canonical_url": "http://91.205.196.7:8000/play/a00i",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0015.Դար 21 HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725298+00:00"
+  },
+  {
+    "record_number": 129,
+    "id": "9677ecd8736f29d2bf17",
+    "name": "0016.Նոր Հայաստան HD-(UCOM)",
+    "url": "http://91.205.196.7:8000/play/a00j",
+    "canonical_url": "http://91.205.196.7:8000/play/a00j",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0016.Նոր Հայաստան HD-(UCOM)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725307+00:00"
+  },
+  {
+    "record_number": 130,
+    "id": "6c728ee4675646fd003d",
+    "name": "0017.ՆՈՅԱՆ ՏԱՊԱՆ HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a00k",
+    "canonical_url": "http://91.205.196.7:8000/play/a00k",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0017.ՆՈՅԱՆ ՏԱՊԱՆ HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725316+00:00"
+  },
+  {
+    "record_number": 131,
+    "id": "f7616e185210f0e675ae",
+    "name": "0018.Շանթ Գյումրի HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a00l",
+    "canonical_url": "http://91.205.196.7:8000/play/a00l",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0018.Շանթ Գյումրի HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725324+00:00"
+  },
+  {
+    "record_number": 132,
+    "id": "6069aca1183191fe791d",
+    "name": "0019.ԱՌՄԱ HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a00m",
+    "canonical_url": "http://91.205.196.7:8000/play/a00m",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0019.ԱՌՄԱ HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725332+00:00"
+  },
+  {
+    "record_number": 133,
+    "id": "f4208e618c1706c314f1",
+    "name": "0020.Գեղամա HD-(82)",
+    "url": "http://91.205.196.7:8000/play/a00n",
+    "canonical_url": "http://91.205.196.7:8000/play/a00n",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0020.Գեղամա HD-(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725340+00:00"
+  },
+  {
+    "record_number": 134,
+    "id": "e838561ed3a8478a97eb",
+    "name": "0021.ՏԱՎՈՒՇ ՏՎ HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a00o",
+    "canonical_url": "http://91.205.196.7:8000/play/a00o",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0021.ՏԱՎՈՒՇ ՏՎ HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725348+00:00"
+  },
+  {
+    "record_number": 135,
+    "id": "880fdbe894f48521ba84",
+    "name": "0022.ԼՈՌԻ HD-(82)",
+    "url": "http://91.205.196.7:8000/play/a00p",
+    "canonical_url": "http://91.205.196.7:8000/play/a00p",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0022.ԼՈՌԻ HD-(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725357+00:00"
+  },
+  {
+    "record_number": 136,
+    "id": "eb9c1162e364c678333c",
+    "name": "0023.Ցայգ HD-(83)",
+    "url": "http://91.205.196.7:8000/play/a00q",
+    "canonical_url": "http://91.205.196.7:8000/play/a00q",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0023.Ցայգ HD-(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725365+00:00"
+  },
+  {
+    "record_number": 137,
+    "id": "c00c7d3a983a49d9a103",
+    "name": "0024.Դելտա HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a00r",
+    "canonical_url": "http://91.205.196.7:8000/play/a00r",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0024.Դելտա HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725375+00:00"
+  },
+  {
+    "record_number": 138,
+    "id": "94a3ddd19e5545759733",
+    "name": "0025.ՖՈՐՏՈՒՆԱ HD",
+    "url": "http://91.205.196.7:8000/play/a00s",
+    "canonical_url": "http://91.205.196.7:8000/play/a00s",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0025.ՖՈՐՏՈՒՆԱ HD",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725383+00:00"
+  },
+  {
+    "record_number": 139,
+    "id": "e304b651ce3a85877a96",
+    "name": "0026.ABN HD-(82)",
+    "url": "http://91.205.196.7:8000/play/a00t",
+    "canonical_url": "http://91.205.196.7:8000/play/a00t",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0026.ABN HD-(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725391+00:00"
+  },
+  {
+    "record_number": 140,
+    "id": "095c8341afdb22deca6e",
+    "name": "0028.FREE NEWS HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a00v",
+    "canonical_url": "http://91.205.196.7:8000/play/a00v",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0028.FREE NEWS HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725399+00:00"
+  },
+  {
+    "record_number": 141,
+    "id": "61122aebb283dcdfb27e",
+    "name": "0029.1 Լրատվական HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a00w",
+    "canonical_url": "http://91.205.196.7:8000/play/a00w",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0029.1 Լրատվական HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725407+00:00"
+  },
+  {
+    "record_number": 142,
+    "id": "f40931b4cbebbfc16c80",
+    "name": "0030.EURONEWS -(83)",
+    "url": "http://91.205.196.7:8000/play/a00x",
+    "canonical_url": "http://91.205.196.7:8000/play/a00x",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0030.EURONEWS -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725416+00:00"
+  },
+  {
+    "record_number": 143,
+    "id": "314cbecfcfb41b5ec511",
+    "name": "0033.РБК -(82)",
+    "url": "http://91.205.196.7:8000/play/a010",
+    "canonical_url": "http://91.205.196.7:8000/play/a010",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0033.РБК -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725424+00:00"
+  },
+  {
+    "record_number": 144,
+    "id": "cedabfb14d8f80348238",
+    "name": "0034.МИР 24 -(82)",
+    "url": "http://91.205.196.7:8000/play/a011",
+    "canonical_url": "http://91.205.196.7:8000/play/a011",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0034.МИР 24 -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725432+00:00"
+  },
+  {
+    "record_number": 145,
+    "id": "05c71b7243c7227a7eb7",
+    "name": "0035.МИР -(84)",
+    "url": "http://91.205.196.7:8000/play/a012",
+    "canonical_url": "http://91.205.196.7:8000/play/a012",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0035.МИР -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725440+00:00"
+  },
+  {
+    "record_number": 146,
+    "id": "b05e26a252d0c5be2606",
+    "name": "0036.РОССИЯ 24 -(84)",
+    "url": "http://91.205.196.7:8000/play/a013",
+    "canonical_url": "http://91.205.196.7:8000/play/a013",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0036.РОССИЯ 24 -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725448+00:00"
+  },
+  {
+    "record_number": 147,
+    "id": "5e256087d628b346c9c3",
+    "name": "0037.ПЕРВЫЙ КАНАЛ HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a014",
+    "canonical_url": "http://91.205.196.7:8000/play/a014",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0037.ПЕРВЫЙ КАНАЛ HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725458+00:00"
+  },
+  {
+    "record_number": 148,
+    "id": "1ad76ce4e9b390c0db22",
+    "name": "0038.НТВ HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a015",
+    "canonical_url": "http://91.205.196.7:8000/play/a015",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0038.НТВ HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725466+00:00"
+  },
+  {
+    "record_number": 149,
+    "id": "6f77627acfd197d789a1",
+    "name": "0039.РЕН ТВ -(83)",
+    "url": "http://91.205.196.7:8000/play/a016",
+    "canonical_url": "http://91.205.196.7:8000/play/a016",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0039.РЕН ТВ -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725474+00:00"
+  },
+  {
+    "record_number": 150,
+    "id": "276af9a172b418c85fc9",
+    "name": "0040.ТНТ HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a017",
+    "canonical_url": "http://91.205.196.7:8000/play/a017",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0040.ТНТ HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725484+00:00"
+  },
+  {
+    "record_number": 151,
+    "id": "a7a51e58dd04ce149fd0",
+    "name": "0041.THT4 -(82)",
+    "url": "http://91.205.196.7:8000/play/a018",
+    "canonical_url": "http://91.205.196.7:8000/play/a018",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0041.THT4 -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725492+00:00"
+  },
+  {
+    "record_number": 152,
+    "id": "233334a054346b216ae1",
+    "name": "0042.СТС -(82)",
+    "url": "http://91.205.196.7:8000/play/a019",
+    "canonical_url": "http://91.205.196.7:8000/play/a019",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0042.СТС -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725500+00:00"
+  },
+  {
+    "record_number": 153,
+    "id": "66830e78596b3b9f7b22",
+    "name": "0043.ПЯТНИЦА -(84)",
+    "url": "http://91.205.196.7:8000/play/a01a",
+    "canonical_url": "http://91.205.196.7:8000/play/a01a",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0043.ПЯТНИЦА -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725509+00:00"
+  },
+  {
+    "record_number": 154,
+    "id": "476caf9d9deafac5b085",
+    "name": "0044.ДОМАШНИЙ -(82)",
+    "url": "http://91.205.196.7:8000/play/a01b",
+    "canonical_url": "http://91.205.196.7:8000/play/a01b",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0044.ДОМАШНИЙ -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725517+00:00"
+  },
+  {
+    "record_number": 155,
+    "id": "612f65d9b1a4be7cc5c2",
+    "name": "0045.5 КАНАЛ -(83)",
+    "url": "http://91.205.196.7:8000/play/a01c",
+    "canonical_url": "http://91.205.196.7:8000/play/a01c",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0045.5 КАНАЛ -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725525+00:00"
+  },
+  {
+    "record_number": 156,
+    "id": "fe49ba4ec80ce8c773ab",
+    "name": "0046.ПЕРЕЦ -(84)",
+    "url": "http://91.205.196.7:8000/play/a01d",
+    "canonical_url": "http://91.205.196.7:8000/play/a01d",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0046.ПЕРЕЦ -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725533+00:00"
+  },
+  {
+    "record_number": 157,
+    "id": "56b85d0e4fba2053b0c8",
+    "name": "0047.ЧЕ -(84)",
+    "url": "http://91.205.196.7:8000/play/a01e",
+    "canonical_url": "http://91.205.196.7:8000/play/a01e",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0047.ЧЕ -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725543+00:00"
+  },
+  {
+    "record_number": 158,
+    "id": "e3876ea199c2266c092e",
+    "name": "0048.Ю-ТВ -(82)",
+    "url": "http://91.205.196.7:8000/play/a01f",
+    "canonical_url": "http://91.205.196.7:8000/play/a01f",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0048.Ю-ТВ -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725552+00:00"
+  },
+  {
+    "record_number": 159,
+    "id": "8c8180c429fca81c4d24",
+    "name": "0049.ТВЦ -(84)",
+    "url": "http://91.205.196.7:8000/play/a01g",
+    "canonical_url": "http://91.205.196.7:8000/play/a01g",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0049.ТВЦ -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725560+00:00"
+  },
+  {
+    "record_number": 160,
+    "id": "baaadd9d0fa076f27677",
+    "name": "0050.ЗВЕЗДА",
+    "url": "http://91.205.196.7:8000/play/a01h",
+    "canonical_url": "http://91.205.196.7:8000/play/a01h",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0050.ЗВЕЗДА",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725568+00:00"
+  },
+  {
+    "record_number": 161,
+    "id": "fd999103019c40698bbc",
+    "name": "0051.ПОБЕДА",
+    "url": "http://91.205.196.7:8000/play/a01i",
+    "canonical_url": "http://91.205.196.7:8000/play/a01i",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0051.ПОБЕДА",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725576+00:00"
+  },
+  {
+    "record_number": 162,
+    "id": "85bc2141f2853ff704bd",
+    "name": "0052.РОССИЯ К -(84)",
+    "url": "http://91.205.196.7:8000/play/a01j",
+    "canonical_url": "http://91.205.196.7:8000/play/a01j",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0052.РОССИЯ К -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725584+00:00"
+  },
+  {
+    "record_number": 163,
+    "id": "39bce87b54c1e4e9ff0b",
+    "name": "0053.CTC KIDS -(82)",
+    "url": "http://91.205.196.7:8000/play/a01k",
+    "canonical_url": "http://91.205.196.7:8000/play/a01k",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0053.CTC KIDS -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725592+00:00"
+  },
+  {
+    "record_number": 164,
+    "id": "9401cdcac0cc671e61f6",
+    "name": "0054.Շանթ Kids HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a01l",
+    "canonical_url": "http://91.205.196.7:8000/play/a01l",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0054.Շանթ Kids HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725601+00:00"
+  },
+  {
+    "record_number": 165,
+    "id": "24b19c3c937e19f149c8",
+    "name": "0055.Խաղալիք HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a01m",
+    "canonical_url": "http://91.205.196.7:8000/play/a01m",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0055.Խաղալիք HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725609+00:00"
+  },
+  {
+    "record_number": 166,
+    "id": "94746b16984766496623",
+    "name": "0056.ARMTOON HD -(84)",
+    "url": "http://91.205.196.7:8000/play/a01n",
+    "canonical_url": "http://91.205.196.7:8000/play/a01n",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0056.ARMTOON HD -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725617+00:00"
+  },
+  {
+    "record_number": 167,
+    "id": "2838a6cf9b2d97332873",
+    "name": "0057.КАРУСЕЛЬ -(84)",
+    "url": "http://91.205.196.7:8000/play/a01o",
+    "canonical_url": "http://91.205.196.7:8000/play/a01o",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0057.КАРУСЕЛЬ -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725627+00:00"
+  },
+  {
+    "record_number": 168,
+    "id": "849ff870fc307d0b6773",
+    "name": "0058.BABY TV -(82)",
+    "url": "http://91.205.196.7:8000/play/a01p",
+    "canonical_url": "http://91.205.196.7:8000/play/a01p",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0058.BABY TV -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725635+00:00"
+  },
+  {
+    "record_number": 169,
+    "id": "fcd3076ffb5cd06d0aad",
+    "name": "0059.NICK JR -(83)",
+    "url": "http://91.205.196.7:8000/play/a01q",
+    "canonical_url": "http://91.205.196.7:8000/play/a01q",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0059.NICK JR -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725643+00:00"
+  },
+  {
+    "record_number": 170,
+    "id": "9fefd9d617dd1614c0a4",
+    "name": "0060.NICKELODEON HD -(84)",
+    "url": "http://91.205.196.7:8000/play/a01r",
+    "canonical_url": "http://91.205.196.7:8000/play/a01r",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0060.NICKELODEON HD -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725651+00:00"
+  },
+  {
+    "record_number": 171,
+    "id": "6432225ff2b858482a04",
+    "name": "0061.Հայ ՏՎ HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a01s",
+    "canonical_url": "http://91.205.196.7:8000/play/a01s",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0061.Հայ ՏՎ HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725659+00:00"
+  },
+  {
+    "record_number": 172,
+    "id": "b0a621d8d5e7f65a639d",
+    "name": "0062.VELARY HD -(84)",
+    "url": "http://91.205.196.7:8000/play/a01t",
+    "canonical_url": "http://91.205.196.7:8000/play/a01t",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0062.VELARY HD -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725669+00:00"
+  },
+  {
+    "record_number": 173,
+    "id": "80f36644fd97fd457ca5",
+    "name": "0063.SONG TV ARMENIA HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a01u",
+    "canonical_url": "http://91.205.196.7:8000/play/a01u",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0063.SONG TV ARMENIA HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725677+00:00"
+  },
+  {
+    "record_number": 174,
+    "id": "d197af8e5856ff7d8b8d",
+    "name": "0064.ՇԱՆԹ Music HD -(84)",
+    "url": "http://91.205.196.7:8000/play/a01v",
+    "canonical_url": "http://91.205.196.7:8000/play/a01v",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0064.ՇԱՆԹ Music HD -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725685+00:00"
+  },
+  {
+    "record_number": 175,
+    "id": "881c3a20b098d406b11e",
+    "name": "0065.Шансон ТВ -(84)",
+    "url": "http://91.205.196.7:8000/play/a01w",
+    "canonical_url": "http://91.205.196.7:8000/play/a01w",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0065.Шансон ТВ -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725694+00:00"
+  },
+  {
+    "record_number": 176,
+    "id": "c59053de5673334adf25",
+    "name": "0066.SONG TV Russia HD -(UCOM)",
+    "url": "http://91.205.196.7:8000/play/a01x",
+    "canonical_url": "http://91.205.196.7:8000/play/a01x",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0066.SONG TV Russia HD -(UCOM)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725702+00:00"
+  },
+  {
+    "record_number": 177,
+    "id": "b62e4329a1c97e4026c0",
+    "name": "0067.Музыка первого HD -(UCOM)",
+    "url": "http://91.205.196.7:8000/play/a01y",
+    "canonical_url": "http://91.205.196.7:8000/play/a01y",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0067.Музыка первого HD -(UCOM)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725712+00:00"
+  },
+  {
+    "record_number": 178,
+    "id": "4f25404d1513f24cca83",
+    "name": "0068.Մուզզոն HD -(84)",
+    "url": "http://91.205.196.7:8000/play/a01z",
+    "canonical_url": "http://91.205.196.7:8000/play/a01z",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0068.Մուզզոն HD -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725720+00:00"
+  },
+  {
+    "record_number": 179,
+    "id": "9518cfa9ff72bbd18111",
+    "name": "0070.Լայֆ Հաք HD  FILMZONE -(84)",
+    "url": "http://91.205.196.7:8000/play/a021",
+    "canonical_url": "http://91.205.196.7:8000/play/a021",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0070.Լայֆ Հաք HD  FILMZONE -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725728+00:00"
+  },
+  {
+    "record_number": 180,
+    "id": "fe6caeb63aa19f866039",
+    "name": "0072.DISCOVERY CHANEL HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a023",
+    "canonical_url": "http://91.205.196.7:8000/play/a023",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0072.DISCOVERY CHANEL HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725737+00:00"
+  },
+  {
+    "record_number": 181,
+    "id": "13af47cfc9bb3e4c30b8",
+    "name": "0073.NATIONAL GEOGRAPHIC -(82)",
+    "url": "http://91.205.196.7:8000/play/a024",
+    "canonical_url": "http://91.205.196.7:8000/play/a024",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0073.NATIONAL GEOGRAPHIC -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725745+00:00"
+  },
+  {
+    "record_number": 182,
+    "id": "8a5dd2a8f939799f8405",
+    "name": "0074.DELTA TRAVEL -(Inet)",
+    "url": "http://91.205.196.7:8000/play/a025",
+    "canonical_url": "http://91.205.196.7:8000/play/a025",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0074.DELTA TRAVEL -(Inet)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725753+00:00"
+  },
+  {
+    "record_number": 183,
+    "id": "004cb25815d1a7d2f0e8",
+    "name": "0075.АВТО ПЛЮС -(82)",
+    "url": "http://91.205.196.7:8000/play/a026",
+    "canonical_url": "http://91.205.196.7:8000/play/a026",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0075.АВТО ПЛЮС -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725761+00:00"
+  },
+  {
+    "record_number": 184,
+    "id": "b58e22a91fe3df524d51",
+    "name": "0076.TLC HD - (84)",
+    "url": "http://91.205.196.7:8000/play/a027",
+    "canonical_url": "http://91.205.196.7:8000/play/a027",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0076.TLC HD - (84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725769+00:00"
+  },
+  {
+    "record_number": 185,
+    "id": "5c874824f9b6dedb051e",
+    "name": "0077.Охотник и рыболов HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a028",
+    "canonical_url": "http://91.205.196.7:8000/play/a028",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0077.Охотник и рыболов HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725777+00:00"
+  },
+  {
+    "record_number": 186,
+    "id": "44650cbcdef327ef879e",
+    "name": "0078.ANIMAL PLANET HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a029",
+    "canonical_url": "http://91.205.196.7:8000/play/a029",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0078.ANIMAL PLANET HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725785+00:00"
+  },
+  {
+    "record_number": 187,
+    "id": "92a95f6f3e8db2d41819",
+    "name": "0079.NAT.GEO.WILD HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a02a",
+    "canonical_url": "http://91.205.196.7:8000/play/a02a",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0079.NAT.GEO.WILD HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725795+00:00"
+  },
+  {
+    "record_number": 188,
+    "id": "cb8185f71137ecbdf49a",
+    "name": "0080.КУХНЯ ТВ -(84)",
+    "url": "http://91.205.196.7:8000/play/a02b",
+    "canonical_url": "http://91.205.196.7:8000/play/a02b",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0080.КУХНЯ ТВ -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725803+00:00"
+  },
+  {
+    "record_number": 189,
+    "id": "1da036bbe9e2a7560368",
+    "name": "0081. Թավա ՏՎ HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a02c",
+    "canonical_url": "http://91.205.196.7:8000/play/a02c",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0081. Թավա ՏՎ HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725811+00:00"
+  },
+  {
+    "record_number": 190,
+    "id": "2c43edbc848367fc4cdf",
+    "name": "0082. ТЕЛЕКАФЕ -(84)",
+    "url": "http://91.205.196.7:8000/play/a02d",
+    "canonical_url": "http://91.205.196.7:8000/play/a02d",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0082. ТЕЛЕКАФЕ -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725819+00:00"
+  },
+  {
+    "record_number": 191,
+    "id": "78662f549c5fd329fd34",
+    "name": "0083.НТВ СТИЛЬ -(82)",
+    "url": "http://91.205.196.7:8000/play/a02e",
+    "canonical_url": "http://91.205.196.7:8000/play/a02e",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0083.НТВ СТИЛЬ -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725827+00:00"
+  },
+  {
+    "record_number": 192,
+    "id": "b7aae55e99c81e868ee2",
+    "name": "0084.НТВ ПРАВО -(82)",
+    "url": "http://91.205.196.7:8000/play/a02f",
+    "canonical_url": "http://91.205.196.7:8000/play/a02f",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0084.НТВ ПРАВО -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725835+00:00"
+  },
+  {
+    "record_number": 193,
+    "id": "8d0ab3d46bf4f500198c",
+    "name": "0085.НТВ СЕРИАЛ -(82)",
+    "url": "http://91.205.196.7:8000/play/a02g",
+    "canonical_url": "http://91.205.196.7:8000/play/a02g",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0085.НТВ СЕРИАЛ -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725845+00:00"
+  },
+  {
+    "record_number": 194,
+    "id": "e1751647427329285571",
+    "name": "0086.Շանթ սերիալ -(82)",
+    "url": "http://91.205.196.7:8000/play/a02h",
+    "canonical_url": "http://91.205.196.7:8000/play/a02h",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0086.Շանթ սերիալ -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725853+00:00"
+  },
+  {
+    "record_number": 195,
+    "id": "83c6360b6bb1d6b05eab",
+    "name": "0087.Բազմոց ՏՎ HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a02i",
+    "canonical_url": "http://91.205.196.7:8000/play/a02i",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0087.Բազմոց ՏՎ HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725861+00:00"
+  },
+  {
+    "record_number": 196,
+    "id": "609a02c815dc95e8c071",
+    "name": "0088.VIJU TV 1000 HD -(84)",
+    "url": "http://91.205.196.7:8000/play/a02j",
+    "canonical_url": "http://91.205.196.7:8000/play/a02j",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0088.VIJU TV 1000 HD -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725869+00:00"
+  },
+  {
+    "record_number": 197,
+    "id": "1c3b03087d386a65fddc",
+    "name": "0089.КИНОМИКС HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a02k",
+    "canonical_url": "http://91.205.196.7:8000/play/a02k",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0089.КИНОМИКС HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725879+00:00"
+  },
+  {
+    "record_number": 198,
+    "id": "d0789626061cbbb3c5dc",
+    "name": "0090.Կինոման HD -(83)",
+    "url": "http://91.205.196.7:8000/play/a02l",
+    "canonical_url": "http://91.205.196.7:8000/play/a02l",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0090.Կինոման HD -(83)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725887+00:00"
+  },
+  {
+    "record_number": 199,
+    "id": "a20fa0282f2218e61137",
+    "name": "0091.КИНОПРЕМЬЕРА HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a02m",
+    "canonical_url": "http://91.205.196.7:8000/play/a02m",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0091.КИНОПРЕМЬЕРА HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725895+00:00"
+  },
+  {
+    "record_number": 200,
+    "id": "bc25f748298a9f61fcf1",
+    "name": "0092.МУЖСКОЕ КИНО HD",
+    "url": "http://91.205.196.7:8000/play/a02n",
+    "canonical_url": "http://91.205.196.7:8000/play/a02n",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0092.МУЖСКОЕ КИНО HD",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725904+00:00"
+  },
+  {
+    "record_number": 201,
+    "id": "a94810d5c67e25dbcf7b",
+    "name": "0093.ЕВРОКИНО HD -(84)",
+    "url": "http://91.205.196.7:8000/play/a02o",
+    "canonical_url": "http://91.205.196.7:8000/play/a02o",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0093.ЕВРОКИНО HD -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725912+00:00"
+  },
+  {
+    "record_number": 202,
+    "id": "6f0a5e93f206f1dd21ea",
+    "name": "0094.ТВ 3 -(94)",
+    "url": "http://91.205.196.7:8000/play/a02p",
+    "canonical_url": "http://91.205.196.7:8000/play/a02p",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0094.ТВ 3 -(94)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725920+00:00"
+  },
+  {
+    "record_number": 203,
+    "id": "d2a44af1fc97cd7386b6",
+    "name": "0095.ИНДИЙСКОЕ КИНО -(84)",
+    "url": "http://91.205.196.7:8000/play/a02q",
+    "canonical_url": "http://91.205.196.7:8000/play/a02q",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0095.ИНДИЙСКОЕ КИНО -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725928+00:00"
+  },
+  {
+    "record_number": 204,
+    "id": "e6d066d1352514c093af",
+    "name": "0096.ИНДИЯ -(82)",
+    "url": "http://91.205.196.7:8000/play/a02r",
+    "canonical_url": "http://91.205.196.7:8000/play/a02r",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0096.ИНДИЯ -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725936+00:00"
+  },
+  {
+    "record_number": 205,
+    "id": "ca8b8d8cffb39e8fd682",
+    "name": "0097.МАТЧ БОЕЦ -(84)",
+    "url": "http://91.205.196.7:8000/play/a02s",
+    "canonical_url": "http://91.205.196.7:8000/play/a02s",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0097.МАТЧ БОЕЦ -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725944+00:00"
+  },
+  {
+    "record_number": 206,
+    "id": "9da5b4567d4f74489543",
+    "name": "0098.FAST SPORT HD -(84)",
+    "url": "http://91.205.196.7:8000/play/a02t",
+    "canonical_url": "http://91.205.196.7:8000/play/a02t",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0098.FAST SPORT HD -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725952+00:00"
+  },
+  {
+    "record_number": 207,
+    "id": "1df3a911d5b9ac57f446",
+    "name": "0099.МАТЧ ПЛАНЕТА",
+    "url": "http://91.205.196.7:8000/play/a02u",
+    "canonical_url": "http://91.205.196.7:8000/play/a02u",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0099.МАТЧ ПЛАНЕТА",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725975+00:00"
+  },
+  {
+    "record_number": 208,
+    "id": "ab9847ea773f37a079a5",
+    "name": "0100.EUROSPORT 1  HD -(82)",
+    "url": "http://91.205.196.7:8000/play/a02v",
+    "canonical_url": "http://91.205.196.7:8000/play/a02v",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0100.EUROSPORT 1  HD -(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725983+00:00"
+  },
+  {
+    "record_number": 209,
+    "id": "b6bf1b7f1b7536d68aee",
+    "name": "0101.EUROSPORT 2 HD -(TEAM)",
+    "url": "http://91.205.196.7:8000/play/a02w",
+    "canonical_url": "http://91.205.196.7:8000/play/a02w",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0101.EUROSPORT 2 HD -(TEAM)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.725992+00:00"
+  },
+  {
+    "record_number": 210,
+    "id": "70b34335d7e26562c6bc",
+    "name": "0102.Ֆիթնես ՏՎ HD",
+    "url": "http://91.205.196.7:8000/play/a02x",
+    "canonical_url": "http://91.205.196.7:8000/play/a02x",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0102.Ֆիթնես ՏՎ HD",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726000+00:00"
+  },
+  {
+    "record_number": 211,
+    "id": "185fe2ea82af6c0b11b0",
+    "name": "0103.VIJU+SPORT-(82)",
+    "url": "http://91.205.196.7:8000/play/a02y",
+    "canonical_url": "http://91.205.196.7:8000/play/a02y",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0103.VIJU+SPORT-(82)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726008+00:00"
+  },
+  {
+    "record_number": 212,
+    "id": "3553d1340ea93dc55cf8",
+    "name": "0104.МАТЧ ФУТБОЛ 1 HD -(84)",
+    "url": "http://91.205.196.7:8000/play/a02z",
+    "canonical_url": "http://91.205.196.7:8000/play/a02z",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0104.МАТЧ ФУТБОЛ 1 HD -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726016+00:00"
+  },
+  {
+    "record_number": 213,
+    "id": "ee36cf0886ed1abcf8d6",
+    "name": "0105.МАТЧ ФУТБОЛ 2 HD -(84)",
+    "url": "http://91.205.196.7:8000/play/a030",
+    "canonical_url": "http://91.205.196.7:8000/play/a030",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0105.МАТЧ ФУТБОЛ 2 HD -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726024+00:00"
+  },
+  {
+    "record_number": 214,
+    "id": "99d124a8732c58744220",
+    "name": "0106.PLAYBOY -(84)",
+    "url": "http://91.205.196.7:8000/play/a031",
+    "canonical_url": "http://91.205.196.7:8000/play/a031",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0106.PLAYBOY -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726032+00:00"
+  },
+  {
+    "record_number": 215,
+    "id": "ffa7d7bae1eb6c6f3cc2",
+    "name": "0107.EROX",
+    "url": "http://91.205.196.7:8000/play/a032",
+    "canonical_url": "http://91.205.196.7:8000/play/a032",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0107.EROX",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726042+00:00"
+  },
+  {
+    "record_number": 216,
+    "id": "e186f592e9a9c1743d7b",
+    "name": "0108.Русская ночь -(84)",
+    "url": "http://91.205.196.7:8000/play/a033",
+    "canonical_url": "http://91.205.196.7:8000/play/a033",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0108.Русская ночь -(84)",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726050+00:00"
+  },
+  {
+    "record_number": 217,
+    "id": "e0eabc94a1ef6d6e2a19",
+    "name": "0110.Delta-Music",
+    "url": "http://91.205.196.7:8000/play/a035",
+    "canonical_url": "http://91.205.196.7:8000/play/a035",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0110.Delta-Music",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726060+00:00"
+  },
+  {
+    "record_number": 218,
+    "id": "2c1bfe910ed60343a7ad",
+    "name": "0111.Top Music",
+    "url": "http://91.205.196.7:8000/play/a03d",
+    "canonical_url": "http://91.205.196.7:8000/play/a03d",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0111.Top Music",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726068+00:00"
+  },
+  {
+    "record_number": 219,
+    "id": "c61674029c9125f1deb9",
+    "name": "0112.Top Film",
+    "url": "http://91.205.196.7:8000/play/a03e",
+    "canonical_url": "http://91.205.196.7:8000/play/a03e",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0112.Top Film",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726076+00:00"
+  },
+  {
+    "record_number": 220,
+    "id": "b545dbaf03b4d12fb71d",
+    "name": "0113.Top Mult",
+    "url": "http://91.205.196.7:8000/play/a03f",
+    "canonical_url": "http://91.205.196.7:8000/play/a03f",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0113.Top Mult",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726084+00:00"
+  },
+  {
+    "record_number": 221,
+    "id": "5ce869c93093c7202564",
+    "name": "0114.Top DOC",
+    "url": "http://91.205.196.7:8000/play/a03g",
+    "canonical_url": "http://91.205.196.7:8000/play/a03g",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0114.Top DOC",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726092+00:00"
+  },
+  {
+    "record_number": 222,
+    "id": "034482de8519f5a1a7db",
+    "name": "0115.Bun TV",
+    "url": "http://91.205.196.7:8000/play/a03h",
+    "canonical_url": "http://91.205.196.7:8000/play/a03h",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0115.Bun TV",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726101+00:00"
+  },
+  {
+    "record_number": 223,
+    "id": "b6a08bd56bf4ccf396ce",
+    "name": "0116.Top Wild",
+    "url": "http://91.205.196.7:8000/play/a03i",
+    "canonical_url": "http://91.205.196.7:8000/play/a03i",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0116.Top Wild",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726108+00:00"
+  },
+  {
+    "record_number": 224,
+    "id": "0dfa7d419c76295c855e",
+    "name": "0117.Romance",
+    "url": "http://91.205.196.7:8000/play/a03j",
+    "canonical_url": "http://91.205.196.7:8000/play/a03j",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0117.Romance",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726117+00:00"
+  },
+  {
+    "record_number": 225,
+    "id": "0a4b3e6628115bc5b51a",
+    "name": "0118.Наше Новое кино",
+    "url": "http://91.205.196.7:8000/play/a03k",
+    "canonical_url": "http://91.205.196.7:8000/play/a03k",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0118.Наше Новое кино",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726125+00:00"
+  },
+  {
+    "record_number": 226,
+    "id": "a2701bd59c81d1298fea",
+    "name": "0119.MATCH PREMYER",
+    "url": "http://91.205.196.7:8000/play/a03l",
+    "canonical_url": "http://91.205.196.7:8000/play/a03l",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0119.MATCH PREMYER",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726133+00:00"
+  },
+  {
+    "record_number": 227,
+    "id": "0c8296dcba6de6f927ea",
+    "name": "0120.Exxxotika",
+    "url": "http://91.205.196.7:8000/play/a03m",
+    "canonical_url": "http://91.205.196.7:8000/play/a03m",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0120.Exxxotika",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726143+00:00"
+  },
+  {
+    "record_number": 228,
+    "id": "3dbbc5c785d49555f437",
+    "name": "0121.Ararat TV",
+    "url": "http://91.205.196.7:8000/play/a001",
+    "canonical_url": "http://91.205.196.7:8000/play/a001",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0121.Ararat TV",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726151+00:00"
+  },
+  {
+    "record_number": 229,
+    "id": "8782b09fc84add119d46",
+    "name": "0122.ITC",
+    "url": "http://91.205.196.7:8000/play/a002",
+    "canonical_url": "http://91.205.196.7:8000/play/a002",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0122.ITC",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726159+00:00"
+  },
+  {
+    "record_number": 230,
+    "id": "f4b1ba9bea916b3f4e4a",
+    "name": "0123.Bari",
+    "url": "http://91.205.196.7:8000/play/a00y",
+    "canonical_url": "http://91.205.196.7:8000/play/a00y",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0123.Bari",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726167+00:00"
+  },
+  {
+    "record_number": 231,
+    "id": "96796f590d30ceac21ef",
+    "name": "0124.Kino",
+    "url": "http://91.205.196.7:8000/play/a00z",
+    "canonical_url": "http://91.205.196.7:8000/play/a00z",
+    "extinf": "#EXTINF:-1 group-title=\"-\",0124.Kino",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726175+00:00"
+  },
+  {
+    "record_number": 232,
+    "id": "1ca1d4104afc852a83ef",
+    "name": "129.PREMIUM-1",
+    "url": "http://91.205.196.7:8000/play/a03n",
+    "canonical_url": "http://91.205.196.7:8000/play/a03n",
+    "extinf": "#EXTINF:-1 group-title=\"-\",129.PREMIUM-1",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726184+00:00"
+  },
+  {
+    "record_number": 233,
+    "id": "d6b9ff13d20c5f3a98bb",
+    "name": "130.PREMIUM-2",
+    "url": "http://91.205.196.7:8000/play/a03o",
+    "canonical_url": "http://91.205.196.7:8000/play/a03o",
+    "extinf": "#EXTINF:-1 group-title=\"-\",130.PREMIUM-2",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726192+00:00"
+  },
+  {
+    "record_number": 234,
+    "id": "fe9156454cfc42d48c7b",
+    "name": "131.PREMIUM-3",
+    "url": "http://91.205.196.7:8000/play/a03p",
+    "canonical_url": "http://91.205.196.7:8000/play/a03p",
+    "extinf": "#EXTINF:-1 group-title=\"-\",131.PREMIUM-3",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726200+00:00"
+  },
+  {
+    "record_number": 235,
+    "id": "59def85a53b79940b97f",
+    "name": "132.PREMIUM-4",
+    "url": "http://91.205.196.7:8000/play/a03q",
+    "canonical_url": "http://91.205.196.7:8000/play/a03q",
+    "extinf": "#EXTINF:-1 group-title=\"-\",132.PREMIUM-4",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726208+00:00"
+  },
+  {
+    "record_number": 236,
+    "id": "88509d0bf0d3f89c3716",
+    "name": "133.PREMIUM-5",
+    "url": "http://91.205.196.7:8000/play/a03r",
+    "canonical_url": "http://91.205.196.7:8000/play/a03r",
+    "extinf": "#EXTINF:-1 group-title=\"-\",133.PREMIUM-5",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726216+00:00"
+  },
+  {
+    "record_number": 237,
+    "id": "a6416acb27fb97bd63f2",
+    "name": "134.PREMIUM-6",
+    "url": "http://91.205.196.7:8000/play/a03s",
+    "canonical_url": "http://91.205.196.7:8000/play/a03s",
+    "extinf": "#EXTINF:-1 group-title=\"-\",134.PREMIUM-6",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726226+00:00"
+  },
+  {
+    "record_number": 238,
+    "id": "ff5950b6f6bd24afd45a",
+    "name": "135.ArmountTV",
+    "url": "http://91.205.196.7:8000/play/a03u",
+    "canonical_url": "http://91.205.196.7:8000/play/a03u",
+    "extinf": "#EXTINF:-1 group-title=\"-\",135.ArmountTV",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726234+00:00"
+  },
+  {
+    "record_number": 239,
+    "id": "6dc375ceb94eb8d70ca0",
+    "name": "5_INT",
+    "url": "http://91.205.196.7:8000/play/a039",
+    "canonical_url": "http://91.205.196.7:8000/play/a039",
+    "extinf": "#EXTINF:-1 group-title=\"-\",5_INT",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726244+00:00"
+  },
+  {
+    "record_number": 240,
+    "id": "1eba667d38e0993fb9be",
+    "name": "DOM_INT",
+    "url": "http://91.205.196.7:8000/play/a037",
+    "canonical_url": "http://91.205.196.7:8000/play/a037",
+    "extinf": "#EXTINF:-1 group-title=\"-\",DOM_INT",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726253+00:00"
+  },
+  {
+    "record_number": 241,
+    "id": "d510c0d5f9bb96961f9d",
+    "name": "REN_INT",
+    "url": "http://91.205.196.7:8000/play/a038",
+    "canonical_url": "http://91.205.196.7:8000/play/a038",
+    "extinf": "#EXTINF:-1 group-title=\"-\",REN_INT",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726261+00:00"
+  },
+  {
+    "record_number": 242,
+    "id": "de974d8698ad9b2e4779",
+    "name": "STS_INT",
+    "url": "http://91.205.196.7:8000/play/a036",
+    "canonical_url": "http://91.205.196.7:8000/play/a036",
+    "extinf": "#EXTINF:-1 group-title=\"-\",STS_INT",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726269+00:00"
+  },
+  {
+    "record_number": 243,
+    "id": "83afe9d50fc9d909dfb2",
+    "name": "STS_KIDS_INT",
+    "url": "http://91.205.196.7:8000/play/a03a",
+    "canonical_url": "http://91.205.196.7:8000/play/a03a",
+    "extinf": "#EXTINF:-1 group-title=\"-\",STS_KIDS_INT",
+    "duration": "-1",
+    "attributes": {
+      "group-title": "-"
+    },
+    "group_title": "-",
+    "tvg_id": "",
+    "tvg_name": "",
+    "tvg_logo": "",
+    "extra_tags": [],
+    "source_master": "http://91.205.196.7:8000/playlist.m3u8",
+    "source_type": "master",
+    "sources": [
+      "http://91.205.196.7:8000/playlist.m3u8"
+    ],
+    "first_seen": "2026-11-15T14:36:41.726275+00:00"
+  }
+]

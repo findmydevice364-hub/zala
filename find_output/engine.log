@@ -1,0 +1,23 @@
+2026-11-15 14:36:40,138 | INFO | ========================================================================
+2026-11-15 14:36:40,138 | INFO | IPTV NODE MASTER AGGREGATOR v2.1.0
+2026-11-15 14:36:40,138 | INFO | DEDUPLICATION: DISABLED
+2026-11-15 14:36:40,138 | INFO | ========================================================================
+2026-11-15 14:36:40,138 | INFO | [SOURCE] Downloading source playlist
+2026-11-15 14:36:40,292 | INFO | [SOURCE] Parsing initial channels
+2026-11-15 14:36:40,301 | INFO | [SOURCE] Initial records: 115
+2026-11-15 14:36:40,304 | INFO | [DISCOVERY] Explicit masters: 1
+2026-11-15 14:36:41,305 | INFO | [MASTER] depth=1 | http://91.205.196.7:8000/playlist.m3u8
+2026-11-15 14:36:41,726 | INFO | [OK] 128 records | http://91.205.196.7:8000/playlist.m3u8
+2026-11-15 14:36:41,728 | INFO | [EXPORT] Creating complete channel inventory
+2026-11-15 14:36:41,732 | INFO | [EXPORT] Records: 243
+2026-11-15 14:36:41,733 | INFO | [EXPORT] Building final master playlist
+2026-11-15 14:36:41,733 | INFO | [EXPORT] Final playlist: /home/runner/work/zala/zala/find_output/04_final/AGGREGATED_MASTER.m3u
+2026-11-15 14:36:41,735 | INFO | [VALIDATION] All output files verified
+2026-11-15 14:36:41,735 | INFO | ========================================================================
+2026-11-15 14:36:41,735 | INFO | STATUS: SUCCESS
+2026-11-15 14:36:41,735 | INFO | NODES: 13
+2026-11-15 14:36:41,735 | INFO | MASTERS: 1
+2026-11-15 14:36:41,735 | INFO | CHANNEL RECORDS: 243
+2026-11-15 14:36:41,735 | INFO | DUPLICATE URL OCCURRENCES PRESERVED: 31
+2026-11-15 14:36:41,735 | INFO | ELAPSED: 1.60 seconds
+2026-11-15 14:36:41,735 | INFO | ========================================================================

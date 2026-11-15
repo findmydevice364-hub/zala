@@ -1,0 +1,43 @@
+========================================================================
+IPTV NODE MASTER AGGREGATOR
+VERSION: 2.1.0
+MODE: NO DEDUPLICATION
+========================================================================
+Generated UTC: 2026-11-15T14:36:41.733380+00:00
+
+STATISTICS
+------------------------------------------------------------------------
+source_downloads: 1
+masters_attempted: 1
+masters_successful: 1
+masters_failed: 0
+channels_parsed: 243
+channels_exported: 243
+channels_filtered: 3
+nested_masters_discovered: 0
+bytes_downloaded: 19067
+duplicate_urls_preserved: 31
+
+Nodes registered: 13
+Masters visited: 1
+Channel records: 243
+
+NODE INVENTORY
+------------------------------------------------------------------------
+176.65.153.12 | ports=6001,6002,6003,6004,6005 | records=19
+176.65.153.3 | ports=8042 | records=2
+176.65.153.35 | ports=6005 | records=1
+176.65.153.40 | ports=6002,6003,6004 | records=7
+176.65.153.49 | ports=6002,6004,6005 | records=3
+176.65.153.66 | ports=6001,6002,6003 | records=8
+62.204.50.170 | ports=80 | records=10
+88.212.15.35 | ports=80 | records=10
+88.212.15.93 | ports=80 | records=8
+88.218.242.237 | ports=8001 | records=11
+91.205.196.7 | ports=8000 | records=162
+canli.tgrthaber.com | ports=80 | records=1
+tytturk-live.ercdn.net | ports=80 | records=1
+
+MASTER RESULTS
+------------------------------------------------------------------------
+SUCCESS | depth=1 | channels=128 | http://91.205.196.7:8000/playlist.m3u8
