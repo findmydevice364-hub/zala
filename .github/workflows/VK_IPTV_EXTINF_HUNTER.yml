@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
   schedule:
-    - cron: "0 1 * * *" # Ежедневно в 03:00 по Калининграду (UTC+2)
+    - cron: "0 1 * * *" # Ежедневно в 03:00 Калининград (UTC+2)
 
 permissions:
   contents: write
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   run-hunter:
-    name: Run VK_IPTV_EXTINF_HUNTER.py
+    name: Run VK IPTV EXTINF Hunter
     runs-on: ubuntu-latest
     timeout-minutes: 360
 
@@ -30,6 +30,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -41,17 +42,35 @@ jobs:
             pip install requests pyyaml
           fi
 
-      - name: Validate source file
+      - name: Validate hunter source
         run: |
           if [ ! -f VK_IPTV_EXTINF_HUNTER.py ]; then
-            echo "ERROR: VK_IPTV_EXTINF_HUNTER.py not found"
+            echo "::error::VK_IPTV_EXTINF_HUNTER.py not found"
             exit 1
           fi
+
+          python -m py_compile VK_IPTV_EXTINF_HUNTER.py
+
+          echo "Hunter source validation successful."
+
+      - name: Validate VK API token
+        env:
+          VK_ACCESS_TOKEN: ${{ secrets.VK_ACCESS_TOKEN }}
+        run: |
+          if [ -z "${VK_ACCESS_TOKEN:-}" ]; then
+            echo "::error::VK_ACCESS_TOKEN is empty or missing."
+            echo "Add VK_ACCESS_TOKEN in Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+          echo "VK API token detected."
+          echo "Token value will not be displayed."
 
       - name: Run VK IPTV EXTINF Hunter
         env:
           VK_ACCESS_TOKEN: ${{ secrets.VK_ACCESS_TOKEN }}
           PYTHONUNBUFFERED: "1"
+          PYTHONIOENCODING: "utf-8"
         run: |
           python -u VK_IPTV_EXTINF_HUNTER.py
 
@@ -64,17 +83,17 @@ jobs:
           git add -A
 
           if ! git diff --cached --quiet; then
-            git commit -m "Update IPTV playlist via VK_IPTV_EXTINF_HUNTER.py"
+            git commit -m "Update IPTV playlist via VK EXTINF Hunter"
             git push
           else
             echo "No changes to commit."
           fi
 
-      - name: Upload execution logs
+      - name: Upload hunter logs and results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: vk-iptv-hunter-logs
+          name: vk-iptv-hunter-results
           path: |
             VK_IPTV_OUTPUT/
           if-no-files-found: ignore
