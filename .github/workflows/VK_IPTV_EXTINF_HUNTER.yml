@@ -1,0 +1,90 @@
+# ==============================================================================
+# VK IPTV EXTINF HUNTER — Launcher Configuration
+# Developer: Phoenix 89S lab.
+# ==============================================================================
+
+application:
+  name: VK_IPTV_EXTINF_HUNTER
+  version: "1.0.0"
+  description: Launcher for the original VK IPTV EXTINF Hunter
+  developer: Phoenix 89S lab.
+
+source:
+  provider: github
+  repository: findmydevice364-hub/zala
+  branch: main
+  filename: VK_IPTV_EXTINF_HUNTER.py
+  download_url: https://raw.githubusercontent.com/findmydevice364-hub/zala/main/VK_IPTV_EXTINF_HUNTER.py
+  download_before_execution: true
+  overwrite_local_source: true
+  timeout_seconds: 60
+
+runtime:
+  interpreter: python
+  minimum_version: "3.10"
+  encoding: utf-8
+  execution:
+    mode: subprocess
+    timeout_seconds: 0
+    arguments: []
+    working_directory: ./
+
+dependencies:
+  package_manager: pip
+  required:
+    - name: requests
+      import_name: requests
+    - name: pyyaml
+      import_name: yaml
+
+security:
+  access_token:
+    environment_variable: VK_ACCESS_TOKEN
+    required: true
+  source_validation:
+    enabled: true
+    reject_empty_file: true
+    calculate_sha256: true
+    log_source_hash: true
+    verify_expected_hash: false
+    expected_sha256: ""
+
+execution:
+  enabled: true
+  update_source: true
+  run_after_download: true
+  stop_on_download_error: true
+  stop_on_validation_error: true
+  stop_on_missing_token: true
+
+paths:
+  root: ./
+  source: ./VK_IPTV_EXTINF_HUNTER.py
+  output: ./VK_IPTV_OUTPUT/
+  logs: ./VK_IPTV_OUTPUT/logs/
+
+logging:
+  enabled: true
+  level: INFO
+  encoding: utf-8
+  timestamp_format: "%Y-%m-%d %H:%M:%S"
+  files:
+    launcher: launcher.log
+    stdout: hunter_stdout.log
+    stderr: hunter_stderr.log
+
+error_handling:
+  preserve_error_logs: true
+  return_process_exit_code: true
+  retry_download:
+    enabled: true
+    attempts: 3
+    delay_seconds: 5
+  retry_execution:
+    enabled: false
+    attempts: 1
+
+shutdown:
+  wait_for_process: true
+  terminate_on_timeout: false
+  preserve_output: true
