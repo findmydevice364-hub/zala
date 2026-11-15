@@ -2,18 +2,14 @@
 name: FIMD IPTV Master Aggregator
 
 on:
-  # Ручной запуск через GitHub Actions
   workflow_dispatch:
 
-  # Автоматический запуск раз в три дня
   schedule:
     - cron: "0 6 */3 * *"
 
-# Разрешаем workflow сохранять результаты в репозиторий
 permissions:
   contents: write
 
-# Не допускаем параллельное выполнение двух сборок
 concurrency:
   group: fimd-master-aggregator
   cancel-in-progress: false
@@ -21,36 +17,24 @@ concurrency:
 jobs:
   aggregate:
     name: IPTV Node Master Aggregation
-
     runs-on: ubuntu-latest
-
     timeout-minutes: 60
 
     steps:
-      # --------------------------------------------------
       # 1. Получение репозитория
-      # --------------------------------------------------
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: true
 
-      # --------------------------------------------------
-      # 2. Установка Python
-      # --------------------------------------------------
-
+      # 2. Установка Python без pip cache
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: "pip"
 
-      # --------------------------------------------------
       # 3. Информация о запуске
-      # --------------------------------------------------
-
       - name: Initialize run information
         run: |
           echo "FIMD IPTV MASTER AGGREGATOR"
@@ -59,10 +43,7 @@ jobs:
           echo "Run ID: ${{ github.run_id }}"
           echo "UTC: $(date -u)"
 
-      # --------------------------------------------------
-      # 4. Проверка наличия исходного кода
-      # --------------------------------------------------
-
+      # 4. Проверка исходного кода
       - name: Verify engine file
         run: |
           if [ ! -f "fimd_master.py" ]; then
@@ -70,31 +51,20 @@ jobs:
             exit 1
           fi
 
-          echo "Engine file found:"
           ls -lh fimd_master.py
 
-      # --------------------------------------------------
       # 5. Проверка синтаксиса
-      # --------------------------------------------------
-
       - name: Compile Python engine
         run: |
           python -m py_compile fimd_master.py
-
           echo "Python syntax check passed"
 
-      # --------------------------------------------------
       # 6. Запуск агрегатора
-      # --------------------------------------------------
-
       - name: Run FIMD Master Aggregator
         run: |
           python -u fimd_master.py
 
-      # --------------------------------------------------
-      # 7. Проверка выходных файлов
-      # --------------------------------------------------
-
+      # 7. Проверка результатов
       - name: Validate aggregation results
         run: |
           set -e
@@ -120,13 +90,9 @@ jobs:
             echo "OK: $FILE"
           done
 
-          echo ""
           echo "Output validation completed"
 
-      # --------------------------------------------------
       # 8. Сохранение результатов в репозитории
-      # --------------------------------------------------
-
       - name: Commit aggregation results
         if: success()
         run: |
@@ -141,27 +107,19 @@ jobs:
           fi
 
           git commit -m "Update IPTV aggregation results"
-
           git push origin "HEAD:${GITHUB_REF_NAME}"
 
-      # --------------------------------------------------
-      # 9. Архив результатов GitHub Actions
-      # --------------------------------------------------
-
+      # 9. Резервный архив GitHub Actions
       - name: Upload aggregation artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: fimd-iptv-aggregation-${{ github.run_number }}
-          path: |
-            find_output/
+          path: find_output/
           if-no-files-found: warn
           retention-days: 30
 
-      # --------------------------------------------------
       # 10. Итог выполнения
-      # --------------------------------------------------
-
       - name: Final status
         if: always()
         run: |
