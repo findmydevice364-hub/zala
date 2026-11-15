@@ -1,0 +1,33 @@
+
+application:
+  name: "VK IPTV EXTINF HUNTER LAUNCHER"
+  version: "1.0.0"
+
+source:
+  type: "github_raw"
+  url: "https://raw.githubusercontent.com/findmydevice364-hub/zala/refs/heads/main/VK_IPTV_EXTINF_HUNTER.py"
+  filename: "VK_IPTV_EXTINF_HUNTER.py"
+  download_timeout: 60
+  update_before_run: true
+
+runtime:
+  interpreter: "python"
+  minimum_version: "3.10"
+  timeout: 0
+
+security:
+  token_environment_variable: "VK_ACCESS_TOKEN"
+  sha256: ""
+
+dependencies:
+  - requests
+  - pyyaml
+
+execution:
+  working_directory: "."
+  arguments: []
+
+logging:
+  directory: "VK_IPTV_OUTPUT"
+  filename: "launcher.log"
+
