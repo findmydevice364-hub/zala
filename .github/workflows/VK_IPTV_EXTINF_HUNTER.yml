@@ -1,90 +1,81 @@
-# ==============================================================================
-# VK IPTV EXTINF HUNTER — Launcher Configuration
-# Developer: Phoenix 89S lab.
-# ==============================================================================
 
-application:
-  name: VK_IPTV_EXTINF_HUNTER
-  version: "1.0.0"
-  description: Launcher for the original VK IPTV EXTINF Hunter
-  developer: Phoenix 89S lab.
+name: VK_IPTV_EXTINF_HUNTER.py
 
-source:
-  provider: github
-  repository: findmydevice364-hub/zala
-  branch: main
-  filename: VK_IPTV_EXTINF_HUNTER.py
-  download_url: https://raw.githubusercontent.com/findmydevice364-hub/zala/main/VK_IPTV_EXTINF_HUNTER.py
-  download_before_execution: true
-  overwrite_local_source: true
-  timeout_seconds: 60
+on:
+  workflow_dispatch:
 
-runtime:
-  interpreter: python
-  minimum_version: "3.10"
-  encoding: utf-8
-  execution:
-    mode: subprocess
-    timeout_seconds: 0
-    arguments: []
-    working_directory: ./
+  schedule:
+    - cron: "0 1 * * *" # Ежедневно в 03:00 по Калининграду (UTC+2)
 
-dependencies:
-  package_manager: pip
-  required:
-    - name: requests
-      import_name: requests
-    - name: pyyaml
-      import_name: yaml
+permissions:
+  contents: write
 
-security:
-  access_token:
-    environment_variable: VK_ACCESS_TOKEN
-    required: true
-  source_validation:
-    enabled: true
-    reject_empty_file: true
-    calculate_sha256: true
-    log_source_hash: true
-    verify_expected_hash: false
-    expected_sha256: ""
+concurrency:
+  group: vk-iptv-extinf-hunter
+  cancel-in-progress: false
 
-execution:
-  enabled: true
-  update_source: true
-  run_after_download: true
-  stop_on_download_error: true
-  stop_on_validation_error: true
-  stop_on_missing_token: true
+jobs:
+  run-hunter:
+    name: Run VK_IPTV_EXTINF_HUNTER.py
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
 
-paths:
-  root: ./
-  source: ./VK_IPTV_EXTINF_HUNTER.py
-  output: ./VK_IPTV_OUTPUT/
-  logs: ./VK_IPTV_OUTPUT/logs/
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
-logging:
-  enabled: true
-  level: INFO
-  encoding: utf-8
-  timestamp_format: "%Y-%m-%d %H:%M:%S"
-  files:
-    launcher: launcher.log
-    stdout: hunter_stdout.log
-    stderr: hunter_stderr.log
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-error_handling:
-  preserve_error_logs: true
-  return_process_exit_code: true
-  retry_download:
-    enabled: true
-    attempts: 3
-    delay_seconds: 5
-  retry_execution:
-    enabled: false
-    attempts: 1
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
 
-shutdown:
-  wait_for_process: true
-  terminate_on_timeout: false
-  preserve_output: true
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            pip install requests pyyaml
+          fi
+
+      - name: Validate source file
+        run: |
+          if [ ! -f VK_IPTV_EXTINF_HUNTER.py ]; then
+            echo "ERROR: VK_IPTV_EXTINF_HUNTER.py not found"
+            exit 1
+          fi
+
+      - name: Run VK IPTV EXTINF Hunter
+        env:
+          VK_ACCESS_TOKEN: ${{ secrets.VK_ACCESS_TOKEN }}
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python -u VK_IPTV_EXTINF_HUNTER.py
+
+      - name: Commit and push changes
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if ! git diff --cached --quiet; then
+            git commit -m "Update IPTV playlist via VK_IPTV_EXTINF_HUNTER.py"
+            git push
+          else
+            echo "No changes to commit."
+          fi
+
+      - name: Upload execution logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vk-iptv-hunter-logs
+          path: |
+            VK_IPTV_OUTPUT/
+          if-no-files-found: ignore
+          retention-days: 14
