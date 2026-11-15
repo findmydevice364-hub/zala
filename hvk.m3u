@@ -1,0 +1,249 @@
+#EXTM3U
+
+# ═══ PPPPP.m3u (62.204.50.170) ═══
+#EXTINF:-1,tlc
+http://62.204.50.170:80/tlcX/index.m3u8
+#EXTINF:-1,ard
+http://62.204.50.170:80/ardX/index.m3u8
+#EXTINF:-1,n24
+http://62.204.50.170:80/n24X/index.m3u8
+#EXTINF:-1,six
+http://62.204.50.170:80/sixX/index.m3u8
+#EXTINF:-1,dmax
+http://62.204.50.170:80/dmaxX/index.m3u8
+#EXTINF:-1,gold
+http://62.204.50.170:80/goldX/index.m3u8
+#EXTINF:-1,viva
+http://62.204.50.170:80/vivaX/index.m3u8
+#EXTINF:-1,super
+http://62.204.50.170:80/superX/index.m3u8
+#EXTINF:-1,disney
+http://62.204.50.170:80/disneyX/index.m3u8
+#EXTINF:-1,ntv
+http://62.204.50.170:80/ntvX/index.m3u8
+
+# ═══ Турецкие каналы (176.65.153.x) ═══
+#EXTINF:-1,KANAL D HD
+http://176.65.153.12:6002/play/a05s/index.m3u8
+#EXTINF:-1,STAR TV HD
+http://176.65.153.66:6001/play/a01u/index.m3u8
+#EXTINF:-1,ATV HD
+http://176.65.153.66:6001/play/a01r/index.m3u8
+#EXTINF:-1,SHOW TV HD
+http://176.65.153.12:6002/play/a05m/index.m3u8
+#EXTINF:-1,NOW HD
+http://176.65.153.12:6002/play/a05l/index.m3u8
+#EXTINF:-1,TV8 HD
+http://176.65.153.40:6003/play/a01q/index.m3u8
+#EXTINF:-1,TLC HD
+http://176.65.153.49:6004/play/a003/index.m3u8
+#EXTINF:-1,DMAX HD
+http://176.65.153.12:6004/play/a01p/index.m3u8
+#EXTINF:-1,HALK TV HD
+http://176.65.153.35:6005/play/a026/index.m3u8
+#EXTINF:-1,SZC TV HD
+http://176.65.153.12:6001/play/a04u/index.m3u8
+#EXTINF:-1,KOZA TV HD
+http://176.65.153.40:6004/play/a01i/index.m3u8
+#EXTINF:-1,CARTOON NETWORK HD
+http://176.65.153.12:6002/play/a05x/index.m3u8
+#EXTINF:-1,TRT COCUK HD
+http://176.65.153.12:6001/play/a04e/index.m3u8
+#EXTINF:-1,minikaCOCUK HD
+http://176.65.153.12:6005/play/a033/index.m3u8
+#EXTINF:-1,minikaGO HD
+http://176.65.153.12:6005/play/a034/index.m3u8
+#EXTINF:-1,STOON TV HD
+http://176.65.153.49:6005/play/a002/index.m3u8
+#EXTINF:-1,TRT SPOR HD
+http://176.65.153.66:6001/play/a01y/index.m3u8
+#EXTINF:-1,TRT SPOR YILDIZ HD
+http://176.65.153.49:6002/play/a003/index.m3u8
+#EXTINF:-1,HABER HD (название скрыто в посте)
+http://176.65.153.66:6003/play/a00y/index.m3u8
+#EXTINF:-1,HT SPOR HD
+http://176.65.153.40:6002/play/a01k/index.m3u8
+#EXTINF:-1,A SPOR HD
+http://176.65.153.66:6001/play/a01t/index.m3u8
+#EXTINF:-1,KANAL7 HD
+http://176.65.153.12:6001/play/a04n/index.m3u8
+#EXTINF:-1,360 HD
+http://176.65.153.40:6002/play/a01m/index.m3u8
+#EXTINF:-1,TV4 HD
+http://176.65.153.40:6002/play/a01n/index.m3u8
+#EXTINF:-1,NTV HD
+http://176.65.153.66:6001/play/a01w/index.m3u8
+#EXTINF:-1,CNN TÜRK HD
+http://176.65.153.12:6004/play/a01r/index.m3u8
+#EXTINF:-1,HABER GLOBAL HD
+http://176.65.153.12:6004/play/a01x/index.m3u8
+#EXTINF:-1,HABERTURK HD
+http://176.65.153.40:6002/play/a01b/index.m3u8
+#EXTINF:-1,A HABER HD
+http://176.65.153.66:6001/play/a01s/index.m3u8
+#EXTINF:-1,24 TV HD
+http://176.65.153.40:6002/play/a01l/index.m3u8
+#EXTINF:-1,TV100 HD
+http://176.65.153.12:6003/play/a02h/index.m3u8
+#EXTINF:-1,TGRT HABER HD
+http://canli.tgrthaber.com/tgrt.m3u8
+#EXTINF:-1,TVNET HD
+http://176.65.153.12:6003/play/a02c/index.m3u8
+#EXTINF:-1,TYT TURK HD
+http://tytturk-live.ercdn.net/tytturk/ty
+#EXTINF:-1,CNBC-E HD
+http://176.65.153.66:6002/play/a01e/index.m3u8
+#EXTINF:-1,BLOOMBERGHT HD
+http://176.65.153.12:6002/play/a05o/index.m3u8
+#EXTINF:-1,A PARA HD
+http://176.65.153.12:6005/play/a030/index.m3u8
+#EXTINF:-1,EKOTURK HD
+http://176.65.153.3:8042/play/a017/index.m3u8
+#EXTINF:-1,LİDER HABER HD
+http://176.65.153.12:6002/play/a05y/index.m3u8
+#EXTINF:-1,BEYAZ TV HD
+http://176.65.153.3:8042/play/a02p/index.m3u8
+#EXTINF:-1,AKIT TV HD
+http://176.65.153.12:6004/play/a020/index.m3u8
+#EXTINF:-1,BENGİ TURK HD
+http://176.65.153.12:6004/play/a01z/index.m3u8
+
+# ═══ Русские HD (88.218.242.237) ═══
+#EXTINF:-1,cartoon_classic
+http://88.218.242.237:8001/Cartoon_Classics
+#EXTINF:-1,detective_jam HD
+http://88.218.242.237:8001/DetectiveJam_HD
+#EXTINF:-1,explorers HD
+http://88.218.242.237:8001/The_Explorers_HD
+#EXTINF:-1,magnat HD
+http://88.218.242.237:8001/Magnat_HD
+#EXTINF:-1,Scream HD
+http://88.218.242.237:8001/Scream_HD
+#EXTINF:-1,Еда
+http://88.218.242.237:8001/eda
+#EXTINF:-1,romance HD
+http://88.218.242.237:8001/Romance_HD
+#EXTINF:-1,Старт Триумф
+http://88.218.242.237:8001/Start_Triumf_HD
+#EXTINF:-1,suspense HD
+http://88.218.242.237:8001/Suspense_HD
+#EXTINF:-1,kinoman
+http://88.218.242.237:8001/kinoman
+#EXTINF:-1,pes-i-ko
+http://88.218.242.237:8001/pes-i-ko
+
+# ═══ Армения + Россия (91.205.196.7:8000) — видимый фрагмент ═══
+#EXTINF:-1,0001.Հ1 HD
+http://91.205.196.7:8000/play/a004
+#EXTINF:-1,0002.Շողակաթ
+http://91.205.196.7:8000/play/a006
+#EXTINF:-1,0003.Արմենիա HD
+http://91.205.196.7:8000/play/a005
+#EXTINF:-1,0004.Շանթ HD
+http://91.205.196.7:8000/play/a007
+#EXTINF:-1,0005.ԱՏՎ HD
+http://91.205.196.7:8000/play/a008
+#EXTINF:-1,0006.Կենտրոն HD
+http://91.205.196.7:8000/play/a009
+#EXTINF:-1,0007.Erkir MEDIA HD
+http://91.205.196.7:8000/play/a03t
+#EXTINF:-1,0008.ԿՈՏԱՅՔ HD
+http://91.205.196.7:8000/play/…
+#EXTINF:-1,0021.ՏԱՎՈՒՇ HD
+http://91.205.196.7:8000/play/a00n
+#EXTINF:-1,0022.ԼՈՌԻ HD
+http://91.205.196.7:8000/play/a00o
+#EXTINF:-1,0023.Ցայգ HD
+http://91.205.196.7:8000/play/a00p
+#EXTINF:-1,0024.Դելտա HD
+http://91.205.196.7:8000/play/a00q
+#EXTINF:-1,0025.ՖՈՐՏՈՒՆԱ HD
+http://91.205.196.7:8000/play/a00r
+#EXTINF:-1,0026.ABN HD
+http://91.205.196.7:8000/play/a00s
+#EXTINF:-1,0027.Ազատություն HD (UCOM)
+http://91.205.196.7:8000/play/a00t
+#EXTINF:-1,0046.ПЕРЕЦ
+http://91.205.196.7:8000/play/a01c
+#EXTINF:-1,0047.ЧЕ
+http://91.205.196.7:8000/play/a01d
+#EXTINF:-1,0048.Ю-ТВ
+http://91.205.196.7:8000/play/a01e
+#EXTINF:-1,0049.ТВЦ
+http://91.205.196.7:8000/play/a01f
+#EXTINF:-1,0050.ЗВЕЗДА
+http://91.205.196.7:8000/play/a01g
+#EXTINF:-1,0051.ПОБЕДА
+http://91.205.196.7:8000/play/a01h
+#EXTINF:-1,0052.РОССИЯ К
+http://91.205.196.7:8000/play/a01i
+#EXTINF:-1,0053.CTC KIDS
+http://91.205.196.7:8000/play/a01j
+#EXTINF:-1,0081.Թավա TV HD
+http://91.205.196.7:8000/play/a02b
+#EXTINF:-1,0082.ТЕЛЕКАФЕ
+http://91.205.196.7:8000/play/a02c
+#EXTINF:-1,0083.НТВ СТИЛЬ
+http://91.205.196.7:8000/play/a02d
+#EXTINF:-1,0084.НТВ ПРАВО
+http://91.205.196.7:8000/play/a02e
+#EXTINF:-1,0085.НТВ СЕРИАЛ
+http://91.205.196.7:8000/play/a02f
+#EXTINF:-1,0086.Շանթ сериал
+http://91.205.196.7:8000/play/a02g
+#EXTINF:-1,0087.Բազմոց TV
+http://91.205.196.7:8000/play/a02h
+#EXTINF:-1,REN_INT
+http://91.205.196.7:8000/play/a038
+#EXTINF:-1,STS_INT
+http://91.205.196.7:8000/play/a036
+#EXTINF:-1,STS_KIDS_INT
+http://91.205.196.7:8000/play/a03a
+#EXTINF:-1,ОБЩИЙ СПИСОК (~135 каналов целиком)
+http://91.205.196.7:8000/playlist.m3u8
+
+# ═══ 00.m3u (88.212.15.93) ═══
+#EXTINF:-1,vixen
+http://88.212.15.93:80/live/vixen/index.m3u8
+#EXTINF:-1,mb_dance
+http://88.212.15.93:80/live/mb_dance/index.m3u8
+#EXTINF:-1,mb_sexy
+http://88.212.15.93:80/live/mb_sexy/index.m3u8
+#EXTINF:-1,mb_hits
+http://88.212.15.93:80/live/mb_hits/index.m3u8
+#EXTINF:-1,sporty_tv
+http://88.212.15.93:80/live/sporty_tv/index.m3u8
+#EXTINF:-1,lifetv
+http://88.212.15.93:80/live/lifetv/index.m3u8
+#EXTINF:-1,utv
+http://88.212.15.93:80/live/utv/index.m3u8
+#EXTINF:-1,prime
+http://88.212.15.93:80/live/prime/index.m3u8
+#EXTINF:-1,mb_classic
+http://88.212.15.93:80/live/mb_classic/index.m3u8
+#EXTINF:-1,retro
+http://88.212.15.93:80/live/retro/index.m3u8
+
+# ═══ 99.m3u (88.212.15.35) ═══
+#EXTINF:-1,mb_dance
+http://88.212.15.35:80/mb_dance/index.m3u8
+#EXTINF:-1,mb_sexy
+http://88.212.15.35:80/mb_sexy/index.m3u8
+#EXTINF:-1,mb_hits
+http://88.212.15.35:80/mb_hits/index.m3u8
+#EXTINF:-1,dom
+http://88.212.15.35:80/dom/index.m3u8
+#EXTINF:-1,gntv
+http://88.212.15.35:80/gntv/index.m3u8
+#EXTINF:-1,atv
+http://88.212.15.35:80/atv/index.m3u8
+#EXTINF:-1,cam2
+http://88.212.15.35:80/cam2/index.m3u8
+#EXTINF:-1,ptv
+http://88.212.15.35:80/ptv/index.m3u8
+#EXTINF:-1,nick_jr
+http://88.212.15.35:80/nick_jr/index.m3u8
+#EXTINF:-1,utv
+http://88.212.15.35:80/utv/index.m3u8
+#EXTINF:-1,v1
+http://88.212.15.35:80/v1/index.m3u8
