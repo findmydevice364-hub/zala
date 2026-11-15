@@ -1,59 +1,174 @@
 
-name: FIMD Master Runner
+name: FIMD IPTV Master Aggregator
 
 on:
+  # Ручной запуск через GitHub Actions
   workflow_dispatch:
 
+  # Автоматический запуск раз в три дня
   schedule:
-    - cron: "0 6 * * *"
+    - cron: "0 6 */3 * *"
 
+# Разрешаем workflow сохранять результаты в репозиторий
 permissions:
-  contents: read
+  contents: write
 
+# Не допускаем параллельное выполнение двух сборок
 concurrency:
-  group: fimd-master
+  group: fimd-master-aggregator
   cancel-in-progress: false
 
 jobs:
-  run-master:
+  aggregate:
+    name: IPTV Node Master Aggregation
+
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+
+    timeout-minutes: 60
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      # --------------------------------------------------
+      # 1. Получение репозитория
+      # --------------------------------------------------
 
-      - name: Setup Python
-        uses: actions/setup-python@v7
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      # --------------------------------------------------
+      # 2. Установка Python
+      # --------------------------------------------------
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: "pip"
 
-      - name: Download fimd_master.py
+      # --------------------------------------------------
+      # 3. Информация о запуске
+      # --------------------------------------------------
+
+      - name: Initialize run information
         run: |
-          mkdir -p scripts
-          curl -fL \
-            "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/fimd_master.py" \
-            -o scripts/fimd_master.py
+          echo "FIMD IPTV MASTER AGGREGATOR"
+          echo "Trigger: ${{ github.event_name }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "UTC: $(date -u)"
 
-      - name: Verify script
+      # --------------------------------------------------
+      # 4. Проверка наличия исходного кода
+      # --------------------------------------------------
+
+      - name: Verify engine file
         run: |
-          test -s scripts/fimd_master.py
-          python -m py_compile scripts/fimd_master.py
+          if [ ! -f "fimd_master.py" ]; then
+            echo "::error::fimd_master.py not found in repository root"
+            exit 1
+          fi
 
-      - name: Run FIMD Master
+          echo "Engine file found:"
+          ls -lh fimd_master.py
+
+      # --------------------------------------------------
+      # 5. Проверка синтаксиса
+      # --------------------------------------------------
+
+      - name: Compile Python engine
         run: |
-          python -u scripts/fimd_master.py
+          python -m py_compile fimd_master.py
 
-      - name: Upload results
+          echo "Python syntax check passed"
+
+      # --------------------------------------------------
+      # 6. Запуск агрегатора
+      # --------------------------------------------------
+
+      - name: Run FIMD Master Aggregator
+        run: |
+          python -u fimd_master.py
+
+      # --------------------------------------------------
+      # 7. Проверка выходных файлов
+      # --------------------------------------------------
+
+      - name: Validate aggregation results
+        run: |
+          set -e
+
+          REQUIRED_FILES=(
+            "find_output/01_nodes.json"
+            "find_output/02_masters.json"
+            "find_output/03_channels/channels_extinf.txt"
+            "find_output/03_channels/channels_urls.txt"
+            "find_output/03_channels/channels_inventory.json"
+            "find_output/03_channels/channels_inventory.m3u"
+            "find_output/04_final/AGGREGATED_MASTER.m3u"
+            "find_output/05_reports/report.txt"
+            "find_output/05_reports/statistics.json"
+          )
+
+          for FILE in "${REQUIRED_FILES[@]}"; do
+            if [ ! -s "$FILE" ]; then
+              echo "::error::Missing or empty output: $FILE"
+              exit 1
+            fi
+
+            echo "OK: $FILE"
+          done
+
+          echo ""
+          echo "Output validation completed"
+
+      # --------------------------------------------------
+      # 8. Сохранение результатов в репозитории
+      # --------------------------------------------------
+
+      - name: Commit aggregation results
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add find_output/
+
+          if git diff --cached --quiet; then
+            echo "No changes in aggregation results"
+            exit 0
+          fi
+
+          git commit -m "Update IPTV aggregation results"
+
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      # --------------------------------------------------
+      # 9. Архив результатов GitHub Actions
+      # --------------------------------------------------
+
+      - name: Upload aggregation artifacts
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
-          name: fimd-master-results
+          name: fimd-iptv-aggregation-${{ github.run_number }}
           path: |
-            output/
-            reports/
-            *.m3u
-            *.json
-            *.txt
-          if-no-files-found: ignore
-          retention-days: 14
+            find_output/
+          if-no-files-found: warn
+          retention-days: 30
+
+      # --------------------------------------------------
+      # 10. Итог выполнения
+      # --------------------------------------------------
+
+      - name: Final status
+        if: always()
+        run: |
+          echo "======================================"
+          echo "FIMD IPTV MASTER AGGREGATOR"
+          echo "======================================"
+          echo "Trigger: ${{ github.event_name }}"
+          echo "Run: ${{ github.run_number }}"
+          echo "Status: ${{ job.status }}"
+          echo "======================================"
