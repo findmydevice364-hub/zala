@@ -17,7 +17,7 @@ Universal Multi-threaded Full Logic Version
 
 Полная логика версии с исправлениями устойчивости:
 
-- Многопоточная загрузка восьми донорских источников.
+- Многопоточная загрузка девяти донорских источников.
 - Каждый доступный донор загружается целиком.
 - Повреждённая запись M3U не останавливает разбор всего донора.
 - Недоступность одного донора не отменяет обработку остальных.
@@ -29,8 +29,9 @@ Universal Multi-threaded Full Logic Version
 - РТРС SD / РТРС HD (1–20) с нормализацией названий и строгой сортировкой.
 - Нераспознанные названия не выбрасываются из пула из-за нормализации.
 - Тематические группы для остальных каналов:
-    Новости, Музыка, Детские, Кино, Познавательные,
+    Новости, Музыка, Детские, Кино, Еда, Познавательные,
     Развлекательные, Научные, Прочее.
+- Специальное переименование scream HD в scream HD (Крик HD).
 - Целевые файлы:
     IPTVmir.m3u8
     legacy/IPTVstable.m3u8
@@ -44,7 +45,7 @@ Universal Multi-threaded Full Logic Version
 Правила устойчивости:
 1. Отсутствующий URL у отдельного EXTINF не вызывает аварийного завершения.
 2. Повреждённая запись пропускается; разбор продолжается со следующей.
-3. Ошибка загрузки одного донора не отменяет обработку других доноров.
+3. Ошибка загрузки одного донора не отменяет обработку остальных доноров.
 4. Пустой донор не обнуляет общий пул.
 5. Нормализация РТРС меняет имена и порядок, а не отбрасывает
    кандидатов только из-за несовпадения с шаблоном.
@@ -114,6 +115,13 @@ EIGHTH_SOURCE_URL = (
     "findmydevice364-hub/zala/main/zala_N.m3u"
 )
 
+# Девятый донор: агрегированный плейлист Zala.
+NINTH_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/find_output/04_final/"
+    "AGGREGATED_MASTER.m3u"
+)
+
 
 # ==============================================================================
 # ПЕРЕОПРЕДЕЛЕНИЕ ИСТОЧНИКОВ ЧЕРЕЗ ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ
@@ -140,6 +148,9 @@ SEVENTH_SOURCE_URL = os.environ.get(
 )
 EIGHTH_SOURCE_URL = os.environ.get(
     "EIGHTH_SOURCE_URL", EIGHTH_SOURCE_URL
+)
+NINTH_SOURCE_URL = os.environ.get(
+    "NINTH_SOURCE_URL", NINTH_SOURCE_URL
 )
 
 SKIP_PUSH = (
@@ -379,6 +390,13 @@ CATEGORY_RULES = [
         "sony", "кинопоказ", "кинокомедия",
         "индийское кино", "наше кино"
     ]),
+    ("Еда", [
+        "еда", "food", "кулинар", "кухня", "кухон",
+        "рецепт", "рецепты", "cooking", "cook",
+        "chef", "gastro", "гастроном", "food network",
+        "food tv", "вкусно", "готовим", "готовка",
+        "телекафе", "кухня тв", "кулинария"
+    ]),
     ("Познавательные", [
         "познават", "discovery", "national geographic",
         "nat geo", "history", "animal", "наука", "doc",
@@ -403,6 +421,7 @@ CATEGORY_ORDER = [
     "Музыка",
     "Детские",
     "Кино",
+    "Еда",
     "Познавательные",
     "Развлекательные",
     "Научные",
@@ -1146,6 +1165,23 @@ def normalize_channel_text(value):
     return clean
 
 
+def rename_special_channel(name):
+    """
+    Переименовывает специальные каналы.
+
+    scream HD -> scream HD (Крик HD)
+
+    Сравнение выполняется по нормализованному имени,
+    поэтому регистр и лишние пробелы не влияют на результат.
+    """
+    original_name = (name or "").strip()
+
+    if normalize_channel_text(original_name) == "scream hd":
+        return "scream HD (Крик HD)"
+
+    return original_name
+
+
 def _contains_phrase(text, phrase):
     """Ищет фразу по границам слов."""
     if not text or not phrase:
@@ -1253,7 +1289,21 @@ def smart_format_entry(
 
     Сопоставление с РТРС меняет название и группу, но само по себе
     не удаляет и не отклоняет запись.
+
+    Специальные имена каналов нормализуются также в EXTINF,
+    чтобы переименование попадало в итоговый M3U.
     """
+    name = rename_special_channel(name)
+
+    if extinf and "," in extinf:
+        source_meta, source_name = extinf.split(",", 1)
+
+        renamed_source_name = rename_special_channel(
+            source_name.strip()
+        )
+
+        extinf = f"{source_meta},{renamed_source_name}"
+
     matched = match_rtrs(name)
 
     if matched:
@@ -1304,6 +1354,10 @@ def smart_format_entry(
             else (extinf, name or "Без названия")
         )
 
+        channel_name = rename_special_channel(
+            channel_name.strip()
+        )
+
         if re.search(
             r'\bgroup-title="[^"]*"',
             meta,
@@ -1322,6 +1376,10 @@ def smart_format_entry(
         extinf.split(",", 1)
         if "," in extinf
         else (extinf, name or "Без названия")
+    )
+
+    channel_name = rename_special_channel(
+        channel_name.strip()
     )
 
     return (
@@ -1395,7 +1453,7 @@ def build_playlist_header(
         f"# Target File:      {os.path.basename(target_path)}",
         (
             f"# Playlist Schema:  v{meta['playlist_schema']} "
-            "(Strict RTRS + Eight-source pools)"
+            "(Strict RTRS + Nine-source pools)"
         ),
         f"# Generated At:     {meta['timestamp']}",
         "# ------------------------------------------------------------------------------",
@@ -1843,6 +1901,8 @@ def build_rtrs_stable(
                     or "Без названия"
                 )
 
+                name = rename_special_channel(name)
+
                 extinf = entry.get("extinf", "")
 
                 if not extinf:
@@ -1857,6 +1917,10 @@ def build_rtrs_stable(
                     else:
                         meta = extinf
                         original_name = name
+
+                    original_name = rename_special_channel(
+                        original_name.strip()
+                    )
 
                     if re.search(
                         r'\bgroup-title="[^"]*"',
@@ -2087,7 +2151,7 @@ def main():
             "рабочем дереве без коммита/пуша."
         )
 
-    # Восемь доноров.
+    # Девять доноров.
     # Ни один донор не является критическим условием для запуска
     # обработки остальных источников.
     sources = [
@@ -2099,6 +2163,7 @@ def main():
         ("SIXTH_SOURCE_URL", SIXTH_SOURCE_URL, False),
         ("SEVENTH_SOURCE_URL", SEVENTH_SOURCE_URL, False),
         ("EIGHTH_SOURCE_URL", EIGHTH_SOURCE_URL, False),
+        ("NINTH_SOURCE_URL", NINTH_SOURCE_URL, False),
     ]
 
     donor_entries = []
@@ -2173,6 +2238,7 @@ def main():
         "SIXTH_SOURCE_URL",
         "SEVENTH_SOURCE_URL",
         "EIGHTH_SOURCE_URL",
+        "NINTH_SOURCE_URL",
     ):
         print(
             f"  {source_name}: "
