@@ -1,0 +1,59 @@
+
+name: FIMD Master Runner
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "0 6 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fimd-master
+  cancel-in-progress: false
+
+jobs:
+  run-master:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Download fimd_master.py
+        run: |
+          mkdir -p scripts
+          curl -fL \
+            "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/fimd_master.py" \
+            -o scripts/fimd_master.py
+
+      - name: Verify script
+        run: |
+          test -s scripts/fimd_master.py
+          python -m py_compile scripts/fimd_master.py
+
+      - name: Run FIMD Master
+        run: |
+          python -u scripts/fimd_master.py
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: fimd-master-results
+          path: |
+            output/
+            reports/
+            *.m3u
+            *.json
+            *.txt
+          if-no-files-found: ignore
+          retention-days: 14
