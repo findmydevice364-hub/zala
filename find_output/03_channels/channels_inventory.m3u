@@ -193,8 +193,12 @@ http://91.205.196.7:8000/play/a036
 http://91.205.196.7:8000/play/a03a
 #EXTINF:-1,ОБЩИЙ СПИСОК (~135 каналов целиком)
 http://91.205.196.7:8000/playlist.m3u8
+#EXTINF:-1,vixen
+http://88.212.15.93:80/live/vixen/index.m3u8
 #EXTINF:-1,mb_dance
 http://88.212.15.93:80/live/mb_dance/index.m3u8
+#EXTINF:-1,mb_sexy
+http://88.212.15.93:80/live/mb_sexy/index.m3u8
 #EXTINF:-1,mb_hits
 http://88.212.15.93:80/live/mb_hits/index.m3u8
 #EXTINF:-1,sporty_tv
@@ -211,6 +215,8 @@ http://88.212.15.93:80/live/mb_classic/index.m3u8
 http://88.212.15.93:80/live/retro/index.m3u8
 #EXTINF:-1,mb_dance
 http://88.212.15.35:80/mb_dance/index.m3u8
+#EXTINF:-1,mb_sexy
+http://88.212.15.35:80/mb_sexy/index.m3u8
 #EXTINF:-1,mb_hits
 http://88.212.15.35:80/mb_hits/index.m3u8
 #EXTINF:-1,dom

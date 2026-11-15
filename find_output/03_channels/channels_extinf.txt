@@ -95,7 +95,9 @@
 #EXTINF:-1,STS_INT
 #EXTINF:-1,STS_KIDS_INT
 #EXTINF:-1,ОБЩИЙ СПИСОК (~135 каналов целиком)
+#EXTINF:-1,vixen
 #EXTINF:-1,mb_dance
+#EXTINF:-1,mb_sexy
 #EXTINF:-1,mb_hits
 #EXTINF:-1,sporty_tv
 #EXTINF:-1,lifetv
@@ -104,6 +106,7 @@
 #EXTINF:-1,mb_classic
 #EXTINF:-1,retro
 #EXTINF:-1,mb_dance
+#EXTINF:-1,mb_sexy
 #EXTINF:-1,mb_hits
 #EXTINF:-1,dom
 #EXTINF:-1,gntv

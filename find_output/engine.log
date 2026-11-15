@@ -21,3 +21,30 @@
 2026-11-15 14:36:41,735 | INFO | DUPLICATE URL OCCURRENCES PRESERVED: 31
 2026-11-15 14:36:41,735 | INFO | ELAPSED: 1.60 seconds
 2026-11-15 14:36:41,735 | INFO | ========================================================================
+2026-11-15 15:23:16,557 | INFO | ====================================================================
+2026-11-15 15:23:16,557 | INFO | IPTV NODE MASTER AGGREGATOR v3.0.0
+2026-11-15 15:23:16,557 | INFO | Started: 2026-11-15T15:23:16.557646+00:00
+2026-11-15 15:23:16,557 | INFO | Channel deduplication: DISABLED
+2026-11-15 15:23:16,557 | INFO | 18+ filter: ENABLED
+2026-11-15 15:23:16,557 | INFO | Master count limit: DISABLED
+2026-11-15 15:23:16,557 | INFO | Depth limit: DISABLED
+2026-11-15 15:23:16,557 | INFO | ====================================================================
+2026-11-15 15:23:16,557 | INFO | [SOURCE] Downloading source playlist
+2026-11-15 15:23:16,764 | INFO | [SOURCE] Parsing source channels
+2026-11-15 15:23:16,768 | INFO | [SOURCE] Accepted records: 118
+2026-11-15 15:23:16,770 | INFO | [DISCOVERY] Initial catalog candidates: 1
+2026-11-15 15:23:16,770 | INFO | [MASTER] depth=1 | http://91.205.196.7:8000/playlist.m3u8
+2026-11-15 15:23:17,113 | INFO | [OK] 128 channel records | http://91.205.196.7:8000/playlist.m3u8
+2026-11-15 15:23:17,116 | INFO | [PROGRESS] masters=1 successful=1 channels=246 queue=0
+2026-11-15 15:23:17,132 | INFO | [EXPORT] Nodes: 13
+2026-11-15 15:23:17,132 | INFO | [EXPORT] Masters: 1
+2026-11-15 15:23:17,182 | INFO | [EXPORT] Channel occurrences: 246
+2026-11-15 15:23:17,245 | INFO | [EXPORT] Final master playlist written
+2026-11-15 15:23:17,245 | INFO | [VALIDATION] All output files checked
+2026-11-15 15:23:17,245 | INFO | ====================================================================
+2026-11-15 15:23:17,245 | INFO | [SUCCESS] Aggregation completed
+2026-11-15 15:23:17,245 | INFO | Masters: 1
+2026-11-15 15:23:17,245 | INFO | Channels: 246
+2026-11-15 15:23:17,246 | INFO | Filtered 18+: 0
+2026-11-15 15:23:17,246 | INFO | Elapsed seconds: 0.69
+2026-11-15 15:23:17,246 | INFO | ====================================================================

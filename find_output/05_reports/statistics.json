@@ -1,18 +1,20 @@
 {
-  "engine": "IPTV NODE MASTER AGGREGATOR",
-  "version": "2.1.0",
-  "generated": "2026-11-15T14:36:41.733649+00:00",
-  "deduplication": false,
-  "statistics": {
-    "source_downloads": 1,
-    "masters_attempted": 1,
-    "masters_successful": 1,
-    "masters_failed": 0,
-    "channels_parsed": 243,
-    "channels_exported": 243,
-    "channels_filtered": 3,
-    "nested_masters_discovered": 0,
-    "bytes_downloaded": 19067,
-    "duplicate_urls_preserved": 31
-  }
+  "source_downloads": 1,
+  "masters_discovered": 1,
+  "masters_attempted": 1,
+  "masters_successful": 1,
+  "masters_failed": 0,
+  "channels_parsed": 246,
+  "channels_exported": 246,
+  "channels_filtered": 0,
+  "duplicate_urls_preserved": 31,
+  "nested_masters_discovered": 0,
+  "bytes_downloaded": 19067,
+  "nodes_registered": 13,
+  "unique_master_urls": 1,
+  "total_channel_occurrences": 246,
+  "total_nodes": 13,
+  "total_errors": 0,
+  "adult_filter_enabled": true,
+  "completed_at": "2026-11-15T15:23:17.245203+00:00"
 }

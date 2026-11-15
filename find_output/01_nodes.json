@@ -10,7 +10,7 @@
     ],
     "master_urls": [],
     "channel_record_count": 19,
-    "channel_record_numbers": [
+    "channel_records": [
       11,
       14,
       15,
@@ -39,7 +39,7 @@
     ],
     "master_urls": [],
     "channel_record_count": 2,
-    "channel_record_numbers": [
+    "channel_records": [
       48,
       50
     ]
@@ -51,7 +51,7 @@
     ],
     "master_urls": [],
     "channel_record_count": 1,
-    "channel_record_numbers": [
+    "channel_records": [
       19
     ]
   },
@@ -64,7 +64,7 @@
     ],
     "master_urls": [],
     "channel_record_count": 7,
-    "channel_record_numbers": [
+    "channel_records": [
       16,
       21,
       30,
@@ -83,7 +83,7 @@
     ],
     "master_urls": [],
     "channel_record_count": 3,
-    "channel_record_numbers": [
+    "channel_records": [
       17,
       26,
       28
@@ -98,7 +98,7 @@
     ],
     "master_urls": [],
     "channel_record_count": 8,
-    "channel_record_numbers": [
+    "channel_records": [
       12,
       13,
       27,
@@ -116,7 +116,7 @@
     ],
     "master_urls": [],
     "channel_record_count": 10,
-    "channel_record_numbers": [
+    "channel_records": [
       1,
       2,
       3,
@@ -135,10 +135,8 @@
       80
     ],
     "master_urls": [],
-    "channel_record_count": 10,
-    "channel_record_numbers": [
-      106,
-      107,
+    "channel_record_count": 11,
+    "channel_records": [
       108,
       109,
       110,
@@ -146,7 +144,10 @@
       112,
       113,
       114,
-      115
+      115,
+      116,
+      117,
+      118
     ]
   },
   {
@@ -155,8 +156,8 @@
       80
     ],
     "master_urls": [],
-    "channel_record_count": 8,
-    "channel_record_numbers": [
+    "channel_record_count": 10,
+    "channel_records": [
       98,
       99,
       100,
@@ -164,7 +165,9 @@
       102,
       103,
       104,
-      105
+      105,
+      106,
+      107
     ]
   },
   {
@@ -174,7 +177,7 @@
     ],
     "master_urls": [],
     "channel_record_count": 11,
-    "channel_record_numbers": [
+    "channel_records": [
       53,
       54,
       55,
@@ -197,7 +200,7 @@
       "http://91.205.196.7:8000/playlist.m3u8"
     ],
     "channel_record_count": 162,
-    "channel_record_numbers": [
+    "channel_records": [
       64,
       65,
       66,
@@ -232,9 +235,6 @@
       95,
       96,
       97,
-      116,
-      117,
-      118,
       119,
       120,
       121,
@@ -359,7 +359,10 @@
       240,
       241,
       242,
-      243
+      243,
+      244,
+      245,
+      246
     ]
   },
   {
@@ -369,7 +372,7 @@
     ],
     "master_urls": [],
     "channel_record_count": 1,
-    "channel_record_numbers": [
+    "channel_records": [
       42
     ]
   },
@@ -380,7 +383,7 @@
     ],
     "master_urls": [],
     "channel_record_count": 1,
-    "channel_record_numbers": [
+    "channel_records": [
       44
     ]
   }

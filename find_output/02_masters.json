@@ -3,12 +3,13 @@
     "id": "5b678f69cfd64b96eadd",
     "url": "http://91.205.196.7:8000/playlist.m3u8",
     "depth": 1,
+    "discovered_from": "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/hvk.m3u",
     "status": "success",
     "channels": 128,
     "error": null,
-    "started_at": "2026-11-15T14:36:41.305097+00:00",
+    "started_at": "2026-11-15T15:23:16.770531+00:00",
     "final_url": "http://91.205.196.7:8000/playlist.m3u8",
     "content_type": "application/x-mpegurl",
-    "finished_at": "2026-11-15T14:36:41.726333+00:00"
+    "finished_at": "2026-11-15T15:23:17.113779+00:00"
   }
 ]
