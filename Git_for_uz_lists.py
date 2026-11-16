@@ -1,6 +1,7 @@
 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
 ===============================================================================
 Project:       findmydevice364-hub_lab
@@ -14,33 +15,44 @@ Build ID:      P3100-A1-20261116
 Release:       ALPHA
 Revision:      16-SOURCE-DREG-DUAL
 
-Purpose:
-    Shirt.uz IPTV collector, recursive playlist parser,
-    stream validator and stable playlist builder.
+PURPOSE:
+    Shirt.uz IPTV collector.
+    Recursive M3U/M3U8 parser.
+    Automatic FFprobe installer.
+    IPTV stream validator.
+    Stable playlist builder.
 
-Outputs:
+PARALLEL ARCHITECTURE:
+    DOWNLOAD:       36 workers
+    PARSING:        57 workers
+    VALIDATION:     60 workers
+
+OUTPUTS:
     Main/donors_uz.m3u
     Main/stable_uz.m3u
     Shirt_uz/donors_uz.m3u
     Shirt_uz/stable_uz.m3u
 
-Journals in BOTH output directories:
-    logs/DREG_COMMON.txt
-    logs/DREG_SKALA_4_0.txt
-    logs/DREG_TITAN_2_8.txt
+DREG JOURNALS IN BOTH OUTPUT DIRECTORIES:
+    logs/DREG_COMMON_uz.txt
+    logs/DREG_SKALA_4_0_uz.txt
+    logs/DREG_TITAN_2_8_uz.txt
 
-Source:
-    https://shirtv.uz/playlists.html
+OTHER REPORTS:
+    errors.json
 
-Architecture:
+ARCHITECTURE:
     SKALA 4.0 — operational journal.
     TITAN 2.8 — extended technical journal.
     DREG COMMON — duplicated journal of all events.
 
-Notes:
+IMPORTANT:
     - Donor records are not globally deduplicated.
     - Duplicate source URLs are suppressed during discovery.
-    - Inconclusive stream checks are configurable.
+    - Inconclusive checks are configurable.
+    - FFprobe is installed automatically when necessary.
+    - FFprobe archives are verified using SHA-256.
+    - Downloaded FFprobe is cached in .tools/ffmpeg.
     - Playlist writes use temporary files and atomic replacement.
 ===============================================================================
 """
@@ -51,20 +63,22 @@ import concurrent.futures
 import hashlib
 import json
 import os
+import platform
 import re
 import shutil
 import socket
 import subprocess
 import sys
+import tarfile
 import threading
 import time
 import uuid
+import zipfile
 
-from collections import Counter
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 from urllib.parse import (
     urljoin,
     urlsplit,
@@ -76,7 +90,7 @@ import requests
 
 
 # =============================================================================
-# BUILD METADATA
+# 01. BUILD METADATA
 # =============================================================================
 
 PROJECT = "findmydevice364-hub_lab"
@@ -104,7 +118,7 @@ BUILD_METADATA = {
 
 
 # =============================================================================
-# DIRECTORY STRUCTURE
+# 02. DIRECTORY STRUCTURE
 # =============================================================================
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -132,16 +146,46 @@ INDEX_URL = os.getenv(
     "https://shirtv.uz/playlists.html",
 )
 
+FFPROBE_DIR = ROOT_DIR / ".tools" / "ffmpeg"
+
 
 # =============================================================================
-# CONFIGURATION
+# 03. PARALLEL CONFIGURATION
 # =============================================================================
 
-REQUEST_TIMEOUT = int(os.getenv("REQUEST_TIMEOUT", "20"))
-
-MAX_WORKERS = max(
+MAX_DOWNLOAD_WORKERS = max(
     1,
-    int(os.getenv("MAX_WORKERS", "12")),
+    int(os.getenv("MAX_DOWNLOAD_WORKERS", "36")),
+)
+
+MAX_PARSE_WORKERS = max(
+    1,
+    int(os.getenv("MAX_PARSE_WORKERS", "57")),
+)
+
+MAX_VALIDATION_WORKERS = max(
+    1,
+    int(os.getenv("MAX_VALIDATION_WORKERS", "60")),
+)
+
+# Compatibility with previous diagnostics.
+MAX_WORKERS = MAX_VALIDATION_WORKERS
+
+DOWNLOAD_SEMAPHORE = threading.BoundedSemaphore(
+    MAX_DOWNLOAD_WORKERS
+)
+
+VALIDATION_SEMAPHORE = threading.BoundedSemaphore(
+    MAX_VALIDATION_WORKERS
+)
+
+
+# =============================================================================
+# 04. NETWORK CONFIGURATION
+# =============================================================================
+
+REQUEST_TIMEOUT = int(
+    os.getenv("REQUEST_TIMEOUT", "20")
 )
 
 MAX_RETRIES = max(
@@ -156,56 +200,90 @@ RETRY_DELAY = float(
 MAX_PAGE_SIZE = 8 * 1024 * 1024
 MAX_PLAYLIST_SIZE = 64 * 1024 * 1024
 
-MAX_PLAYLIST_DEPTH = int(
-    os.getenv("MAX_PLAYLIST_DEPTH", "2")
+MAX_REDIRECTS = 10
+
+MAX_PLAYLIST_DEPTH = max(
+    0,
+    int(os.getenv("MAX_PLAYLIST_DEPTH", "2")),
 )
 
-FFPROBE_BIN = os.getenv(
-    "FFPROBE_BIN",
-    "ffprobe",
-)
 
-FFPROBE_TIMEOUT = int(
-    os.getenv("FFPROBE_TIMEOUT", "15")
-)
+# =============================================================================
+# 05. FFPROBE CONFIGURATION
+# =============================================================================
 
 ENABLE_FFPROBE = os.getenv(
     "ENABLE_FFPROBE",
     "true",
-).lower() in {"1", "true", "yes", "on"}
+).lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
 
-# If both HTTP and FFprobe cannot determine stream status,
-# retain the record as inconclusive instead of deleting it.
+AUTO_INSTALL_FFPROBE = os.getenv(
+    "AUTO_INSTALL_FFPROBE",
+    "true",
+).lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
+
+FFPROBE_CONFIGURED = os.getenv(
+    "FFPROBE_BIN",
+    "",
+).strip()
+
+FFPROBE_BIN = (
+    FFPROBE_CONFIGURED
+    or "ffprobe"
+)
+
+FFPROBE_TIMEOUT = int(
+    os.getenv("FFPROBE_TIMEOUT", "20")
+)
+
+FFPROBE_READ_SECONDS = int(
+    os.getenv("FFPROBE_READ_SECONDS", "8")
+)
+
+FFPROBE_DOWNLOAD_TIMEOUT = int(
+    os.getenv("FFPROBE_DOWNLOAD_TIMEOUT", "180")
+)
+
+MAX_FFPROBE_ARCHIVE_SIZE = (
+    250 * 1024 * 1024
+)
+
 KEEP_INCONCLUSIVE = os.getenv(
     "KEEP_INCONCLUSIVE",
     "true",
-).lower() in {"1", "true", "yes", "on"}
+).lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
 
-# A stream must produce actual media when FFprobe is enabled.
 REQUIRE_MEDIA_PROBE = os.getenv(
     "REQUIRE_MEDIA_PROBE",
     "false",
-).lower() in {"1", "true", "yes", "on"}
+).lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
 
-# Preserve the same source record more than once.
-# No global deduplication of donor entries.
+
+# =============================================================================
+# 06. PLAYLIST CONFIGURATION
+# =============================================================================
+
 DEDUPLICATE_DONOR_RECORDS = False
-
-# Maximum number of redirects handled by requests.
-MAX_REDIRECTS = 10
-
-# Number of seconds read by FFprobe before giving up.
-FFPROBE_READ_SECONDS = 8
-
-ADULT_PATTERNS = (
-    r"\b18\+\b",
-    r"\bxxx\b",
-    r"\badult\b",
-    r"\bporn\b",
-    r"\berotic\b",
-    r"для\s+взрослых",
-    r"эрот",
-)
 
 PLAYLIST_EXTENSIONS = (
     ".m3u",
@@ -223,6 +301,18 @@ DIRECTIVE_PREFIXES = (
     "#EXTGENRE:",
     "#EXTLANG:",
     "#EXTLOGO:",
+    "#EXTOPT:",
+    "#EXTM3U:",
+)
+
+ADULT_PATTERNS = (
+    r"\b18\+\b",
+    r"\bxxx\b",
+    r"\badult\b",
+    r"\bporn\b",
+    r"\berotic\b",
+    r"для\s+взрослых",
+    r"эрот",
 )
 
 PLAYLIST_LINK_PATTERN = re.compile(
@@ -233,7 +323,7 @@ PLAYLIST_LINK_PATTERN = re.compile(
 
 
 # =============================================================================
-# GLOBAL STATE
+# 07. GLOBAL STATE
 # =============================================================================
 
 RUN_ID = uuid.uuid4().hex[:16].upper()
@@ -244,10 +334,17 @@ STOP_EVENT = threading.Event()
 
 HTTP_LOCAL = threading.local()
 
-URL_CACHE: dict[str, Any] = {}
+COUNTER_LOCK = threading.RLock()
+
+SOURCE_ERRORS_LOCK = threading.RLock()
+
 URL_CACHE_LOCK = threading.RLock()
 
-COUNTER_LOCK = threading.RLock()
+FFPROBE_INSTALL_LOCK = threading.RLock()
+
+URL_CACHE: dict[str, Any] = {}
+
+SOURCE_ERRORS = []
 
 COUNTERS = {
     "sources_discovered": 0,
@@ -263,16 +360,17 @@ COUNTERS = {
     "cache_hits": 0,
     "http_errors": 0,
     "ffprobe_errors": 0,
+    "ffprobe_downloads": 0,
+    "ffprobe_cache_hits": 0,
     "write_errors": 0,
 }
-
-SOURCE_ERRORS = []
-SOURCE_ERRORS_LOCK = threading.RLock()
 
 
 def counter_add(name: str, value: int = 1):
     with COUNTER_LOCK:
-        COUNTERS[name] = COUNTERS.get(name, 0) + value
+        COUNTERS[name] = (
+            COUNTERS.get(name, 0) + value
+        )
 
 
 def counter_snapshot():
@@ -285,32 +383,26 @@ def remember_error(source, error):
         SOURCE_ERRORS.append({
             "source": str(source),
             "error": str(error),
+            "timestamp": datetime.now(
+                timezone.utc
+            ).isoformat(),
         })
 
 
 # =============================================================================
-# DREG JOURNAL SYSTEM
+# 08. DREG JOURNAL SYSTEM
 # =============================================================================
 
 class DREGManager:
-    """
-    Two-system DREG journal.
-
-    SKALA:
-        Operational events.
-
-    TITAN:
-        Extended technical events.
-
-    COMMON:
-        Receives every event from both systems.
-
-    Each event is duplicated to both directory trees.
-    A failure in one journal destination does not disable all logging.
-    """
 
     SYSTEM_SKALA = "DREG_SKALA_4_0"
     SYSTEM_TITAN = "DREG_TITAN_2_8"
+
+    FILENAMES = {
+        "common": "DREG_COMMON_uz.txt",
+        "skala": "DREG_SKALA_4_0_uz.txt",
+        "titan": "DREG_TITAN_2_8_uz.txt",
+    }
 
     def __init__(self):
         self.lock = threading.RLock()
@@ -323,26 +415,26 @@ class DREGManager:
         self._open_all()
 
     def _open_all(self):
+
         for directory in (
             MAIN_LOG_DIR,
             SHIRT_LOG_DIR,
         ):
+
             try:
                 directory.mkdir(
                     parents=True,
                     exist_ok=True,
                 )
+
             except Exception:
                 self.failed_destinations.add(
                     str(directory)
                 )
                 continue
 
-            for filename in (
-                "DREG_COMMON.txt",
-                "DREG_SKALA_4_0.txt",
-                "DREG_TITAN_2_8.txt",
-            ):
+            for filename in self.FILENAMES.values():
+
                 path = directory / filename
 
                 try:
@@ -368,6 +460,7 @@ class DREGManager:
         message,
         details,
     ):
+
         self.seq += 1
 
         record = {
@@ -400,15 +493,17 @@ class DREGManager:
         message,
         **details,
     ):
+
         with self.lock:
+
             if self.closed:
                 return
 
             if system == self.SYSTEM_TITAN:
-                system_file = "DREG_TITAN_2_8.txt"
+                system_file = self.FILENAMES["titan"]
             else:
                 system = self.SYSTEM_SKALA
-                system_file = "DREG_SKALA_4_0.txt"
+                system_file = self.FILENAMES["skala"]
 
             try:
                 line = self._serialize(
@@ -417,18 +512,24 @@ class DREGManager:
                     message,
                     details,
                 )
+
             except Exception:
                 return
+
+            common_file = self.FILENAMES["common"]
 
             for directory in (
                 MAIN_LOG_DIR,
                 SHIRT_LOG_DIR,
             ):
+
                 for filename in (
                     system_file,
-                    "DREG_COMMON.txt",
+                    common_file,
                 ):
+
                     key = (directory, filename)
+
                     handle = self.files.get(key)
 
                     if handle is None:
@@ -437,7 +538,9 @@ class DREGManager:
                     try:
                         handle.write(line)
                         handle.flush()
+
                     except Exception:
+
                         self.failed_destinations.add(
                             str(directory / filename)
                         )
@@ -455,6 +558,7 @@ class DREGManager:
         level="INFO",
         **details,
     ):
+
         self.emit(
             self.SYSTEM_SKALA,
             level,
@@ -468,6 +572,7 @@ class DREGManager:
         level="INFO",
         **details,
     ):
+
         self.emit(
             self.SYSTEM_TITAN,
             level,
@@ -476,11 +581,16 @@ class DREGManager:
         )
 
     def close(self):
+
         with self.lock:
+
             if self.closed:
                 return
 
-            for handle in list(self.files.values()):
+            for handle in list(
+                self.files.values()
+            ):
+
                 try:
                     handle.flush()
                     handle.close()
@@ -491,7 +601,12 @@ class DREGManager:
             self.closed = True
 
 
-def log_skala(message, level="INFO", **details):
+def log_skala(
+    message,
+    level="INFO",
+    **details,
+):
+
     if DREG is not None:
         DREG.skala(
             message,
@@ -500,7 +615,12 @@ def log_skala(message, level="INFO", **details):
         )
 
 
-def log_titan(message, level="INFO", **details):
+def log_titan(
+    message,
+    level="INFO",
+    **details,
+):
+
     if DREG is not None:
         DREG.titan(
             message,
@@ -510,10 +630,11 @@ def log_titan(message, level="INFO", **details):
 
 
 # =============================================================================
-# HTTP SESSION
+# 09. HTTP SESSION MANAGEMENT
 # =============================================================================
 
 def get_http_session():
+
     session = getattr(
         HTTP_LOCAL,
         "session",
@@ -521,6 +642,7 @@ def get_http_session():
     )
 
     if session is None:
+
         session = requests.Session()
 
         session.max_redirects = MAX_REDIRECTS
@@ -547,11 +669,16 @@ def get_http_session():
     return session
 
 
+# =============================================================================
+# 10. CONTROLLED HTTP DOWNLOAD
+# =============================================================================
+
 def fetch_url(
     url,
     max_bytes=MAX_PLAYLIST_SIZE,
     referer=None,
 ):
+
     last_error = None
 
     headers = {}
@@ -559,7 +686,10 @@ def fetch_url(
     if referer:
         headers["Referer"] = referer
 
-    for attempt in range(MAX_RETRIES + 1):
+    for attempt in range(
+        MAX_RETRIES + 1
+    ):
+
         if STOP_EVENT.is_set():
             raise RuntimeError(
                 "Operation interrupted"
@@ -567,7 +697,10 @@ def fetch_url(
 
         response = None
 
+        DOWNLOAD_SEMAPHORE.acquire()
+
         try:
+
             response = get_http_session().get(
                 url,
                 headers=headers,
@@ -584,6 +717,7 @@ def fetch_url(
             for chunk in response.iter_content(
                 131072
             ):
+
                 if not chunk:
                     continue
 
@@ -613,7 +747,9 @@ def fetch_url(
             return result
 
         except Exception as exc:
+
             last_error = exc
+
             counter_add("http_errors")
 
             log_titan(
@@ -630,11 +766,15 @@ def fetch_url(
                 )
 
         finally:
+
             if response is not None:
+
                 try:
                     response.close()
                 except Exception:
                     pass
+
+            DOWNLOAD_SEMAPHORE.release()
 
     raise RuntimeError(
         f"Unable to download {url}: {last_error}"
@@ -642,35 +782,25 @@ def fetch_url(
 
 
 # =============================================================================
-# URL NORMALIZATION
+# 11. URL NORMALIZATION
 # =============================================================================
 
 def normalize_url_for_compare(url):
-    """
-    Normalize scheme and hostname.
-
-    Preserve:
-        - path case
-        - query parameters
-        - non-default ports
-        - authentication data
-
-    Remove:
-        - fragment
-        - default HTTP/HTTPS port
-    """
 
     try:
+
         parts = urlsplit(
             str(url).strip()
         )
 
         scheme = parts.scheme.lower()
+
         hostname = (
             parts.hostname or ""
         ).lower()
 
         if not scheme or not hostname:
+
             return str(url).strip().split(
                 "#",
                 1,
@@ -682,6 +812,7 @@ def normalize_url_for_compare(url):
         credentials = ""
 
         if username is not None:
+
             credentials = username
 
             if password is not None:
@@ -719,6 +850,7 @@ def normalize_url_for_compare(url):
         ))
 
     except Exception:
+
         return str(url).strip().split(
             "#",
             1,
@@ -726,8 +858,12 @@ def normalize_url_for_compare(url):
 
 
 def is_http_url(url):
+
     try:
-        parts = urlsplit(str(url))
+
+        parts = urlsplit(
+            str(url)
+        )
 
         return (
             parts.scheme.lower() in (
@@ -742,6 +878,7 @@ def is_http_url(url):
 
 
 def is_playlist_url(url):
+
     path = urlsplit(
         str(url)
     ).path.lower()
@@ -753,21 +890,13 @@ def is_playlist_url(url):
 
 
 # =============================================================================
-# HTML PLAYLIST DISCOVERY
+# 12. HTML SOURCE DISCOVERY
 # =============================================================================
 
 class ShirtPlaylistHTMLParser(HTMLParser):
-    """
-    Collect playlist links from:
-        href
-        data-href
-        data-url
-        data-src
-        onclick
-        embedded text URLs
-    """
 
     def __init__(self):
+
         super().__init__(
             convert_charrefs=True
         )
@@ -776,6 +905,7 @@ class ShirtPlaylistHTMLParser(HTMLParser):
         self.text_fragments = []
 
     def _add_candidate(self, value):
+
         if not value:
             return
 
@@ -783,12 +913,15 @@ class ShirtPlaylistHTMLParser(HTMLParser):
             "\"'"
         )
 
-        if not value:
-            return
+        if value:
+            self.links.append(value)
 
-        self.links.append(value)
+    def handle_starttag(
+        self,
+        tag,
+        attrs,
+    ):
 
-    def handle_starttag(self, tag, attrs):
         attributes = dict(attrs)
 
         for key in (
@@ -796,7 +929,9 @@ class ShirtPlaylistHTMLParser(HTMLParser):
             "data-href",
             "data-url",
             "data-src",
+            "src",
         ):
+
             self._add_candidate(
                 attributes.get(key)
             )
@@ -807,19 +942,24 @@ class ShirtPlaylistHTMLParser(HTMLParser):
         )
 
         if onclick:
-            for match in re.findall(
+
+            matches = re.findall(
                 r"""['"]([^'"]+\.(?:m3u8?|m3u\.txt)(?:\?[^'"]*)?)['"]""",
                 onclick,
                 re.I,
-            ):
+            )
+
+            for match in matches:
                 self._add_candidate(match)
 
     def handle_data(self, data):
+
         if data:
             self.text_fragments.append(data)
 
 
 def discover_playlist_urls():
+
     log_skala(
         "Loading Shirt.uz playlist catalogue",
         url=INDEX_URL,
@@ -836,21 +976,27 @@ def discover_playlist_urls():
     )
 
     parser = ShirtPlaylistHTMLParser()
+
     parser.feed(html)
     parser.close()
 
-    candidates = list(parser.links)
+    candidates = list(
+        parser.links
+    )
 
-    # Search embedded URLs in page scripts and text.
-    for match in PLAYLIST_LINK_PATTERN.findall(
-        html
-    ):
-        candidates.append(match.strip())
+    embedded_matches = (
+        PLAYLIST_LINK_PATTERN.findall(html)
+    )
+
+    candidates.extend(
+        embedded_matches
+    )
 
     result = []
     seen = set()
 
     for href in candidates:
+
         href = unquote(
             str(href).strip()
         )
@@ -874,6 +1020,7 @@ def discover_playlist_urls():
             continue
 
         seen.add(normalized)
+
         result.append(absolute)
 
     counter_add(
@@ -891,14 +1038,13 @@ def discover_playlist_urls():
         "Catalogue parser diagnostics",
         html_size=len(page),
         raw_links=len(parser.links),
-        embedded_matches=len(
-            PLAYLIST_LINK_PATTERN.findall(html)
-        ),
+        embedded_matches=len(embedded_matches),
         unique_sources=len(result),
         sources=result,
     )
 
     if not result:
+
         raise RuntimeError(
             "No M3U/M3U8 links discovered on Shirt.uz"
         )
@@ -907,18 +1053,21 @@ def discover_playlist_urls():
 
 
 # =============================================================================
-# M3U DECODING
+# 13. PLAYLIST DECODING
 # =============================================================================
 
 def decode_playlist(data):
+
     for encoding in (
         "utf-8-sig",
         "utf-8",
         "cp1251",
         "latin-1",
     ):
+
         try:
             return data.decode(encoding)
+
         except UnicodeDecodeError:
             continue
 
@@ -929,19 +1078,24 @@ def decode_playlist(data):
 
 
 def is_hls_media_playlist(content):
-    head = content[:12000].upper()
 
-    return (
-        "#EXT-X-TARGETDURATION" in head
-        or "#EXT-X-MEDIA-SEQUENCE" in head
-        or "#EXT-X-PLAYLIST-TYPE" in head
-        or "#EXT-X-ENDLIST" in head
-        or "#EXT-X-PART" in head
+    head = content[:16000].upper()
+
+    return any(
+        marker in head
+        for marker in (
+            "#EXT-X-TARGETDURATION",
+            "#EXT-X-MEDIA-SEQUENCE",
+            "#EXT-X-PLAYLIST-TYPE",
+            "#EXT-X-ENDLIST",
+            "#EXT-X-PART",
+        )
     )
 
 
 def is_hls_master_playlist(content):
-    head = content[:12000].upper()
+
+    head = content[:16000].upper()
 
     return (
         "#EXT-X-STREAM-INF" in head
@@ -950,16 +1104,24 @@ def is_hls_master_playlist(content):
 
 
 def extract_extinf_name(extinf):
+
     try:
+
         return extinf.split(
             ",",
             1,
         )[1].strip()
+
     except Exception:
         return "Без названия"
 
 
-def make_default_entry(url, name):
+def make_default_entry(
+    url,
+    name,
+    source=None,
+):
+
     safe_name = (
         name.strip()
         if name
@@ -973,31 +1135,26 @@ def make_default_entry(url, name):
         ),
         "url": url,
         "directives": [],
-        "source": url,
+        "source": source or url,
         "source_line": 0,
         "status": "unverified",
     }
 
 
 # =============================================================================
-# M3U PARSER
+# 14. M3U PARSER
 # =============================================================================
 
 def parse_m3u_content(
     content,
     source_url,
 ):
-    """
-    Parse IPTV M3U.
-
-    HLS media playlists are not expanded into individual segments.
-    HLS master playlists are represented by their variant streams.
-    """
 
     if not content:
         return []
 
     if not content.lstrip().startswith("#EXTM3U"):
+
         log_titan(
             "Source does not start with EXT M3U",
             level="WARNING",
@@ -1005,7 +1162,11 @@ def parse_m3u_content(
             sample=content[:160],
         )
 
+    # HLS media playlist:
+    # do not turn media segments into IPTV channels.
+
     if is_hls_media_playlist(content):
+
         log_titan(
             "HLS media playlist detected",
             source=source_url,
@@ -1018,6 +1179,7 @@ def parse_m3u_content(
                 Path(
                     urlsplit(source_url).path
                 ).stem or "HLS Stream",
+                source_url,
             )
         ]
 
@@ -1035,6 +1197,7 @@ def parse_m3u_content(
         content.splitlines(),
         1,
     ):
+
         line_count += 1
 
         line = raw.strip().lstrip(
@@ -1050,12 +1213,14 @@ def parse_m3u_content(
         if line.startswith(
             "#EXT-X-STREAM-INF:"
         ):
+
             pending_stream_inf = line
             continue
 
         if line.startswith(
             "#EXT-X-I-FRAME-STREAM-INF:"
         ):
+
             uri_match = re.search(
                 r'URI="([^"]+)"',
                 line,
@@ -1063,6 +1228,7 @@ def parse_m3u_content(
             )
 
             if uri_match:
+
                 variant_url = urljoin(
                     source_url,
                     uri_match.group(1),
@@ -1072,34 +1238,38 @@ def parse_m3u_content(
                     make_default_entry(
                         variant_url,
                         "HLS I-Frame",
+                        source_url,
                     )
                 )
 
             continue
 
         if line.startswith("#EXTINF:"):
+
             if "," not in line:
+
                 malformed += 1
+
                 current_extinf = None
                 current_directives = []
+
                 continue
 
             current_extinf = line
             current_directives = []
+
             continue
 
         if line.startswith("#"):
+
             if current_extinf is not None:
+
                 if line.startswith(
                     DIRECTIVE_PREFIXES
                 ):
+
                     current_directives.append(line)
 
-            continue
-
-        if not is_http_url(
-            urljoin(source_url, line)
-        ):
             continue
 
         absolute_url = urljoin(
@@ -1107,7 +1277,11 @@ def parse_m3u_content(
             line,
         )
 
+        if not is_http_url(absolute_url):
+            continue
+
         if pending_stream_inf:
+
             variant_name = (
                 "HLS Variant "
                 + str(len(entries) + 1)
@@ -1117,13 +1291,16 @@ def parse_m3u_content(
                 make_default_entry(
                     absolute_url,
                     variant_name,
+                    source_url,
                 )
             )
 
             pending_stream_inf = None
+
             continue
 
         if current_extinf is None:
+
             extinf = (
                 '#EXTINF:-1 group-title="Прочее",'
                 "Без названия"
@@ -1132,7 +1309,9 @@ def parse_m3u_content(
             directives = []
 
         else:
+
             extinf = current_extinf
+
             directives = list(
                 current_directives
             )
@@ -1162,10 +1341,11 @@ def parse_m3u_content(
 
 
 # =============================================================================
-# ADULT CONTENT FILTER
+# 15. ADULT CONTENT FILTER
 # =============================================================================
 
 def is_blacklisted(entry):
+
     searchable = (
         entry.get("extinf", "")
         + " "
@@ -1183,40 +1363,130 @@ def is_blacklisted(entry):
 
 
 # =============================================================================
-# RECURSIVE PLAYLIST EXPANSION
+# 16. RECURSIVE PLAYLIST PARSER
 # =============================================================================
 
-def download_playlist_entries(
-    url,
+def parse_and_expand_content(
+    content,
+    source_url,
     depth=0,
     visited=None,
 ):
+
     if visited is None:
         visited = set()
 
     normalized = normalize_url_for_compare(
-        url
+        source_url
     )
 
     if normalized in visited:
+
         log_titan(
             "Recursive playlist cycle detected",
-            url=url,
+            url=source_url,
             depth=depth,
         )
+
         return []
 
     if depth > MAX_PLAYLIST_DEPTH:
+
         log_titan(
             "Playlist recursion depth limit reached",
             level="WARNING",
-            url=url,
+            url=source_url,
             depth=depth,
             maximum=MAX_PLAYLIST_DEPTH,
         )
+
         return []
 
     visited.add(normalized)
+
+    parsed = parse_m3u_content(
+        content,
+        source_url,
+    )
+
+    output = []
+
+    for entry in parsed:
+
+        entry_url = entry["url"]
+
+        if (
+            is_playlist_url(entry_url)
+            and depth < MAX_PLAYLIST_DEPTH
+        ):
+
+            counter_add(
+                "nested_playlists"
+            )
+
+            log_skala(
+                "Nested playlist discovered",
+                parent=source_url,
+                child=entry_url,
+                depth=depth + 1,
+            )
+
+            try:
+
+                nested_data = fetch_url(
+                    entry_url,
+                    max_bytes=MAX_PLAYLIST_SIZE,
+                    referer=source_url,
+                )
+
+                nested_content = decode_playlist(
+                    nested_data
+                )
+
+                nested_entries = parse_and_expand_content(
+                    nested_content,
+                    entry_url,
+                    depth + 1,
+                    visited,
+                )
+
+                output.extend(
+                    nested_entries
+                )
+
+            except Exception as exc:
+
+                log_titan(
+                    "Nested playlist processing failed",
+                    level="WARNING",
+                    url=entry_url,
+                    error=repr(exc),
+                )
+
+                # Keep original record if expansion fails.
+
+                output.append(entry)
+
+        else:
+
+            output.append(entry)
+
+    return output
+
+
+# =============================================================================
+# 17. DONOR DOWNLOAD AND PARSING
+# =============================================================================
+
+def download_and_parse_source(
+    url,
+    parse_executor,
+):
+
+    log_skala(
+        "Donor download started",
+        source=url,
+    )
 
     data = fetch_url(
         url,
@@ -1224,94 +1494,32 @@ def download_playlist_entries(
         referer=INDEX_URL,
     )
 
-    content = decode_playlist(data)
+    counter_add(
+        "sources_downloaded"
+    )
 
-    if is_hls_media_playlist(content):
-        entries = parse_m3u_content(
-            content,
-            url,
-        )
-
-        return entries
-
-    parsed = parse_m3u_content(
-        content,
+    parse_future = parse_executor.submit(
+        parse_and_expand_content,
+        decode_playlist(data),
         url,
+        0,
+        set(),
     )
 
-    output = []
-
-    for entry in parsed:
-        entry_url = entry["url"]
-
-        if (
-            is_playlist_url(entry_url)
-            and depth < MAX_PLAYLIST_DEPTH
-        ):
-            counter_add("nested_playlists")
-
-            log_skala(
-                "Nested playlist discovered",
-                parent=url,
-                child=entry_url,
-                depth=depth + 1,
-            )
-
-            try:
-                nested = download_playlist_entries(
-                    entry_url,
-                    depth=depth + 1,
-                    visited=visited,
-                )
-
-                output.extend(nested)
-
-            except Exception as exc:
-                log_titan(
-                    "Nested playlist download failed",
-                    level="WARNING",
-                    url=entry_url,
-                    error=repr(exc),
-                )
-
-                # Keep the original URL as a possible stream.
-                output.append(entry)
-
-        else:
-            output.append(entry)
-
-    return output
-
-
-# =============================================================================
-# DONOR DOWNLOAD WORKER
-# =============================================================================
-
-def download_and_parse_source(url):
-    log_skala(
-        "Donor download started",
-        source=url,
-    )
-
-    entries = download_playlist_entries(
-        url,
-        depth=0,
-        visited=set(),
-    )
+    entries = parse_future.result()
 
     accepted = []
     filtered = 0
 
     for entry in entries:
+
         if is_blacklisted(entry):
+
             filtered += 1
+
             continue
 
         accepted.append(entry)
-
-    counter_add(
-        "sources_downloaded"
-    )
 
     counter_add(
         "adult_filtered",
@@ -1319,7 +1527,7 @@ def download_and_parse_source(url):
     )
 
     log_skala(
-        "Donor download completed",
+        "Donor download and parsing completed",
         source=url,
         parsed=len(entries),
         adult_filtered=filtered,
@@ -1330,85 +1538,111 @@ def download_and_parse_source(url):
 
 
 # =============================================================================
-# DONOR AGGREGATION
+# 18. DONOR AGGREGATION
 # =============================================================================
 
 def collect_donors(source_urls):
+
     all_entries = []
 
+    log_skala(
+        "Donor collection started",
+        sources=len(source_urls),
+        download_workers=MAX_DOWNLOAD_WORKERS,
+        parse_workers=MAX_PARSE_WORKERS,
+    )
+
     with concurrent.futures.ThreadPoolExecutor(
-        max_workers=MAX_WORKERS
-    ) as executor:
+        max_workers=MAX_PARSE_WORKERS,
+        thread_name_prefix="Phoenix-Parser",
+    ) as parse_executor:
 
-        future_map = {
-            executor.submit(
-                download_and_parse_source,
-                url,
-            ): url
-            for url in source_urls
-        }
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=MAX_DOWNLOAD_WORKERS,
+            thread_name_prefix="Phoenix-Download",
+        ) as download_executor:
 
-        for future in concurrent.futures.as_completed(
-            future_map
-        ):
-            source = future_map[future]
+            future_map = {
+                download_executor.submit(
+                    download_and_parse_source,
+                    url,
+                    parse_executor,
+                ): url
+                for url in source_urls
+            }
 
-            try:
-                entries = future.result()
+            for future in concurrent.futures.as_completed(
+                future_map
+            ):
 
-                # No global record deduplication.
-                all_entries.extend(entries)
+                source = future_map[future]
 
-                log_skala(
-                    "Donor records appended",
-                    source=source,
-                    count=len(entries),
-                    aggregate_count=len(all_entries),
-                )
+                try:
 
-            except Exception as exc:
-                counter_add(
-                    "source_errors"
-                )
+                    entries = future.result()
 
-                remember_error(
-                    source,
-                    exc,
-                )
+                    # No global donor record deduplication.
 
-                log_skala(
-                    "Donor processing failed",
-                    level="ERROR",
-                    source=source,
-                    error=repr(exc),
-                )
+                    all_entries.extend(entries)
 
-                log_titan(
-                    "Donor worker exception",
-                    level="ERROR",
-                    source=source,
-                    error=repr(exc),
-                )
+                    log_skala(
+                        "Donor records appended",
+                        source=source,
+                        count=len(entries),
+                        aggregate_count=len(all_entries),
+                    )
+
+                except Exception as exc:
+
+                    counter_add(
+                        "source_errors"
+                    )
+
+                    remember_error(
+                        source,
+                        exc,
+                    )
+
+                    log_skala(
+                        "Donor processing failed",
+                        level="ERROR",
+                        source=source,
+                        error=repr(exc),
+                    )
+
+                    log_titan(
+                        "Donor worker exception",
+                        level="ERROR",
+                        source=source,
+                        error=repr(exc),
+                    )
 
     counter_add(
         "donor_entries",
         len(all_entries),
     )
 
+    log_skala(
+        "Donor aggregation completed",
+        records=len(all_entries),
+    )
+
     return all_entries
 
 
 # =============================================================================
-# HTTP STREAM PROBE
+# 19. HTTP STREAM PROBE
 # =============================================================================
 
 def http_probe(
     url,
     method,
 ):
+
     response = None
 
     try:
+
         headers = {}
 
         if method.upper() == "GET":
@@ -1431,23 +1665,28 @@ def http_probe(
         ).lower()
 
         content_length = response.headers.get(
-            "Content-Length",
+            "Content-Length"
         )
 
         if method.upper() == "GET":
+
             try:
+
                 sample = next(
-                    response.iter_content(
-                        4096
-                    ),
+                    response.iter_content(4096),
                     b"",
                 )
+
             except Exception:
+
                 sample = b""
+
         else:
+
             sample = b""
 
         if 200 <= status < 400:
+
             return True, {
                 "status": status,
                 "content_type": content_type,
@@ -1456,10 +1695,8 @@ def http_probe(
                 "final_url": response.url,
             }
 
-        if status in (
-            404,
-            410,
-        ):
+        if status in (404, 410):
+
             return False, {
                 "status": status,
                 "error": "definitive_not_found",
@@ -1471,12 +1708,15 @@ def http_probe(
         }
 
     except requests.RequestException as exc:
+
         return None, {
             "error": repr(exc),
         }
 
     finally:
+
         if response is not None:
+
             try:
                 response.close()
             except Exception:
@@ -1484,12 +1724,14 @@ def http_probe(
 
 
 def check_stream_alive_simple(url):
+
     head_result, head_details = http_probe(
         url,
         "HEAD",
     )
 
     if head_result is True:
+
         return True, {
             "head": head_details,
             "get": None,
@@ -1502,6 +1744,7 @@ def check_stream_alive_simple(url):
     )
 
     if get_result is True:
+
         return True, {
             "head": head_details,
             "get": get_details,
@@ -1509,14 +1752,8 @@ def check_stream_alive_simple(url):
         }
 
     definitive = (
-        head_details.get("status") in (
-            404,
-            410,
-        )
-        or get_details.get("status") in (
-            404,
-            410,
-        )
+        head_details.get("status") in (404, 410)
+        or get_details.get("status") in (404, 410)
     )
 
     return None, {
@@ -1527,13 +1764,605 @@ def check_stream_alive_simple(url):
 
 
 # =============================================================================
-# FFPROBE
+# 20. FFPROBE PLATFORM DETECTION
+# =============================================================================
+
+def ffprobe_asset_for_platform():
+
+    system = platform.system().lower()
+    machine = platform.machine().lower()
+
+    if system == "linux":
+
+        if machine in (
+            "x86_64",
+            "amd64",
+        ):
+
+            return (
+                "ffmpeg-master-latest-linux64-gpl.tar.xz",
+                "tar.xz",
+            )
+
+        if machine in (
+            "aarch64",
+            "arm64",
+        ):
+
+            return (
+                "ffmpeg-master-latest-linuxarm64-gpl.tar.xz",
+                "tar.xz",
+            )
+
+    if system == "windows":
+
+        if machine in (
+            "amd64",
+            "x86_64",
+        ):
+
+            return (
+                "ffmpeg-master-latest-win64-gpl.zip",
+                "zip",
+            )
+
+    raise RuntimeError(
+        f"Unsupported FFprobe platform: {system}/{machine}"
+    )
+
+
+# =============================================================================
+# 21. FFPROBE BINARY VALIDATION
+# =============================================================================
+
+def verify_ffprobe_binary(path):
+
+    path = Path(path)
+
+    if not path.is_file():
+        return False
+
+    try:
+
+        result = subprocess.run(
+            [str(path), "-version"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+
+        output = (
+            result.stdout
+            + result.stderr
+        ).lower()
+
+        return (
+            result.returncode == 0
+            and "ffprobe version" in output
+        )
+
+    except Exception:
+        return False
+
+
+# =============================================================================
+# 22. FFPROBE ARCHIVE DOWNLOAD
+# =============================================================================
+
+def download_binary_file(
+    url,
+    destination,
+    max_size,
+):
+
+    destination = Path(destination)
+
+    destination.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    total = 0
+
+    with requests.get(
+        url,
+        stream=True,
+        timeout=FFPROBE_DOWNLOAD_TIMEOUT,
+        headers={
+            "User-Agent": "PhoenixHub-Baryshnikov"
+        },
+    ) as response:
+
+        response.raise_for_status()
+
+        declared_size = response.headers.get(
+            "Content-Length"
+        )
+
+        if declared_size:
+
+            if int(declared_size) > max_size:
+
+                raise ValueError(
+                    "FFprobe archive exceeds size limit"
+                )
+
+        with destination.open("wb") as output:
+
+            for chunk in response.iter_content(
+                1024 * 1024
+            ):
+
+                if not chunk:
+                    continue
+
+                total += len(chunk)
+
+                if total > max_size:
+
+                    raise ValueError(
+                        "FFprobe download exceeded size limit"
+                    )
+
+                output.write(chunk)
+
+    return total
+
+
+# =============================================================================
+# 23. FFPROBE SHA-256 VERIFICATION
+# =============================================================================
+
+def download_and_verify_ffprobe_archive(
+    asset_name,
+    archive_path,
+):
+
+    base_url = (
+        "https://github.com/BtbN/FFmpeg-Builds/"
+        "releases/latest/download/"
+    )
+
+    checksum_url = (
+        base_url + "checksums.sha256"
+    )
+
+    archive_url = (
+        base_url + asset_name
+    )
+
+    log_skala(
+        "FFprobe automatic download started",
+        asset=asset_name,
+    )
+
+    checksum_response = requests.get(
+        checksum_url,
+        timeout=30,
+        headers={
+            "User-Agent": "PhoenixHub-Baryshnikov"
+        },
+    )
+
+    checksum_response.raise_for_status()
+
+    expected_hash = None
+
+    for line in checksum_response.text.splitlines():
+
+        parts = line.strip().split()
+
+        if len(parts) < 2:
+            continue
+
+        filename = parts[-1].lstrip("*")
+
+        if filename == asset_name:
+
+            expected_hash = parts[0].lower()
+
+            break
+
+    if not expected_hash or not re.fullmatch(
+        r"[a-f0-9]{64}",
+        expected_hash,
+    ):
+
+        raise RuntimeError(
+            f"SHA-256 not found for {asset_name}"
+        )
+
+    downloaded = download_binary_file(
+        archive_url,
+        archive_path,
+        MAX_FFPROBE_ARCHIVE_SIZE,
+    )
+
+    digest = hashlib.sha256()
+
+    with Path(archive_path).open("rb") as source:
+
+        for chunk in iter(
+            lambda: source.read(1024 * 1024),
+            b"",
+        ):
+
+            digest.update(chunk)
+
+    actual_hash = digest.hexdigest()
+
+    if actual_hash != expected_hash:
+
+        raise RuntimeError(
+            "FFprobe archive SHA-256 mismatch: "
+            f"expected={expected_hash}, "
+            f"actual={actual_hash}"
+        )
+
+    log_titan(
+        "FFprobe archive SHA-256 verified",
+        asset=asset_name,
+        sha256=actual_hash,
+        bytes=downloaded,
+    )
+
+    return archive_path
+
+
+# =============================================================================
+# 24. FFPROBE ARCHIVE EXTRACTION
+# =============================================================================
+
+def extract_ffprobe(
+    archive_path,
+    archive_type,
+):
+
+    FFPROBE_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    executable_name = (
+        "ffprobe.exe"
+        if platform.system().lower() == "windows"
+        else "ffprobe"
+    )
+
+    temporary_binary = FFPROBE_DIR / (
+        executable_name + ".download"
+    )
+
+    found = False
+
+    if archive_type == "tar.xz":
+
+        with tarfile.open(
+            archive_path,
+            mode="r:xz",
+        ) as archive:
+
+            for member in archive.getmembers():
+
+                if not member.isfile():
+                    continue
+
+                if Path(member.name).name != executable_name:
+                    continue
+
+                normalized = member.name.replace(
+                    "\\",
+                    "/",
+                )
+
+                if not normalized.endswith(
+                    "/bin/" + executable_name
+                ):
+                    continue
+
+                source = archive.extractfile(
+                    member
+                )
+
+                if source is None:
+                    continue
+
+                with source:
+
+                    with temporary_binary.open("wb") as output:
+
+                        shutil.copyfileobj(
+                            source,
+                            output,
+                        )
+
+                found = True
+
+                break
+
+    elif archive_type == "zip":
+
+        with zipfile.ZipFile(
+            archive_path
+        ) as archive:
+
+            for member in archive.infolist():
+
+                normalized = member.filename.replace(
+                    "\\",
+                    "/",
+                )
+
+                if not normalized.endswith(
+                    "/bin/" + executable_name
+                ):
+                    continue
+
+                if member.is_dir():
+                    continue
+
+                with archive.open(member) as source:
+
+                    with temporary_binary.open("wb") as output:
+
+                        shutil.copyfileobj(
+                            source,
+                            output,
+                        )
+
+                found = True
+
+                break
+
+    if not found:
+
+        temporary_binary.unlink(
+            missing_ok=True
+        )
+
+        raise RuntimeError(
+            "ffprobe executable not found in archive"
+        )
+
+    if platform.system().lower() != "windows":
+
+        temporary_binary.chmod(0o755)
+
+    final_path = (
+        FFPROBE_DIR / executable_name
+    )
+
+    temporary_binary.replace(
+        final_path
+    )
+
+    if not verify_ffprobe_binary(final_path):
+
+        final_path.unlink(
+            missing_ok=True
+        )
+
+        raise RuntimeError(
+            "Downloaded FFprobe failed version check"
+        )
+
+    return final_path
+
+
+# =============================================================================
+# 25. AUTOMATIC FFPROBE INSTALLER
+# =============================================================================
+
+def ensure_ffprobe():
+
+    global FFPROBE_BIN
+
+    if not ENABLE_FFPROBE:
+
+        log_skala(
+            "FFprobe disabled by configuration",
+            level="WARNING",
+        )
+
+        return False
+
+    with FFPROBE_INSTALL_LOCK:
+
+        # -------------------------------------------------------------
+        # 1. Explicitly configured binary.
+        # -------------------------------------------------------------
+
+        if FFPROBE_CONFIGURED:
+
+            configured = (
+                shutil.which(FFPROBE_CONFIGURED)
+                or FFPROBE_CONFIGURED
+            )
+
+            if verify_ffprobe_binary(configured):
+
+                FFPROBE_BIN = str(configured)
+
+                log_skala(
+                    "Using configured FFprobe",
+                    path=FFPROBE_BIN,
+                )
+
+                return True
+
+            log_titan(
+                "Configured FFprobe unavailable",
+                level="WARNING",
+                path=FFPROBE_CONFIGURED,
+            )
+
+        # -------------------------------------------------------------
+        # 2. System FFprobe.
+        # -------------------------------------------------------------
+
+        system_binary = shutil.which(
+            "ffprobe"
+        )
+
+        if (
+            system_binary
+            and verify_ffprobe_binary(system_binary)
+        ):
+
+            FFPROBE_BIN = system_binary
+
+            log_skala(
+                "System FFprobe detected",
+                path=FFPROBE_BIN,
+            )
+
+            return True
+
+        # -------------------------------------------------------------
+        # 3. Previously downloaded FFprobe.
+        # -------------------------------------------------------------
+
+        executable_name = (
+            "ffprobe.exe"
+            if platform.system().lower() == "windows"
+            else "ffprobe"
+        )
+
+        cached_binary = (
+            FFPROBE_DIR / executable_name
+        )
+
+        if verify_ffprobe_binary(cached_binary):
+
+            FFPROBE_BIN = str(cached_binary)
+
+            counter_add(
+                "ffprobe_cache_hits"
+            )
+
+            log_skala(
+                "Cached FFprobe reused",
+                path=FFPROBE_BIN,
+            )
+
+            return True
+
+        # -------------------------------------------------------------
+        # 4. Automatic installation.
+        # -------------------------------------------------------------
+
+        if not AUTO_INSTALL_FFPROBE:
+
+            log_skala(
+                "FFprobe missing and auto-install disabled",
+                level="WARNING",
+            )
+
+            return False
+
+        archive_path = None
+
+        try:
+
+            asset_name, archive_type = (
+                ffprobe_asset_for_platform()
+            )
+
+            FFPROBE_DIR.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
+
+            archive_path = (
+                FFPROBE_DIR / asset_name
+            )
+
+            download_and_verify_ffprobe_archive(
+                asset_name,
+                archive_path,
+            )
+
+            installed = extract_ffprobe(
+                archive_path,
+                archive_type,
+            )
+
+            FFPROBE_BIN = str(installed)
+
+            counter_add(
+                "ffprobe_downloads"
+            )
+
+            version_result = subprocess.run(
+                [FFPROBE_BIN, "-version"],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                check=False,
+            )
+
+            log_skala(
+                "FFprobe installed successfully",
+                path=FFPROBE_BIN,
+            )
+
+            log_titan(
+                "FFprobe installation completed",
+                path=FFPROBE_BIN,
+                version=version_result.stdout.splitlines()[:2],
+            )
+
+            return True
+
+        except Exception as exc:
+
+            log_skala(
+                "FFprobe automatic installation failed",
+                level="ERROR",
+                error=repr(exc),
+            )
+
+            log_titan(
+                "FFprobe installer exception",
+                level="ERROR",
+                error=repr(exc),
+            )
+
+            return False
+
+        finally:
+
+            if archive_path is not None:
+
+                try:
+                    archive_path.unlink(
+                        missing_ok=True
+                    )
+                except Exception:
+                    pass
+
+
+# =============================================================================
+# 26. FFPROBE STREAM VALIDATION
 # =============================================================================
 
 def check_stream_quality_ffprobe(url):
+
     if not ENABLE_FFPROBE:
+
         return None, {
             "ffprobe": "disabled",
+        }
+
+    if not verify_ffprobe_binary(FFPROBE_BIN):
+
+        counter_add(
+            "ffprobe_errors"
+        )
+
+        return None, {
+            "ffprobe": "binary_unavailable",
         }
 
     command = [
@@ -1553,6 +2382,7 @@ def check_stream_quality_ffprobe(url):
     ]
 
     try:
+
         result = subprocess.run(
             command,
             capture_output=True,
@@ -1562,6 +2392,7 @@ def check_stream_quality_ffprobe(url):
         )
 
         if result.returncode != 0:
+
             counter_add(
                 "ffprobe_errors"
             )
@@ -1608,6 +2439,7 @@ def check_stream_quality_ffprobe(url):
         )
 
     except FileNotFoundError:
+
         counter_add(
             "ffprobe_errors"
         )
@@ -1617,6 +2449,7 @@ def check_stream_quality_ffprobe(url):
         }
 
     except subprocess.TimeoutExpired:
+
         counter_add(
             "ffprobe_errors"
         )
@@ -1626,6 +2459,7 @@ def check_stream_quality_ffprobe(url):
         }
 
     except Exception as exc:
+
         counter_add(
             "ffprobe_errors"
         )
@@ -1637,20 +2471,23 @@ def check_stream_quality_ffprobe(url):
 
 
 # =============================================================================
-# STREAM VALIDATION DECISION
+# 27. STREAM VALIDATION DECISION
 # =============================================================================
 
 def check_stream_all(url):
+
     http_result, http_details = (
         check_stream_alive_simple(url)
     )
 
     quality_result = None
+
     quality_details = {
         "ffprobe": "not_run",
     }
 
     if ENABLE_FFPROBE:
+
         quality_result, quality_details = (
             check_stream_quality_ffprobe(url)
         )
@@ -1661,57 +2498,70 @@ def check_stream_all(url):
     )
 
     # FFprobe confirms actual media.
+
     if quality_result is True:
+
         return True, {
             "decision": "media_confirmed",
             "http": http_details,
             "ffprobe": quality_details,
         }
 
-    # A successful HTTP response is not sufficient if FFprobe
-    # explicitly confirms that the endpoint contains no media.
+    # HTTP works, but FFprobe explicitly detects no media.
+
     if (
         http_result is True
         and quality_result is False
     ):
+
         return False, {
             "decision": "http_ok_but_no_media",
             "http": http_details,
             "ffprobe": quality_details,
         }
 
-    # Definitive missing endpoint.
+    # Definitive missing endpoint:
+    # only after no successful HTTP method.
+
     if (
         definitive_404
+        and http_result is not True
         and quality_result is not True
     ):
+
         return False, {
             "decision": "definitive_not_found",
             "http": http_details,
             "ffprobe": quality_details,
         }
 
-    # HTTP success without FFprobe.
+    # HTTP-only operation.
+
     if (
         http_result is True
         and not ENABLE_FFPROBE
     ):
+
         return True, {
             "decision": "http_only",
             "http": http_details,
             "ffprobe": quality_details,
         }
 
-    # FFprobe explicitly found no media.
+    # Explicitly no media.
+
     if quality_result is False:
+
         return False, {
             "decision": "no_media",
             "http": http_details,
             "ffprobe": quality_details,
         }
 
-    # Unknown state: configurable retention.
+    # Unknown state: retain according to configuration.
+
     if KEEP_INCONCLUSIVE:
+
         return True, {
             "decision": "retain_inconclusive",
             "http": http_details,
@@ -1726,35 +2576,47 @@ def check_stream_all(url):
 
 
 # =============================================================================
-# URL CHECK CACHE
+# 28. VALIDATION CACHE
 # =============================================================================
 
 class CacheSlot:
+
     def __init__(self):
+
         self.event = threading.Event()
+
         self.result = None
         self.error = None
 
 
 def check_stream_cached(url):
+
     key = normalize_url_for_compare(
         url
     )
 
     with URL_CACHE_LOCK:
+
         slot = URL_CACHE.get(key)
 
         if slot is None:
+
             slot = CacheSlot()
 
             URL_CACHE[key] = slot
+
             is_owner = True
 
         else:
+
             is_owner = False
-            counter_add("cache_hits")
+
+            counter_add(
+                "cache_hits"
+            )
 
     if not is_owner:
+
         log_titan(
             "Stream validation cache wait",
             url=url,
@@ -1766,6 +2628,7 @@ def check_stream_cached(url):
             return slot.result
 
         if slot.error is not None:
+
             return None, {
                 "decision": "cache_owner_error",
                 "error": slot.error,
@@ -1776,6 +2639,7 @@ def check_stream_cached(url):
         }
 
     try:
+
         result = check_stream_all(
             url
         )
@@ -1785,6 +2649,7 @@ def check_stream_cached(url):
         return result
 
     except Exception as exc:
+
         slot.error = repr(exc)
 
         log_titan(
@@ -1800,19 +2665,23 @@ def check_stream_cached(url):
         }
 
     finally:
+
         slot.event.set()
 
 
 # =============================================================================
-# STABLE STREAM WORKERS
+# 29. VALIDATION WORKER
 # =============================================================================
 
 def validate_one_entry(entry):
+
     url = entry["url"]
 
-    valid, details = check_stream_cached(
-        url
-    )
+    with VALIDATION_SEMAPHORE:
+
+        valid, details = check_stream_cached(
+            url
+        )
 
     log_titan(
         "Stream validation result",
@@ -1824,17 +2693,25 @@ def validate_one_entry(entry):
     return entry, valid, details
 
 
+# =============================================================================
+# 30. STABLE PLAYLIST BUILDER
+# =============================================================================
+
 def build_stable(donor_entries):
+
     stable_entries = []
 
     log_skala(
         "Stable validation started",
         candidates=len(donor_entries),
-        workers=MAX_WORKERS,
+        workers=MAX_VALIDATION_WORKERS,
+        ffprobe_enabled=ENABLE_FFPROBE,
+        ffprobe_bin=FFPROBE_BIN,
     )
 
     with concurrent.futures.ThreadPoolExecutor(
-        max_workers=MAX_WORKERS
+        max_workers=MAX_VALIDATION_WORKERS,
+        thread_name_prefix="Phoenix-Validator",
     ) as executor:
 
         futures = [
@@ -1848,36 +2725,39 @@ def build_stable(donor_entries):
         for future in concurrent.futures.as_completed(
             futures
         ):
+
             try:
+
                 entry, valid, details = future.result()
 
-                counter_add("checked")
+                counter_add(
+                    "checked"
+                )
 
                 decision = details.get(
                     "decision",
                     "",
                 )
 
-                if decision in (
+                is_inconclusive = decision in (
                     "retain_inconclusive",
                     "inconclusive",
                     "cache_owner_error",
                     "cache_empty",
                     "validation_exception",
-                ):
+                )
+
+                if is_inconclusive:
+
                     counter_add(
                         "inconclusive"
                     )
 
                 if valid is True:
+
                     entry["status"] = (
                         "inconclusive"
-                        if "inconclusive" in decision
-                        or decision in (
-                            "cache_owner_error",
-                            "cache_empty",
-                            "validation_exception",
-                        )
+                        if is_inconclusive
                         else "verified"
                     )
 
@@ -1892,14 +2772,18 @@ def build_stable(donor_entries):
                     )
 
                 elif valid is False:
+
                     counter_add(
                         "rejected"
                     )
 
                 else:
-                    counter_add(
-                        "inconclusive"
-                    )
+
+                    if not is_inconclusive:
+
+                        counter_add(
+                            "inconclusive"
+                        )
 
                     log_skala(
                         "Stream not accepted: inconclusive",
@@ -1908,6 +2792,7 @@ def build_stable(donor_entries):
                     )
 
             except Exception as exc:
+
                 counter_add(
                     "rejected"
                 )
@@ -1927,16 +2812,16 @@ def build_stable(donor_entries):
 
 
 # =============================================================================
-# PLAYLIST SERIALIZATION
+# 31. PLAYLIST SERIALIZATION
 # =============================================================================
 
 def playlist_header():
-    return (
-        "#EXTM3U\n"
-    )
+
+    return "#EXTM3U\n"
 
 
 def serialize_entry(entry):
+
     lines = []
 
     extinf = entry.get(
@@ -1952,6 +2837,7 @@ def serialize_entry(entry):
         "directives",
         [],
     ):
+
         if directive:
             lines.append(
                 directive.rstrip()
@@ -1969,13 +2855,14 @@ def serialize_entry(entry):
 
 
 # =============================================================================
-# ATOMIC PLAYLIST WRITER
+# 32. ATOMIC PLAYLIST WRITER
 # =============================================================================
 
 def write_playlist(
     path,
     entries,
 ):
+
     path.parent.mkdir(
         parents=True,
         exist_ok=True,
@@ -1986,6 +2873,7 @@ def write_playlist(
     )
 
     try:
+
         with temporary.open(
             "w",
             encoding="utf-8",
@@ -1997,11 +2885,13 @@ def write_playlist(
             )
 
             for entry in entries:
+
                 handle.write(
                     serialize_entry(entry)
                 )
 
             handle.flush()
+
             os.fsync(
                 handle.fileno()
             )
@@ -2018,14 +2908,17 @@ def write_playlist(
         return True
 
     except Exception as exc:
+
         counter_add(
             "write_errors"
         )
 
         try:
+
             temporary.unlink(
                 missing_ok=True
             )
+
         except Exception:
             pass
 
@@ -2040,13 +2933,14 @@ def write_playlist(
 
 
 # =============================================================================
-# OUTPUT MIRRORING
+# 33. OUTPUT MIRRORING
 # =============================================================================
 
 def write_all_outputs(
     donors,
     stable,
 ):
+
     destinations = (
         (
             MAIN_DONORS,
@@ -2059,6 +2953,7 @@ def write_all_outputs(
     )
 
     for donor_path, stable_path in destinations:
+
         write_playlist(
             donor_path,
             donors,
@@ -2079,11 +2974,18 @@ def write_all_outputs(
 
 
 # =============================================================================
-# ERROR REPORT
+# 34. ERROR REPORT
 # =============================================================================
 
 def write_error_report():
-    if not SOURCE_ERRORS:
+
+    with SOURCE_ERRORS_LOCK:
+
+        errors = list(
+            SOURCE_ERRORS
+        )
+
+    if not errors:
         return
 
     report = {
@@ -2091,20 +2993,27 @@ def write_error_report():
         "timestamp": datetime.now(
             timezone.utc
         ).astimezone().isoformat(),
-        "errors": list(SOURCE_ERRORS),
+        "errors": errors,
     }
+
+    # JSON report name remains unchanged.
+    # The _uz suffix is applied only to TXT reports.
 
     for directory in (
         MAIN_DIR,
         SHIRT_DIR,
     ):
+
         try:
+
             directory.mkdir(
                 parents=True,
                 exist_ok=True,
             )
 
-            path = directory / "errors.json"
+            path = (
+                directory / "errors.json"
+            )
 
             temporary = path.with_suffix(
                 ".json.tmp"
@@ -2122,6 +3031,7 @@ def write_error_report():
             temporary.replace(path)
 
         except Exception as exc:
+
             log_titan(
                 "Error report write failed",
                 level="WARNING",
@@ -2131,7 +3041,7 @@ def write_error_report():
 
 
 # =============================================================================
-# SUMMARY
+# 35. FINAL SUMMARY
 # =============================================================================
 
 def print_summary(
@@ -2139,18 +3049,27 @@ def print_summary(
     stable_count,
     elapsed,
 ):
+
     summary = {
+        **BUILD_METADATA,
         "run_id": RUN_ID,
-        "version": VERSION,
-        "version_code": VERSION_CODE,
-        "build_id": BUILD_ID,
-        "revision": REVISION,
         **counter_snapshot(),
         "stable_entries": stable_count,
         "elapsed_seconds": round(
             elapsed,
             2,
         ),
+        "parallelism": {
+            "download_workers": MAX_DOWNLOAD_WORKERS,
+            "parse_workers": MAX_PARSE_WORKERS,
+            "validation_workers": MAX_VALIDATION_WORKERS,
+        },
+        "ffprobe": {
+            "enabled": ENABLE_FFPROBE,
+            "automatic_install": AUTO_INSTALL_FFPROBE,
+            "binary": FFPROBE_BIN,
+            "directory": str(FFPROBE_DIR),
+        },
         "main_outputs": {
             "donors": str(MAIN_DONORS),
             "stable": str(MAIN_STABLE),
@@ -2181,25 +3100,32 @@ def print_summary(
 
 
 # =============================================================================
-# ENVIRONMENT DIAGNOSTICS
+# 36. RUNTIME DIAGNOSTICS
 # =============================================================================
 
 def runtime_diagnostics():
+
     diagnostics = {
         "python": sys.version,
         "platform": sys.platform,
+        "machine": platform.machine(),
         "hostname": socket.gethostname(),
         "root_dir": str(ROOT_DIR),
         "main_dir": str(MAIN_DIR),
         "shirt_dir": str(SHIRT_DIR),
         "index_url": INDEX_URL,
-        "workers": MAX_WORKERS,
+        "download_workers": MAX_DOWNLOAD_WORKERS,
+        "parse_workers": MAX_PARSE_WORKERS,
+        "validation_workers": MAX_VALIDATION_WORKERS,
         "request_timeout": REQUEST_TIMEOUT,
         "max_retries": MAX_RETRIES,
         "max_playlist_depth": MAX_PLAYLIST_DEPTH,
         "ffprobe_enabled": ENABLE_FFPROBE,
+        "auto_install_ffprobe": AUTO_INSTALL_FFPROBE,
         "ffprobe_bin": FFPROBE_BIN,
+        "ffprobe_directory": str(FFPROBE_DIR),
         "keep_inconclusive": KEEP_INCONCLUSIVE,
+        "require_media_probe": REQUIRE_MEDIA_PROBE,
     }
 
     log_titan(
@@ -2211,10 +3137,33 @@ def runtime_diagnostics():
 
 
 # =============================================================================
-# MAIN
+# 37. HTTP SESSION CLEANUP
+# =============================================================================
+
+def close_http_session():
+
+    session = getattr(
+        HTTP_LOCAL,
+        "session",
+        None,
+    )
+
+    if session is not None:
+
+        try:
+            session.close()
+        except Exception:
+            pass
+
+        HTTP_LOCAL.session = None
+
+
+# =============================================================================
+# 38. MAIN EXECUTION
 # =============================================================================
 
 def main():
+
     global DREG
 
     started = time.monotonic()
@@ -2244,6 +3193,7 @@ def main():
     DREG = DREGManager()
 
     try:
+
         log_skala(
             "Phoenix Hub Shirt.uz collector started",
             **BUILD_METADATA,
@@ -2252,51 +3202,71 @@ def main():
 
         runtime_diagnostics()
 
-        # ---------------------------------------------------------------------
-        # 1. Discover donor sources.
-        # ---------------------------------------------------------------------
+        # -----------------------------------------------------------------
+        # 00. FFPROBE AUTOMATIC INSTALLATION.
+        # -----------------------------------------------------------------
+
+        ffprobe_ready = ensure_ffprobe()
+
+        if ENABLE_FFPROBE and not ffprobe_ready:
+
+            log_skala(
+                "Continuing without FFprobe",
+                level="WARNING",
+                fallback="HTTP validation",
+            )
+
+            log_titan(
+                "FFprobe unavailable; HTTP-only fallback activated",
+                level="WARNING",
+            )
+
+        # -----------------------------------------------------------------
+        # 01. SOURCE DISCOVERY.
+        # -----------------------------------------------------------------
 
         source_urls = discover_playlist_urls()
 
-        # ---------------------------------------------------------------------
-        # 2. Download and parse donor playlists.
-        # ---------------------------------------------------------------------
+        # -----------------------------------------------------------------
+        # 02. DONOR DOWNLOAD AND PARSING.
+        # -----------------------------------------------------------------
 
         donor_entries = collect_donors(
             source_urls
         )
 
         if not donor_entries:
+
             raise RuntimeError(
                 "No donor records were collected"
             )
 
-        # ---------------------------------------------------------------------
-        # 3. Build stable playlist.
-        # ---------------------------------------------------------------------
+        # -----------------------------------------------------------------
+        # 03. STREAM VALIDATION.
+        # -----------------------------------------------------------------
 
         stable_entries = build_stable(
             donor_entries
         )
 
-        # ---------------------------------------------------------------------
-        # 4. Save both result playlists in both directories.
-        # ---------------------------------------------------------------------
+        # -----------------------------------------------------------------
+        # 04. WRITE FOUR PLAYLIST FILES.
+        # -----------------------------------------------------------------
 
         write_all_outputs(
             donor_entries,
             stable_entries,
         )
 
-        # ---------------------------------------------------------------------
-        # 5. Write diagnostic error report.
-        # ---------------------------------------------------------------------
+        # -----------------------------------------------------------------
+        # 05. WRITE ERROR REPORT.
+        # -----------------------------------------------------------------
 
         write_error_report()
 
-        # ---------------------------------------------------------------------
-        # 6. Final summary.
-        # ---------------------------------------------------------------------
+        # -----------------------------------------------------------------
+        # 06. FINAL SUMMARY.
+        # -----------------------------------------------------------------
 
         elapsed = (
             time.monotonic() - started
@@ -2322,6 +3292,7 @@ def main():
         return 0
 
     except KeyboardInterrupt:
+
         STOP_EVENT.set()
 
         log_skala(
@@ -2337,6 +3308,7 @@ def main():
         return 130
 
     except Exception as exc:
+
         log_skala(
             "Main build failed",
             level="CRITICAL",
@@ -2364,28 +3336,20 @@ def main():
         return 1
 
     finally:
-        if DREG is not None:
-            DREG.close()
 
-        for session in (
-            getattr(
-                HTTP_LOCAL,
-                "session",
-                None,
-            ),
-        ):
-            if session is not None:
-                try:
-                    session.close()
-                except Exception:
-                    pass
+        close_http_session()
+
+        if DREG is not None:
+
+            DREG.close()
 
 
 # =============================================================================
-# ENTRY POINT
+# 39. ENTRY POINT
 # =============================================================================
 
 if __name__ == "__main__":
+
     raise SystemExit(
         main()
     )
