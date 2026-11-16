@@ -30,13 +30,28 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
 
       - name: Install dependencies
+        shell: bash
         run: |
-          python -m pip install --upgrade pip
+          set -euo pipefail
+
+          python -m pip install --upgrade pip setuptools wheel
+
           if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
+            echo "Installing requirements.txt..."
+            python -m pip install -r requirements.txt
+          else
+            echo "requirements.txt not found."
           fi
+
+          echo "Installing mandatory dependencies..."
+          python -m pip install --upgrade requests
+
+          echo "Checking dependencies..."
+          python -c "import requests; print('requests OK:', requests.__version__)"
 
       - name: Download Git_for_uz_lists.py
         shell: bash
@@ -45,14 +60,26 @@ jobs:
 
           SCRIPT_URL="https://raw.githubusercontent.com/findmydevice364-hub/zala/refs/heads/main/Git_for_uz_lists.py"
 
-          curl -fL --retry 3 --retry-delay 3 \
+          curl -fL \
+            --retry 5 \
+            --retry-delay 3 \
+            --retry-all-errors \
             "$SCRIPT_URL" \
             -o Git_for_uz_lists.py
+
+          test -s Git_for_uz_lists.py
+
+          echo "Downloaded script:"
+          wc -l Git_for_uz_lists.py
 
           python -m py_compile Git_for_uz_lists.py
 
       - name: Run Git_for_uz_lists.py
-        run: python -u Git_for_uz_lists.py
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python -u Git_for_uz_lists.py
 
       - name: Commit and push changes safely
         if: success()
