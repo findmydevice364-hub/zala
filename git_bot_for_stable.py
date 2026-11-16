@@ -2776,7 +2776,7 @@ def main():
 
         if SKIP_PUSH:
             print("\nЛокальная сборка завершена.")
-            print("SKIP_PUSH=true — commit/push не выполнялись.")
+            print("SKIP_PUSH=false — commit/push не выполнялись.")
             print("DREG-журналы сохранены локально.")
 
             dlog(
@@ -2784,7 +2784,7 @@ def main():
                 "LOCAL_BUILD_COMPLETE",
                 added=added_total,
                 modified=modified,
-                logs_published=False,
+                logs_published=True,
             )
 
             return 0
