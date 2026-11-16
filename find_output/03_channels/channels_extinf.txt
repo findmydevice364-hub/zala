@@ -116,6 +116,16 @@
 #EXTINF:-1,nick_jr
 #EXTINF:-1,utv
 #EXTINF:-1,v1
+#EXTINF:-1, Nova HD
+#EXTINF:-1, PPTV
+#EXTINF:-1, Star Crime HD
+#EXTINF:-1, Star HD
+#EXTINF:-1, Star Life HD
+#EXTINF:-1, TV5
+#EXTINF:-1, TVK
+#EXTINF:-1, Футбол 3
+#EXTINF:-1, Первый канал
+#EXTINF:-1, Солнце
 #EXTINF:-1 group-title="-",0001.Հ1 HD -(82)
 #EXTINF:-1 group-title="-",0003.Արմենիա HD -(82)
 #EXTINF:-1 group-title="-",0004.Շանթ HD -(83)

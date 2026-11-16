@@ -3,7 +3,7 @@ IPTV NODE MASTER AGGREGATOR
 VERSION: 3.0.0
 ====================================================================
 
-Started/completed: 2026-11-15T15:23:17.245623+00:00
+Started/completed: 2026-11-16T14:06:36.296954+00:00
 
 DISCOVERY
 --------------------------------------------------------------------
@@ -15,18 +15,18 @@ Nested catalog links: 0
 
 CHANNELS
 --------------------------------------------------------------------
-Parsed: 246
-Exported: 246
+Parsed: 256
+Exported: 256
 Filtered by 18+ rule: 0
 Duplicate URLs preserved: 31
 
 NODES
 --------------------------------------------------------------------
-Registered nodes: 13
+Registered nodes: 17
 
 NETWORK
 --------------------------------------------------------------------
-Bytes downloaded: 19067
+Bytes downloaded: 19758
 Errors: 0
 
 FILTERS

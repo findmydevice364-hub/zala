@@ -235,6 +235,26 @@ http://88.212.15.35:80/nick_jr/index.m3u8
 http://88.212.15.35:80/utv/index.m3u8
 #EXTINF:-1,v1
 http://88.212.15.35:80/v1/index.m3u8
+#EXTINF:-1, Nova HD
+http://79.124.21.250:8199/play/Nova/index.m3u8
+#EXTINF:-1, PPTV
+http://79.124.21.250:8199/play/PPTV/index.m3u8
+#EXTINF:-1, Star Crime HD
+http://79.124.21.250:8199/play/StarCrimeHD/index.m3u8
+#EXTINF:-1, Star HD
+http://79.124.21.250:8199/play/StarHD/index.m3u8
+#EXTINF:-1, Star Life HD
+http://79.124.21.250:8199/play/StarLifeHD/index.m3u8
+#EXTINF:-1, TV5
+http://79.124.21.250:8199/play/TV5/index.m3u8
+#EXTINF:-1, TVK
+http://79.124.21.250:8199/play/TVK/index.m3u8
+#EXTINF:-1, Футбол 3
+http://185.57.68.33/110/index.m3u8
+#EXTINF:-1, Первый канал
+http://178.217.49.7/1/index.m3u8
+#EXTINF:-1, Солнце
+http://217.114.191.150/Solnce/index.m3u8
 #EXTINF:-1 group-title="-",0001.Հ1 HD -(82)
 http://91.205.196.7:8000/play/a004
 #EXTINF:-1 group-title="-",0003.Արմենիա HD -(82)
