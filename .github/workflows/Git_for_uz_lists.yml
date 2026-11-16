@@ -1,0 +1,96 @@
+
+name: Git_for_uz_lists.py
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 1 * * *" # Ежедневно в 03:00 по Калининграду (UTC+2)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: git-for-uz-lists
+  cancel-in-progress: false
+
+jobs:
+  run-bot:
+    name: Run Git_for_uz_lists.py
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+
+      - name: Download Git_for_uz_lists.py
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SCRIPT_URL="https://raw.githubusercontent.com/findmydevice364-hub/zala/refs/heads/main/Git_for_uz_lists.py"
+
+          curl -fL --retry 3 --retry-delay 3 \
+            "$SCRIPT_URL" \
+            -o Git_for_uz_lists.py
+
+          python -m py_compile Git_for_uz_lists.py
+
+      - name: Run Git_for_uz_lists.py
+        run: python -u Git_for_uz_lists.py
+
+      - name: Commit and push changes safely
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update files via Git_for_uz_lists.py"
+
+          for attempt in 1 2 3; do
+            echo "Push attempt ${attempt}/3"
+
+            git fetch origin main
+
+            if ! git rebase origin/main; then
+              echo "::error::Rebase conflict detected."
+              git rebase --abort || true
+              exit 1
+            fi
+
+            if git push origin HEAD:main; then
+              echo "Push successful."
+              exit 0
+            fi
+
+            echo "Push rejected. Retrying..."
+            sleep 3
+          done
+
+          echo "::error::Push failed after 3 attempts."
+          exit 1
