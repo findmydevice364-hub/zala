@@ -1,0 +1,318 @@
+#EXTM3U
+
+# ═══════════════════════════════════════════════════════════
+# «МЕГА УЛЬТРА» — добавки. Вклеить после списка «Огромный»
+# ═══════════════════════════════════════════════════════════
+
+# ── ПОСТ 1105. Сервер 93.84.115.174:10181 (~70 каналов, включая всю серию TV-1000) ──
+#EXTINF:-1,Luxury HD
+http://93.84.115.174:10181/foxhd
+#EXTINF:-1,Animal Planet HD
+http://93.84.115.174:10181/animalplanethd
+#EXTINF:-1,RTG HD
+http://93.84.115.174:10181/rtghd
+#EXTINF:-1,Бокс ТВ
+http://93.84.115.174:10181/box_tv
+#EXTINF:-1,HDL
+http://93.84.115.174:10181/HDL
+#EXTINF:-1,Mult
+http://93.84.115.174:10181/mult
+#EXTINF:-1,Duck TV
+http://93.84.115.174:10181/duck_tv
+#EXTINF:-1,Teatr
+http://93.84.115.174:10181/teatr
+#EXTINF:-1,Dom Jivot
+http://93.84.115.174:10181/domjivot
+#EXTINF:-1,KVN
+http://93.84.115.174:10181/kvn
+#EXTINF:-1,Русский Иллюзион
+http://93.84.115.174:10181/rusilluzion
+#EXTINF:-1,Nature
+http://93.84.115.174:10181/nature
+#EXTINF:-1,RTR Belarus
+http://93.84.115.174:10181/rtr-belarus
+#EXTINF:-1,Europa Plus
+http://93.84.115.174:10181/europaplus
+#EXTINF:-1,Home 4K
+http://93.84.115.174:10181/home4k
+#EXTINF:-1,NTV Belarus
+http://93.84.115.174:10181/ntv-belarus
+#EXTINF:-1,Кухня
+http://93.84.115.174:10181/kuhnia
+#EXTINF:-1,Drive
+http://93.84.115.174:10181/drive
+#EXTINF:-1,Zoo
+http://93.84.115.174:10181/zoo
+#EXTINF:-1,Arsenal HD
+http://93.84.115.174:10181/arsenal_hd
+#EXTINF:-1,Sony Sci-Fi
+http://93.84.115.174:10181/sonyscifi
+#EXTINF:-1,TV1000 RU
+http://93.84.115.174:10181/tv1000ru
+#EXTINF:-1,Бобёр
+http://93.84.115.174:10181/bober
+#EXTINF:-1,Mir Seriala
+http://93.84.115.174:10181/mir_seriala
+#EXTINF:-1,Матч! Планета
+http://93.84.115.174:10181/matchplaneta
+#EXTINF:-1,ONT HD
+http://93.84.115.174:10181/ont_hd
+#EXTINF:-1,Dizi HD
+http://93.84.115.174:10181/dizi
+#EXTINF:-1,Sony Turbo
+http://93.84.115.174:10181/sonyturbo
+#EXTINF:-1,Amedia Premium HD
+http://93.84.115.174:10181/amediapremiumhd
+#EXTINF:-1,Amedia Hit HD
+http://93.84.115.174:10181/amediahithd
+#EXTINF:-1,Дикий
+http://93.84.115.174:10181/diki
+#EXTINF:-1,Победа
+http://93.84.115.174:10181/pobeda
+#EXTINF:-1,Киносемья
+http://93.84.115.174:10181/kinosemya
+#EXTINF:-1,Киносерия
+http://93.84.115.174:10181/kinoseria
+#EXTINF:-1,VIP Premiere HD
+http://93.84.115.174:10181/vippremiere
+#EXTINF:-1,Киносвидание
+http://93.84.115.174:10181/kinosvidanie
+#EXTINF:-1,КХЛ HD
+http://93.84.115.174:10181/khl
+#EXTINF:-1,TV1000
+http://93.84.115.174:10181/tv1000
+#EXTINF:-1,Наука
+http://93.84.115.174:10181/nauka
+#EXTINF:-1,Ностальгия
+http://93.84.115.174:10181/nostalgia
+#EXTINF:-1,Mezzo
+http://93.84.115.174:10181/mezzo
+#EXTINF:-1,Теле-кафе
+http://93.84.115.174:10181/telekafe
+#EXTINF:-1,Viju+ Sport
+http://93.84.115.174:10181/viasatsport
+#EXTINF:-1,Cinema
+http://93.84.115.174:10181/cinema
+#EXTINF:-1,TV1000 Action
+http://93.84.115.174:10181/tv1000action
+#EXTINF:-1,Кинохит
+http://93.84.115.174:10181/kinohit
+#EXTINF:-1,Ocean TV
+http://93.84.115.174:10181/oceantv
+#EXTINF:-1,RU.TV
+http://93.84.115.174:10181/rutv
+#EXTINF:-1,Карусель
+http://93.84.115.174:10181/karusel
+#EXTINF:-1,History
+http://93.84.115.174:10181/history
+#EXTINF:-1,Кинокомедия
+http://93.84.115.174:10181/kinokomedia
+#EXTINF:-1,Bollywood HD
+http://93.84.115.174:10181/foxlifehd
+#EXTINF:-1,Наше Новое Кино
+http://93.84.115.174:10181/nashenovoekino
+#EXTINF:-1,Еда HD
+http://93.84.115.174:10181/edahd
+#EXTINF:-1,Шансон ТВ
+http://93.84.115.174:10181/shansontv
+#EXTINF:-1,Усадьба
+http://93.84.115.174:10181/usadba
+#EXTINF:-1,TV21
+http://93.84.115.174:10181/tv21
+#EXTINF:-1,Сарафан
+http://93.84.115.174:10181/sarafan
+#EXTINF:-1,Ретро
+http://93.84.115.174:10181/retro
+#EXTINF:-1,Оружие
+http://93.84.115.174:10181/orujie
+#EXTINF:-1,Моя Планета
+http://93.84.115.174:10181/myplanet
+#EXTINF:-1,МИР 24 HD
+http://93.84.115.174:10181/mir24
+#EXTINF:-1,Laminor
+http://93.84.115.174:10181/laminor
+#EXTINF:-1,Galaxy
+http://93.84.115.174:10181/galaxy
+#EXTINF:-1,Setanta 1 (Футбол)
+http://93.84.115.174:10181/futbol
+#EXTINF:-1,Феникс+Кино
+http://93.84.115.174:10181/feniks+kino
+#EXTINF:-1,Еврокино
+http://93.84.115.174:10181/eurokino
+#EXTINF:-1,Дом Кино
+http://93.84.115.174:10181/domkino
+#EXTINF:-1,Домашний
+http://93.84.115.174:10181/domashniy
+#EXTINF:-1,Детский мир
+http://93.84.115.174:10181/detskimir
+#EXTINF:-1,Авто Плюс
+http://93.84.115.174:10181/avtoplus
+#EXTINF:-1,Amedia 2
+http://93.84.115.174:10181/amedia2
+
+# ── ПОСТ 760, полный. Болгария (79.124.21.250:8199) — ~52 канала ──
+#EXTINF:-1,AXN Neo
+http://79.124.21.250:8199/play/AXN/index.m3u8
+#EXTINF:-1,BNT1 HD
+http://79.124.21.250:8199/play/BNT1HD/index.m3u8
+#EXTINF:-1,BNT2 HD
+http://79.124.21.250:8199/play/BNT2HD/index.m3u8
+#EXTINF:-1,BNT3 HD
+http://79.124.21.250:8199/play/BNT3HD/index.m3u8
+#EXTINF:-1,Balkanika HD
+http://79.124.21.250:8199/play/BalkanikaHD/index.m3u8
+#EXTINF:-1,Bloomberg BG
+http://79.124.21.250:8199/play/BlumbergBG/index.m3u8
+#EXTINF:-1,Cartoon
+http://79.124.21.250:8199/play/Cartoon/index.m3u8
+#EXTINF:-1,Diema Family
+http://79.124.21.250:8199/play/DiemaFam/index.m3u8
+#EXTINF:-1,Diema Sport 2
+http://79.124.21.250:8199/play/DiemaSport2/index.m3u8
+#EXTINF:-1,Diema Sport 3
+http://79.124.21.250:8199/play/DiemaSport3/index.m3u8
+#EXTINF:-1,Diema Sport
+http://79.124.21.250:8199/play/DiemaSport/index.m3u8
+#EXTINF:-1,Diema
+http://79.124.21.250:8199/play/Diema/index.m3u8
+#EXTINF:-1,Discovery HD
+http://79.124.21.250:8199/play/Discovery/index.m3u8
+#EXTINF:-1,Disney Junior
+http://79.124.21.250:8199/play/DisneyJun/index.m3u8
+#EXTINF:-1,Disney Channel
+http://79.124.21.250:8199/play/DisneyCh/index.m3u8
+#EXTINF:-1,Epic Drama
+http://79.124.21.250:8199/play/EpicDrama/index.m3u8
+#EXTINF:-1,Eurosport 2
+http://79.124.21.250:8199/play/EuroSport2/index.m3u8
+#EXTINF:-1,FAN
+http://79.124.21.250:8199/play/FAN/index.m3u8
+#EXTINF:-1,Fan Folk
+http://79.124.21.250:8199/play/FanFolk/index.m3u8
+#EXTINF:-1,FilmBox
+http://79.124.21.250:8199/play/FilmBox/index.m3u8
+#EXTINF:-1,Folklor
+http://79.124.21.250:8199/play/Folklor/index.m3u8
+#EXTINF:-1,HitMix
+http://79.124.21.250:8199/play/HitMix/index.m3u8
+#EXTINF:-1,ID Extra
+http://79.124.21.250:8199/play/IDExtra/index.m3u8
+#EXTINF:-1,Kino Nova
+http://79.124.21.250:8199/play/KinoNova/index.m3u8
+#EXTINF:-1,Max Sport 1 HD
+http://79.124.21.250:8199/play/MaxSport1/index.m3u8
+#EXTINF:-1,Motovizion
+http://79.124.21.250:8199/play/Motovizion/index.m3u8
+#EXTINF:-1,Nike Junior
+http://79.124.21.250:8199/play/NikeJun/index.m3u8
+#EXTINF:-1,Nickelodeon
+http://79.124.21.250:8199/play/Nikelodeon/index.m3u8
+#EXTINF:-1,Nostalgia
+http://79.124.21.250:8199/play/Nostalgia/index.m3u8
+#EXTINF:-1,Nova HD
+http://79.124.21.250:8199/play/Nova/index.m3u8
+#EXTINF:-1,Nova Sport HD
+http://79.124.21.250:8199/play/NovaSportHD/index.m3u8
+#EXTINF:-1,PPTV
+http://79.124.21.250:8199/play/PPTV/index.m3u8
+#EXTINF:-1,Planeta Folk
+http://79.124.21.250:8199/play/PlanetaFolk/index.m3u8
+#EXTINF:-1,Ring HD
+http://79.124.21.250:8199/play/Ring/index.m3u8
+#EXTINF:-1,Skat
+http://79.124.21.250:8199/play/Skat/index.m3u8
+#EXTINF:-1,Star Crime HD
+http://79.124.21.250:8199/play/StarCrimeHD/index.m3u8
+#EXTINF:-1,Star HD
+http://79.124.21.250:8199/play/StarHD/index.m3u8
+#EXTINF:-1,Star Life HD
+http://79.124.21.250:8199/play/StarLifeHD/index.m3u8
+#EXTINF:-1,TLC
+http://79.124.21.250:8199/play/TLC/index.m3u8
+#EXTINF:-1,TV1 HD
+http://79.124.21.250:8199/play/TV1HD/index.m3u8
+#EXTINF:-1,TV5
+http://79.124.21.250:8199/play/TV5/index.m3u8
+#EXTINF:-1,TVK
+http://79.124.21.250:8199/play/TVK/index.m3u8
+#EXTINF:-1,TVT
+http://79.124.21.250:8199/play/TVT/index.m3u8
+#EXTINF:-1,The Voice HD
+http://79.124.21.250:8199/play/TheVoiceHD/index.m3u8
+#EXTINF:-1,Travel TV
+http://79.124.21.250:8199/play/TravelTV/index.m3u8
+#EXTINF:-1,Via Explor HD
+http://79.124.21.250:8199/play/ViaExplorHD/index.m3u8
+#EXTINF:-1,bTV HD
+http://79.124.21.250:8199/play/bTV/index.m3u8
+#EXTINF:-1,bTV Action HD
+http://79.124.21.250:8199/play/bTVAction/index.m3u8
+#EXTINF:-1,bTV Cinema HD
+http://79.124.21.250:8199/play/bTVCinema/index.m3u8
+#EXTINF:-1,bTV Comedy HD
+http://79.124.21.250:8199/play/bTVComedy/index.m3u8
+#EXTINF:-1,bTV Story HD
+http://79.124.21.250:8199/play/bTVLady/index.m3u8
+#EXTINF:-1,baby TV
+http://79.124.21.250:8199/play/babyTV/index.m3u8
+#EXTINF:-1,Star Crime TS
+http://79.124.21.250:8199/play/a01o/index.m3u8
+#EXTINF:-1,Star Life TS
+http://79.124.21.250:8199/play/a01q/index.m3u8
+#EXTINF:-1,Star TS
+http://79.124.21.250:8199/play/a01p/index.m3u8
+
+# ── ПОСТ 436. Сервер 217.21.34.160 (порты 38003/38005/38007) + бонус из комментов ──
+#EXTINF:-1,Наша Тема
+http://217.21.34.160:38003/nashatema/index.m3u8
+#EXTINF:-1,Еврокино
+http://217.21.34.160:38003/evrokino/index.m3u8
+#EXTINF:-1,Зоопарк
+http://217.21.34.160:38003/zoopark/index.m3u8
+#EXTINF:-1,Иллюзион+
+http://217.21.34.160:38003/illuzionplus/index.m3u8
+#EXTINF:-1,Победа
+http://217.21.34.160:38005/pobeda/index.m3u8
+#EXTINF:-1,Карусель
+http://217.21.34.160:38005/karusel/index.m3u8
+#EXTINF:-1,Время
+http://217.21.34.160:38005/vremya/index.m3u8
+#EXTINF:-1,Дом Кино
+http://217.21.34.160:38005/domkino/index.m3u8
+#EXTINF:-1,ТНТ Music
+http://217.21.34.160:38007/tntmusic/index.m3u8
+#EXTINF:-1,RTG HD
+http://217.21.34.160:38007/rtghd/index.m3u8
+#EXTINF:-1,Детский мир
+http://217.21.34.160:38007/detmir/index.m3u8
+#EXTINF:-1,Дикая рыбалка HD
+http://217.21.34.160:38007/dikayarybalkahd/index.m3u8
+#EXTINF:-1,Любимое кино
+http://217.21.34.160:38007/lubimoekino/index.m3u8
+#EXTINF:-1,Мир сериала
+http://217.21.34.160:38007/mirseriala/index.m3u8
+#EXTINF:-1,Культура
+http://217.21.34.160:38007/kultura/index.m3u8
+#EXTINF:-1,Футбол 3
+http://185.57.68.33/110/index.m3u8
+
+# ── ПОСТ 703, добавка. Единичные каналы из свежей ревизии поста ──
+#EXTINF:-1,МАТЧ! Игра
+http://45.145.32.13:20440/match_igra/index.m3u8?token=test
+#EXTINF:-1,Киносвидание
+http://93.170.254.17/Kinosvidanie/index.m3u8
+#EXTINF:-1,Первый канал
+http://178.217.49.7/1/index.m3u8
+#EXTINF:-1,Viasat Kino Comedy HD
+http://ukr2.ukrainske.tv/493/video.m3u8
+#EXTINF:-1,Солнце
+http://217.114.191.150/Solnce/index.m3u8
+
+# ── ПОСТ 1231. Мастер-лист (сам пост — только ссылка на плейлист) ──
+#EXTINF:-1,МАСТЕР-ЛИСТ 217.174.229.136
+http://217.174.229.136:8000/playlist.m3u8
+
+# ── Сводка мастер-списков (одна ссылка = целая пачка каналов) ──
+# 91.205.196.7:8000/playlist.m3u8   (~135 каналов, Армения+Россия)
+# 79.124.21.250:8199/playlist.m3u8   (~52 канала, Болгария — выше уже разобран поимённо)
+# 217.174.229.136:8000/playlist.m3u8 (состав неизвестен — пост отдаёт только ссылку)
