@@ -4,7 +4,7 @@ name: Git_for_uz_lists.py
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 1 * * *"
+    - cron: "0 21 * * 6" # 00:00 МСК каждое воскресенье (проверка интервала 14 дней)
 
 permissions:
   contents: write
@@ -26,18 +26,48 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
+      - name: Check two-week schedule
+        id: schedule
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            echo "Manual launch: bypassing schedule check."
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Фиксированная точка отсчёта: 16 ноября 2026 года.
+          START_DATE="2026-11-16"
+          TODAY="$(date -u +%Y-%m-%d)"
+
+          START_TS="$(date -u -d "$START_DATE" +%s)"
+          TODAY_TS="$(date -u -d "$TODAY" +%s)"
+
+          DAYS=$(( (TODAY_TS - START_TS) / 86400 ))
+
+          if [ "$DAYS" -ge 0 ] && [ $((DAYS % 14)) -eq 0 ]; then
+            echo "Two-week interval confirmed."
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Two-week interval not reached. Skipping."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Set up Python
+        if: steps.schedule.outputs.run == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Install dependencies
+        if: steps.schedule.outputs.run == 'true'
         shell: bash
         run: |
           set -euo pipefail
 
           python -m pip install --upgrade pip setuptools wheel
-
           python -m pip install requests
 
           if [ -f requirements.txt ]; then
@@ -47,6 +77,7 @@ jobs:
           python -c "import requests; print('requests OK:', requests.__version__)"
 
       - name: Download Git_for_uz_lists.py
+        if: steps.schedule.outputs.run == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -61,17 +92,17 @@ jobs:
             -o Git_for_uz_lists.py
 
           test -s Git_for_uz_lists.py
-
           python -m py_compile Git_for_uz_lists.py
 
       - name: Run Git_for_uz_lists.py
+        if: steps.schedule.outputs.run == 'true'
         shell: bash
         run: |
           set -euo pipefail
           python -u Git_for_uz_lists.py
 
       - name: Commit and push changes safely
-        if: success()
+        if: success() && steps.schedule.outputs.run == 'true'
         shell: bash
         run: |
           set -euo pipefail
