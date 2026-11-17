@@ -123,8 +123,6 @@ MAX_DOWNLOAD_WORKERS = max(1, int(os.getenv("MAX_DOWNLOAD_WORKERS", "36")))
 MAX_PARSE_WORKERS = max(1, int(os.getenv("MAX_PARSE_WORKERS", "57")))
 MAX_VALIDATION_WORKERS = max(1, int(os.getenv("MAX_VALIDATION_WORKERS", "60")))
 
-MAX_WORKERS = MAX_VALIDATION_WORKERS
-
 DOWNLOAD_SEMAPHORE = threading.BoundedSemaphore(MAX_DOWNLOAD_WORKERS)
 VALIDATION_SEMAPHORE = threading.BoundedSemaphore(MAX_VALIDATION_WORKERS)
 
@@ -163,8 +161,6 @@ REQUIRE_MEDIA_PROBE = os.getenv("REQUIRE_MEDIA_PROBE", "false").lower() in {"1",
 # =============================================================================
 # 06. PLAYLIST CONFIGURATION
 # =============================================================================
-
-DEDUPLICATE_DONOR_RECORDS = False
 
 PLAYLIST_EXTENSIONS = (".m3u", ".m3u8", ".m3u.txt")
 
@@ -373,7 +369,7 @@ def log_titan(message, level="INFO", **details):
 
 
 # =============================================================================
-# 09. HTTP SESSION
+# 09. HTTP SESSION (FIXED HEADERS)
 # =============================================================================
 
 def get_http_session():
@@ -381,11 +377,21 @@ def get_http_session():
     if session is None:
         session = requests.Session()
         session.max_redirects = MAX_REDIRECTS
+        # Браузерные заголовки — исправляет 415 Unsupported Media Type
         session.headers.update({
-            "User-Agent": "Mozilla/5.0 (compatible; PhoenixHub-Baryshnikov/3.8)",
-            "Accept": "application/vnd.apple.mpegurl,application/x-mpegURL,audio/mpegurl,audio/x-mpegurl,application/octet-stream,*/*",
-            "Accept-Language": "ru,en;q=0.8",
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/122.0.0.0 Safari/537.36"
+            ),
+            "Accept": (
+                "text/html,application/xhtml+xml,application/xml;q=0.9,"
+                "image/avif,image/webp,image/apng,*/*;q=0.8"
+            ),
+            "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
+            "Accept-Encoding": "gzip, deflate, br",
             "Connection": "keep-alive",
+            "Upgrade-Insecure-Requests": "1",
         })
         HTTP_LOCAL.session = session
     return session
@@ -405,11 +411,30 @@ def close_http_session():
 # 10. CONTROLLED HTTP DOWNLOAD
 # =============================================================================
 
-def fetch_url(url, max_bytes=MAX_PLAYLIST_SIZE, referer=None):
+def fetch_url(url, max_bytes=MAX_PLAYLIST_SIZE, referer=None, is_html=False):
     last_error = None
     headers = {}
+
     if referer:
         headers["Referer"] = referer
+
+    # Для HTML-страницы используем браузерный Accept,
+    # для плейлистов — более широкий.
+    if is_html:
+        headers["Accept"] = (
+            "text/html,application/xhtml+xml,application/xml;q=0.9,"
+            "image/avif,image/webp,image/apng,*/*;q=0.8"
+        )
+    else:
+        headers["Accept"] = (
+            "application/vnd.apple.mpegurl,"
+            "application/x-mpegURL,"
+            "audio/mpegurl,"
+            "audio/x-mpegurl,"
+            "application/octet-stream,"
+            "text/plain,"
+            "*/*"
+        )
 
     for attempt in range(MAX_RETRIES + 1):
         if STOP_EVENT.is_set():
@@ -565,7 +590,8 @@ class ShirtPlaylistHTMLParser(HTMLParser):
 def discover_playlist_urls():
     log_skala("Loading Shirt.uz playlist catalogue", url=INDEX_URL)
 
-    page = fetch_url(INDEX_URL, max_bytes=MAX_PAGE_SIZE)
+    # Важно: is_html=True — используем правильный Accept
+    page = fetch_url(INDEX_URL, max_bytes=MAX_PAGE_SIZE, is_html=True)
     html = page.decode("utf-8", errors="replace")
 
     parser = ShirtPlaylistHTMLParser()
@@ -609,7 +635,7 @@ def discover_playlist_urls():
         raw_links=len(parser.links),
         embedded_matches=len(embedded_matches),
         unique_sources=len(result),
-        sources=result,
+        sources=result[:30],  # не логируем всё
     )
 
     if not result:
@@ -645,13 +671,6 @@ def is_hls_media_playlist(content):
 def is_hls_master_playlist(content):
     head = content[:16000].upper()
     return "#EXT-X-STREAM-INF" in head or "#EXT-X-I-FRAME-STREAM-INF" in head
-
-
-def extract_extinf_name(extinf):
-    try:
-        return extinf.split(",", 1)[1].strip()
-    except Exception:
-        return "Без названия"
 
 
 def make_default_entry(url, name, source=None):
@@ -919,7 +938,6 @@ def collect_donors(source_urls):
                 source = future_map[future]
                 try:
                     entries = future.result()
-                    # No global donor record deduplication
                     all_entries.extend(entries)
                     log_skala(
                         "Donor records appended",
@@ -947,10 +965,6 @@ def collect_donors(source_urls):
 # =============================================================================
 
 def check_stream_alive_simple(url):
-    """
-    Returns:
-        (True/False/None, details_dict)
-    """
     if not is_http_url(url):
         return None, {"reason": "not_http"}
 
@@ -997,7 +1011,11 @@ def check_stream_alive_simple(url):
             stream=True,
         )
         status = response.status_code
-        chunk = response.raw.read(2048) if hasattr(response, "raw") else b""
+        chunk = b""
+        try:
+            chunk = next(response.iter_content(2048), b"")
+        except Exception:
+            pass
         details["get_status"] = status
         details["bytes_read"] = len(chunk) if chunk else 0
         if 200 <= status < 400 and chunk:
@@ -1040,7 +1058,7 @@ def verify_ffprobe_binary(path):
         return False
 
 
-def ffprobe_asset_for_platform_for_platform():
+def ffprobe_asset_for_platform():
     system = platform.system().lower()
     machine = platform.machine().lower()
 
@@ -1688,7 +1706,6 @@ def runtime_diagnostics():
         "ffprobe_bin": FFPROBE_BIN,
         "ffprobe_directory": str(FFPROBE_DIR),
         "keep_inconclusive": KEEP_INCONCLUSIVE,
-        "require_media_probe": REQUIRE_MEDIA_PROBE,
     }
     log_titan("Runtime diagnostics", **diagnostics)
     return diagnostics
