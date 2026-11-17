@@ -1,10 +1,11 @@
-name: RUTUBE Live — обновление плейлиста
+
+name: RUTUBE TV — обновление плейлиста
 
 on:
   workflow_dispatch:
     inputs:
-      max_pages:
-        description: "Максимум страниц общей ленты Rutube"
+      feed_pages:
+        description: "Максимум страниц каталогов и витрин Rutube"
         required: false
         default: "30"
         type: string
@@ -15,12 +16,12 @@ permissions:
   contents: write
 
 concurrency:
-  group: rutube-live-refresh
+  group: rutube-tv-refresh
   cancel-in-progress: false
 
 jobs:
   refresh:
-    name: Поиск эфиров и публикация M3U
+    name: Поиск телеканалов и публикация M3U
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -36,69 +37,78 @@ jobs:
           python-version: "3.12"
 
       - name: Установить зависимости
-        run: python -m pip install --upgrade pip requests
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install requests
 
-      - name: Проверить наличие скрипта
+      - name: Проверить входные файлы
         run: |
           test -f bl_rutube.py || {
-            echo "::error::Файл bl_rutube.py не найден в корне репозитория"
+            echo "::error::bl_rutube.py не найден"
             exit 1
           }
 
-      - name: Найти публичные трансляции Rutube и собрать M3U
+          test -f Rutubefile.txt || {
+            echo "::error::Rutubefile.txt не найден"
+            exit 1
+          }
+
+      - name: Найти телеканалы Rutube и собрать M3U
         env:
-          MAX_PAGES: ${{ inputs.max_pages || '30' }}
+          FEED_PAGES: ${{ inputs.feed_pages || '30' }}
         run: |
           python bl_rutube.py \
-            --max-pages "$MAX_PAGES" \
+            Rutubefile.txt \
+            --feed-pages "$FEED_PAGES" \
             --delay 0.4 \
-            --output Rutube_ALL_LIVE.m3u
+            --output Rutube_TV.m3u
 
-          test -s Rutube_ALL_LIVE.m3u
-          test -s Rutube_ALL_LIVE_scan_report.txt
+          test -s Rutube_TV.m3u
+          test -s Rutube_TV_scan_report.txt
 
       - name: Сохранить результат в репозитории
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add Rutube_ALL_LIVE.m3u Rutube_ALL_LIVE_scan_report.txt
+          git add Rutube_TV.m3u Rutube_TV_scan_report.txt
 
           if git diff --cached --quiet; then
             echo "Изменений нет — коммит не требуется."
           else
-            git commit -m "chore(rutube): refresh live playlist"
+            git commit -m "chore(rutube): refresh TV playlist"
             git push
           fi
 
       - name: Загрузить файлы в Actions Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: rutube-live-${{ github.run_number }}
+          name: rutube-tv-${{ github.run_number }}
           path: |
-            Rutube_ALL_LIVE.m3u
-            Rutube_ALL_LIVE_scan_report.txt
+            Rutube_TV.m3u
+            Rutube_TV_scan_report.txt
           if-no-files-found: error
           retention-days: 30
 
-      - name: Создать или обновить Release с плейлистом
+      - name: Создать или обновить Release
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: rutube-live-latest
-          target_commitish: ${{ github.ref_name }}
-          name: "RUTUBE Live — актуальный плейлист"
+          tag_name: rutube-tv-latest
+          target_commitish: main
+          name: "RUTUBE TV — актуальный плейлист"
           body: |
-            Автоматически обновляемый список публичных прямых трансляций Rutube.
+            Автоматически обновляемый плейлист телеканалов Rutube.
 
             Файлы:
-            - `Rutube_ALL_LIVE.m3u` — плейлист;
-            - `Rutube_ALL_LIVE_scan_report.txt` — отчёт поиска.
+            - Rutube_TV.m3u — плейлист телеканалов;
+            - Rutube_TV_scan_report.txt — отчёт сканирования.
 
-            Источник: публичная лента Rutube и ответы API плеера.
+            Источник: каталоги и витрины Rutube,
+            проверка HLS через API плеера.
           prerelease: true
           make_latest: false
           overwrite_files: true
           fail_on_unmatched_files: true
           files: |
-            Rutube_ALL_LIVE.m3u
-            Rutube_ALL_LIVE_scan_report.txt
+            Rutube_TV.m3u
+            Rutube_TV_scan_report.txt
