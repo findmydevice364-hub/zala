@@ -1,203 +1,275 @@
-#EXTM3U
-#EXTINF:-1, Мир 24
+#EXTM3U x-tvg-url="http://epg.one/epg2.xml.gz"
+#EXTINF:-1 tvg-name="Мир 24" group-title="Телеканалы",Мир 24
 https://bl.rutube.ru/livestream/43269ba8fb179e298b1e497f557e8d2d/index.m3u8?s=bS9Nn0sHn6JVte__04JtWQ&e=2068506951&scheme=https
-#EXTINF:-1, Царьград
+#EXTINF:-1 tvg-name="Царьград" group-title="Телеканалы",Царьград
 https://bl.rutube.ru/livestream/91815da4edb167b5bd617bae490e57da/index.m3u8?s=UQvVhXcvnPn0tDMqg2zDYg&e=2068506958&scheme=https
-#EXTINF:-1, 10 канал
+#EXTINF:-1 tvg-name="10 канал" group-title="Телеканалы",10 канал
 https://bl.rutube.ru/livestream/c9e26bf5c003fd8d477200065ca1a05f/index.m3u8?s=LNrBiZqTlgnbikNxV-9ulQ&e=2068506963&scheme=https
-#EXTINF:-1, 360
+#EXTINF:-1 tvg-id="2265" tvg-name="360" group-title="Телеканалы",360
 https://bl.rutube.ru/livestream/d14fcf59cb7d07a26c48ebc8c6565f44/index.m3u8?s=quHaLjLTQiB3zaH-AlSQ5A&e=2068506962&scheme=https
-#EXTINF:-1, Первый канал HD
+#EXTINF:-1 tvg-id="146" tvg-name="Первый канал" group-title="Первый мультиплекс (РТРС-1)",Первый канал HD
 https://bl.rutube.ru/livestream/c58f502c7bb34a8fcdd976b221fca292/index.m3u8?s=lmXcLXuG86134J5a9fUHtQ&e=2068506931&scheme=https
-#EXTINF:-1, НТВ HD
+#EXTINF:-1 tvg-name="НТВ" group-title="Первый мультиплекс (РТРС-1)",НТВ HD
 https://bl.rutube.ru/livestream/c37cd74192c6bc3d6cd6077c0c4fd686/index.m3u8?s=E5FB6LF5iVXO3ikWKlv1NA&e=2068506931&scheme=https
-#EXTINF:-1, ТНТ HD
+#EXTINF:-1 tvg-name="ТНТ" group-title="Второй мультиплекс (РТРС-2)",ТНТ HD
 https://bl.rutube.ru/livestream/546602986e6a424d74d594876ddb3f04/index.m3u8?s=LTSrgtYBpE8r2aujUZ81LA&e=2068506931&scheme=https
-#EXTINF:-1, ТНТ4 HD
+#EXTINF:-1 tvg-name="ТНТ4 HD" group-title="Телеканалы",ТНТ4 HD
 https://bl.rutube.ru/livestream/c801a7087e29a097192d74c270fbc6c1/index.m3u8?s=gSfZr_b1wBE3aUNAD0mlXA&e=2068506932&scheme=https
-#EXTINF:-1, ТВ3 HD
+#EXTINF:-1 tvg-name="ТВ-3" group-title="Второй мультиплекс (РТРС-2)",ТВ3 HD
 https://bl.rutube.ru/livestream/7bf12d9c050f9a7ef3728db5730432ae/index.m3u8?s=riJeRs_4YONNBUd3HTYJXg&e=2068506933&scheme=https
-#EXTINF:-1, 2x2
+#EXTINF:-1 tvg-name="2x2" group-title="Телеканалы",2x2
 https://bl.rutube.ru/livestream/392b4686b770bae2da6bf5ac4574add5/index.m3u8?s=hwyoufQp4n4DEevoTh79AQ&e=2068506934&scheme=https
-#EXTINF:-1, Суббота
+#EXTINF:-1 tvg-name="Суббота" group-title="Телеканалы",Суббота
 https://bl.rutube.ru/livestream/310744c10a5809da38aa445c952976da/index.m3u8?s=K5qwXPiww7h9EIwodnvrAQ&e=2068506935&scheme=https
-#EXTINF:-1, Ю
+#EXTINF:-1 tvg-name="Ю" group-title="Телеканалы",Ю
 https://bl.rutube.ru/livestream/5c9327074e25ca86f3111d4085cbbb65/index.m3u8?s=ypW_sLxBx1nKFR48-gn7hQ&e=2068506935&scheme=https
-#EXTINF:-1, Среда
+#EXTINF:-1 tvg-name="Среда" group-title="Телеканалы",Среда
 https://bl.rutube.ru/livestream/5fa486bf465c8735fff9f41b372610cc/index.m3u8?s=8zIg7oO2dj7zRXDm3VJ-mw&e=2068506945&scheme=https
-#EXTINF:-1, Жар Птица
+#EXTINF:-1 tvg-name="Жар Птица" group-title="Телеканалы",Жар Птица
 https://bl.rutube.ru/livestream/c93be53cba8a4ba6ac311b395a00f4d5/index.m3u8?s=7ThCakzq-BJlrMuNMSau4g&e=2068506965&scheme=https
-#EXTINF:-1, МузТВ
+#EXTINF:-1 tvg-name="МУЗ-ТВ" group-title="Второй мультиплекс (РТРС-2)",МУЗ-ТВ
 https://bl.rutube.ru/livestream/df6fe73494a26f74da51573fd97b9baa/index.m3u8?s=JTAW4J-xV9JKMAUbJmgmIQ&e=2068506966&scheme=https
-#EXTINF:-1, Восток ТВ
+#EXTINF:-1 tvg-name="Восток ТВ" group-title="Телеканалы",Восток ТВ
 https://bl.rutube.ru/livestream/da7bcfc0c302a2f0a46f030c9ef8a02b/index.m3u8?s=xwRJRZoQeAKYsMQ9OdPeIA&e=2068506967&scheme=https
-#EXTINF:-1, Матч ТВ HD
+#EXTINF:-1 tvg-name="Матч ТВ" group-title="Первый мультиплекс (РТРС-1)",Матч ТВ HD
 https://bl.rutube.ru/livestream/11bbbec75a2ceb8cf446ad16813c6eec/index.m3u8?s=dmUCxHrffLTIK5v-vKhGXQ&e=2068506970&scheme=https
-#EXTINF:-1, Sports Grid
+#EXTINF:-1 tvg-name="Sports Grid" group-title="Телеканалы",Sports Grid
 https://bl.rutube.ru/livestream/7a485ef5da9fe50ba939f36ca3e6ed96/index.m3u8?s=i6xs6ojHVGDRxHja9a2FQA&e=2068506970&scheme=https
-#EXTINF:-1, NBA TV
+#EXTINF:-1 tvg-name="NBA TV" group-title="Телеканалы",NBA TV
 https://bl.rutube.ru/livestream/d01241e9fd2bc2d65dbf6d74cca02f89/index.m3u8?s=U6zVHNgxAWO07Ezo-cgV4Q&e=2068506971&scheme=https
-#EXTINF:-1, TVS Classic Sports
+#EXTINF:-1 tvg-name="TVS Classic Sports" group-title="Телеканалы",TVS Classic Sports
 https://bl.rutube.ru/livestream/9f28acb802549828d3ce7fbd8ecc17d3/index.m3u8?s=HkbXjbnEsHETTkb5Srd_2Q&e=2068506971&scheme=https
-#EXTINF:-1, beIN SPORTS XTRA Español
+#EXTINF:-1 tvg-name="beIN SPORTS XTRA Español" group-title="Телеканалы",beIN SPORTS XTRA Español
 https://bl.rutube.ru/livestream/05550e441b09aeec53e60de66b6c47bf/index.m3u8?s=Sdy8lXNmJ0j9gYwwP_PG6A&e=2068506971&scheme=https
-#EXTINF:-1, Sky Sports Tennis
+#EXTINF:-1 tvg-name="Sky Sports Tennis" group-title="Телеканалы",Sky Sports Tennis
 https://bl.rutube.ru/livestream/5f5dc9d64b43dfc740e92f2bdf2b0d38/index.m3u8?s=pDqQ6Dvzh-8Ec9Ml2MCyXg&e=2068506972&scheme=https
-#EXTINF:-1, Sky Sports F1
+#EXTINF:-1 tvg-name="Sky Sports F1" group-title="Телеканалы",Sky Sports F1
 https://bl.rutube.ru/livestream/e5df6984021365a58b3ba22dab2f670a/index.m3u8?s=QW9xj19ZlfgPVb0ObGhHxg&e=2068506972&scheme=https
-#EXTINF:-1, Sky Sports Premier League
+#EXTINF:-1 tvg-name="Sky Sports Premier League" group-title="Телеканалы",Sky Sports Premier League
 https://bl.rutube.ru/livestream/e5bacac3b8e730791d4cab20ae81cd8f/index.m3u8?s=f6Lrx1cPYx2SfJ9mbaHnbw&e=2068506972&scheme=https
-#EXTINF:-1, Sky Sports Main Event
+#EXTINF:-1 tvg-name="Sky Sports Main Event" group-title="Телеканалы",Sky Sports Main Event
 https://bl.rutube.ru/livestream/9585fdae92af45f113fdcc9f6c4ba442/index.m3u8?s=KgZtccuHrnaljGaN7cmUwA&e=2068506973&scheme=https
-#EXTINF:-1, Волейбол
+#EXTINF:-1 tvg-name="Волейбол" group-title="Телеканалы",Волейбол
 https://bl.rutube.ru/livestream/cc1b56aa4955a144f324ad58998513bb/index.m3u8?s=KT4dmbULKlvq1iV4IUVHSg&e=2068506973&scheme=https
-#EXTINF:-1, Тайна
+#EXTINF:-1 tvg-name="Тайна" group-title="Телеканалы",Тайна
 https://bl.rutube.ru/livestream/a11c890a0ec0730ad33bdaaf2d244e1a/index.m3u8?s=IjZLkcpj2TbbBby8FXaA-A&e=2068506937&scheme=https
-#EXTINF:-1, Киножелезо
+#EXTINF:-1 tvg-name="Киножелезо" group-title="Телеканалы",Киножелезо
 https://bl.rutube.ru/livestream/4965b7b928c4a143d708ab424be01d37/index.m3u8?s=cVavn32017xNTlfy6hl-pw&e=2068506937&scheme=https
-#EXTINF:-1, Кинолаффка
+#EXTINF:-1 tvg-name="Кинолаффка" group-title="Телеканалы",Кинолаффка
 https://bl.rutube.ru/livestream/3b7d1499da9396462bfd17282d758d30/index.m3u8?s=xZI2TE-tbt1tUQAOd5Skkw&e=2068506937&scheme=https
-#EXTINF:-1, Кино и Жизнь
+#EXTINF:-1 tvg-name="Кино и Жизнь" group-title="Телеканалы",Кино и Жизнь
 https://bl.rutube.ru/livestream/09e51eefa939595a4ac67182c6fb3e4e/index.m3u8?s=ML11UHe_6_ttGKfJv42jNg&e=2068506963&scheme=https
-#EXTINF:-1, Большая азия
+#EXTINF:-1 tvg-name="Большая азия" group-title="Телеканалы",Большая азия
 https://bl.rutube.ru/livestream/495ab964b755baa2c9fc7481a2e40f7d/index.m3u8?s=nzkWYIxTzLiM0tQ2DC9S5Q&e=2068506935&scheme=https
-#EXTINF:-1, Охотник и рыболов
+#EXTINF:-1 tvg-name="Охотник и рыболов" group-title="Телеканалы",Охотник и рыболов
 https://bl.rutube.ru/livestream/1da5d92af8c55b16241f1eb12a27f00c/index.m3u8?s=Kmb5U8Od5In6YypbGhahIg&e=2068506936&scheme=https
-#EXTINF:-1, Загородный International
+#EXTINF:-1 tvg-name="Загородный International" group-title="Телеканалы",Загородный International
 https://bl.rutube.ru/livestream/406973c72e9d0449feef05ef7811ad01/index.m3u8?s=bfA9fwhxngtkDUUGRQDgyQ&e=2068506936&scheme=https
-#EXTINF:-1, RU.TV
+#EXTINF:-1 tvg-name="RU.TV" group-title="Телеканалы",RU.TV
 https://bl.rutube.ru/livestream/b1eb8e90d7e636677b3eb73b4fcbb717/index.m3u8?s=z8iI3jVMag-witLRIH5zVg&e=2068506966&scheme=https
-#EXTINF:-1, MIXM
+#EXTINF:-1 tvg-name="MIXM" group-title="Телеканалы",MIXM
 https://bl.rutube.ru/livestream/88eba514854a55d87a4b66b66b1977e7/index.m3u8?s=627TjzA4VCXicgJ7x1Zncg&e=2068506966&scheme=https
-#EXTINF:-1, ММТВ
+#EXTINF:-1 tvg-name="ММТВ" group-title="Телеканалы",ММТВ
 https://bl.rutube.ru/livestream/965a025e4ebbaf0957415f80c6de8534/index.m3u8?s=wSeIJIsBx3y-tmApWp-xqw&e=2068506967&scheme=https
-#EXTINF:-1, NOW: Rock
+#EXTINF:-1 tvg-name="NOW: Rock" group-title="Телеканалы мира онлайн - кино и музыка",NOW: Rock
 https://bl.rutube.ru/livestream/047ba54d846ee185b4209a797a2ae138/index.m3u8?s=cWldV1U46VVAFfLSRNKB2w&e=2068506967&scheme=https
-#EXTINF:-1, Илли ТВ
+#EXTINF:-1 tvg-name="Илли ТВ" group-title="Телеканалы",Илли ТВ
 https://bl.rutube.ru/livestream/eda2da42eea89951e4135141a30915f7/index.m3u8?s=UKvGFq1X35957nFifIojhg&e=2068506967&scheme=https
-#EXTINF:-1, МузСоюз
+#EXTINF:-1 tvg-name="МузСоюз" group-title="Телеканалы",МузСоюз
 https://bl.rutube.ru/livestream/d1dff14680d4c84e27908983375f7e89/index.m3u8?s=MR-idByAIA2YJdMGxAabNg&e=2068506968&scheme=https
-#EXTINF:-1, Deluxe Dance
+#EXTINF:-1 tvg-name="Deluxe Dance" group-title="Телеканалы",Deluxe Dance
 https://bl.rutube.ru/livestream/47fdffd6ab82bbab0a19039d7018839f/index.m3u8?s=5iVKech65NpuxgeUevT0Hg&e=2068506968&scheme=https
-#EXTINF:-1, Record Супердискотека 90х
+#EXTINF:-1 tvg-name="Record Супердискотека 90х" group-title="Телеканалы",Record Супердискотека 90х
 https://bl.rutube.ru/livestream/351f0e84a7db69a73658bbf61debcf62/index.m3u8?s=8xQFTehgXrRnDYtfPmjN4g&e=2068506968&scheme=https
-#EXTINF:-1, Record Russian Hits
+#EXTINF:-1 tvg-name="Record Russian Hits" group-title="Телеканалы",Record Russian Hits
 https://bl.rutube.ru/livestream/b5f4e1d43e11888455a0a66f0872e77b/index.m3u8?s=4gNG-CS7_ubrGsS3GMGpIg&e=2068506969&scheme=https
-#EXTINF:-1, Record Megamix
+#EXTINF:-1 tvg-name="Record Megamix" group-title="Телеканалы",Record Megamix
 https://bl.rutube.ru/livestream/60b73481dcc9880850f22690142c8d17/index.m3u8?s=A6TrQmZyPv2n8X6TnDy-AA&e=2068506969&scheme=https
-#EXTINF:-1, Record Trance
+#EXTINF:-1 tvg-name="Record Trance" group-title="Телеканалы",Record Trance
 https://bl.rutube.ru/livestream/26aeb9043f519687846255556ee891aa/index.m3u8?s=vpFz3v_5Gi71_uh6ZlXhOQ&e=2068506969&scheme=https
-#EXTINF:-1, VIVA Russia HD
+#EXTINF:-1 tvg-name="VIVA Russia HD" group-title="Телеканалы",VIVA Russia HD
 https://bl.rutube.ru/livestream/f712ae5ff3db23ec09b3674133d44daa/index.m3u8?s=huO81WRGvesnVMCCPmNTRQ&e=2068506970&scheme=https
-#EXTINF:-1, Буряад ТВ
+#EXTINF:-1 tvg-name="Буряад ТВ" group-title="Телеканалы",Буряад ТВ
 https://bl.rutube.ru/livestream/55fec7f2c11f4decc66568fca39f26b2/index.m3u8?s=rrG_mWN-kLhThUU4lhDUZA&e=2068506938&scheme=https
-#EXTINF:-1, GLN24-Геленджик
+#EXTINF:-1 tvg-name="GLN24-Геленджик" group-title="Телеканалы",GLN24-Геленджик
 https://bl.rutube.ru/livestream/64ab8f32ecf1e2f582110165bf55b60a/index.m3u8?s=W0p7J9Gc8WMfTTJS16wx_g&e=2068506938&scheme=https
-#EXTINF:-1, ОТС HD
+#EXTINF:-1 tvg-name="ОТС HD" group-title="Телеканалы",ОТС HD
 https://bl.rutube.ru/livestream/39c5bfe012402990e6402eded8bdc761/index.m3u8?s=20-tvVnScAMAY71ynfbDfA&e=2068506939&scheme=https
-#EXTINF:-1, Сангат
+#EXTINF:-1 tvg-name="Сангат" group-title="Телеканалы",Сангат
 https://bl.rutube.ru/livestream/dce1080977de5e89dcbd1dd24d014b4e/index.m3u8?s=VfcvAXG9j613HOCQ7F-ncQ&e=2068506939&scheme=https
-#EXTINF:-1, 25 Регион
+#EXTINF:-1 tvg-name="25 Регион" group-title="Телеканалы",25 Регион
 https://bl.rutube.ru/livestream/c3a00280a36a173641f422a7bf832c4f/index.m3u8?s=P4aU-sdpKnrYRRW-UTFjpQ&e=2068506939&scheme=https
-#EXTINF:-1, Сургут 86 FHD
+#EXTINF:-1 tvg-name="Сургут 86 FHD" group-title="Телеканалы",Сургут 86 FHD
 https://bl.rutube.ru/livestream/813dc0c5a944559e7e52b840d09a84f6/index.m3u8?s=fY8J6hEwCMguqGa8PY_DEQ&e=2068506940&scheme=https
-#EXTINF:-1, Сургут 1 FHD
+#EXTINF:-1 tvg-name="Сургут 1 FHD" group-title="Телеканалы",Сургут 1 FHD
 https://bl.rutube.ru/livestream/7a35d5186515db85144d86900ebe1daf/index.m3u8?s=7RKmnionIRieWaR0sTk0Hw&e=2068506940&scheme=https
-#EXTINF:-1, Барс
+#EXTINF:-1 tvg-name="Барс" group-title="Телеканалы",Барс
 https://bl.rutube.ru/livestream/f79ff24ad16cf5f5eb52994647596d13/index.m3u8?s=9AK9N9MmA7SZGu07xOfVPQ&e=2068506940&scheme=https
-#EXTINF:-1, Первоуральск ТВ
+#EXTINF:-1 tvg-name="Первоуральск ТВ" group-title="Телеканалы",Первоуральск ТВ
 https://bl.rutube.ru/livestream/59e0373a9aa587e06aeaf9009f86ded1/index.m3u8?s=i57ALNooGhZkBKMqVFPuNw&e=2068506941&scheme=https
-#EXTINF:-1, 4 канал
+#EXTINF:-1 tvg-name="4 канал" group-title="Телеканалы",4 канал
 https://bl.rutube.ru/livestream/c6f66b644424c117f41e48062719ceed/index.m3u8?s=yRwnm8q3D10B3aelK-sCWA&e=2068506941&scheme=https
-#EXTINF:-1, БелРос
+#EXTINF:-1 tvg-name="БелРос" group-title="Телеканалы",БелРос
 https://bl.rutube.ru/livestream/46c03b7f1a7255326900f4a60a9b44e0/index.m3u8?s=kQKFCnPyqy2Nsd8YJddpFA&e=2068506942&scheme=https
-#EXTINF:-1, Таврия
+#EXTINF:-1 tvg-name="Таврия" group-title="Телеканалы",Таврия
 https://bl.rutube.ru/livestream/c5a272dc23ad505667bc2b54f98a3241/index.m3u8?s=ACKUOrygMpQo8a-UWzSq5w&e=2068506943&scheme=https
-#EXTINF:-1, Ника ТВ
+#EXTINF:-1 tvg-name="Ника ТВ" group-title="Телеканалы",Ника ТВ
 https://bl.rutube.ru/livestream/37d722b7752cd193a3f94d71cc9d60f5/index.m3u8?s=Rjhrb3UwE43id3gB2OCdbg&e=2068506944&scheme=https
-#EXTINF:-1, UTV
+#EXTINF:-1 tvg-name="UTV" group-title="Телеканалы",UTV
 https://bl.rutube.ru/livestream/673b559e08f8b99d65a4e8fbbceb911b/index.m3u8?s=ZH8G3y4cctRxtocfUgyFdA&e=2068506945&scheme=https
-#EXTINF:-1, Волга
+#EXTINF:-1 tvg-name="Волга" group-title="Телеканалы",Волга
 https://bl.rutube.ru/livestream/bed2dcda74004e4e9a61966d2848c027/index.m3u8?s=OL-y5S9Uur2e_Q5NMFtT2w&e=2068506946&scheme=https
-#EXTINF:-1, ЛТВ
+#EXTINF:-1 tvg-name="ЛТВ" group-title="Телеканалы",ЛТВ
 https://bl.rutube.ru/livestream/067561b5754d0b7844762fa92939716b/index.m3u8?s=Jcgx09XL6lQQZEFeh8KC0A&e=2068506946&scheme=https
-#EXTINF:-1, Волга 24
+#EXTINF:-1 tvg-name="Волга 24" group-title="Телеканалы",Волга 24
 https://bl.rutube.ru/livestream/e30732c0045af997cb7312822534522f/index.m3u8?s=_7UkYU5qiM1_bzRvs98rdQ&e=2068506946&scheme=https
-#EXTINF:-1, Башкортостан 24
+#EXTINF:-1 tvg-name="Башкортостан 24" group-title="Телеканалы",Башкортостан 24
 https://bl.rutube.ru/livestream/cf7e6ad2c24ce743b5b60478c176037b/index.m3u8?s=us60bfvgc-Nmso1sVWL-aA&e=2068506947&scheme=https
-#EXTINF:-1, Абакан 24
+#EXTINF:-1 tvg-name="Абакан 24" group-title="Телеканалы",Абакан 24
 https://bl.rutube.ru/livestream/7c5ae60686a94e04691f6917e1dec066/index.m3u8?s=Z1pmg2EDJRG5_fJnrEA3Vg&e=2068506947&scheme=https
-#EXTINF:-1, Кубань 24
+#EXTINF:-1 tvg-name="Кубань 24" group-title="Телеканалы",Кубань 24
 https://bl.rutube.ru/livestream/cb2f1d99b88c9b4d38df05cd7fa0a6c2/index.m3u8?s=cWjDGKXikJfhg8j6Xq0BQw&e=2068506947&scheme=https
-#EXTINF:-1, Саратов 24
+#EXTINF:-1 tvg-name="Саратов 24" group-title="Телеканалы",Саратов 24
 https://bl.rutube.ru/livestream/e07fffc5eb21f98a5ade09e825d7095a/index.m3u8?s=_T4kalU2Bai06k_3NU7CFg&e=2068506948&scheme=https
-#EXTINF:-1, Ариг Ус 24
+#EXTINF:-1 tvg-name="Ариг Ус 24" group-title="Телеканалы",Ариг Ус 24
 https://bl.rutube.ru/livestream/5d9273a93631b87a3bbdc883bb3a58cb/index.m3u8?s=40vjOfUXB_ju-bCmow3wMQ&e=2068506949&scheme=https
-#EXTINF:-1, ДОН 24
+#EXTINF:-1 tvg-name="ДОН 24" group-title="Телеканалы",ДОН 24
 https://bl.rutube.ru/livestream/72ced5d533f940251e5e4bd5d61f6bc9/index.m3u8?s=wTe0fhjopVDZq4bf5u9s-A&e=2068506949&scheme=https
-#EXTINF:-1, Мордовия 24
+#EXTINF:-1 tvg-name="Мордовия 24" group-title="Телеканалы",Мордовия 24
 https://bl.rutube.ru/livestream/04106d67b7888cda01b0ffa5e7ef757b/index.m3u8?s=t0aP1pubjwG_czfCZJzxlQ&e=2068506949&scheme=https
-#EXTINF:-1, АРИС 24
+#EXTINF:-1 tvg-name="АРИС 24" group-title="Телеканалы",АРИС 24
 https://bl.rutube.ru/livestream/9b482361d6c845f7d70eafc98356d8bf/index.m3u8?s=NNiigeRnzGSb0ta10gINyg&e=2068506949&scheme=https
-#EXTINF:-1, БСТ
+#EXTINF:-1 tvg-name="БСТ" group-title="Телеканалы",БСТ
 https://bl.rutube.ru/livestream/2804b7fd1507420dda2e2c81b2b72c8e/index.m3u8?s=2Pvy7bDJjOLbg1maRW3bGA&e=2068506950&scheme=https
-#EXTINF:-1, Катунь 24
+#EXTINF:-1 tvg-name="Катунь 24" group-title="Телеканалы",Катунь 24
 https://bl.rutube.ru/livestream/5e56eba895d87d84749e756720a71e73/index.m3u8?s=iihU7-vaEftHxWuvkHMiZw&e=2068506950&scheme=https
-#EXTINF:-1, Рифей-ТВ
+#EXTINF:-1 tvg-name="Рифей-ТВ" group-title="Телеканалы",Рифей-ТВ
 https://bl.rutube.ru/livestream/57486bf8e1c01d16a5a939c463867fab/index.m3u8?s=klrPR4CAx9Iai25kN8Z09g&e=2068506952&scheme=https
-#EXTINF:-1, КРИК-ТВ
+#EXTINF:-1 tvg-name="КРИК-ТВ" group-title="Телеканалы",КРИК-ТВ
 https://bl.rutube.ru/livestream/f372aa2aff09518d050ecdf70956012c/index.m3u8?s=kDVSNjotPs2u7e4WcRmGLw&e=2068506952&scheme=https
-#EXTINF:-1, Своё ТВ FHD
+#EXTINF:-1 tvg-name="Своё ТВ FHD" group-title="Телеканалы",Своё ТВ FHD
 https://bl.rutube.ru/livestream/1932f750f00f3a742a1d90c62d0076ad/index.m3u8?s=0IeAHBntQmh26cwxI1vSrw&e=2068506953&scheme=https
-#EXTINF:-1, Продвижение
+#EXTINF:-1 tvg-name="Продвижение" group-title="Телеканалы",Продвижение
 https://bl.rutube.ru/livestream/ff5c11c9a51750f5d33427762abc315c/index.m3u8?s=gFfn2Zp4BM0EBETLXj3ZmA&e=2068506953&scheme=https
-#EXTINF:-1, Импульс Севера
+#EXTINF:-1 tvg-name="Импульс Севера" group-title="Телеканалы",Импульс Севера
 https://bl.rutube.ru/livestream/342a3e4f3c9bb0d7830a52af0d956c44/index.m3u8?s=jbLsfoxTMYSjZxZ0EuWl6Q&e=2068506953&scheme=https
-#EXTINF:-1, САМОТЛОР
+#EXTINF:-1 tvg-name="САМОТЛОР" group-title="Телеканалы",САМОТЛОР
 https://bl.rutube.ru/livestream/695f0fdefc96b6f7f2b4a311b71f596b/index.m3u8?s=pgjKxYsM7EBiEASUTTn0fA&e=2068506954&scheme=https
-#EXTINF:-1, НТС Иркутск
+#EXTINF:-1 tvg-name="НТС Иркутск" group-title="Телеканалы",НТС Иркутск
 https://bl.rutube.ru/livestream/b4c501ea4129408a3c195f9ae4359c0e/index.m3u8?s=Ni93prUgokkhWUHaZvdZNg&e=2068506954&scheme=https
-#EXTINF:-1, Евразия
+#EXTINF:-1 tvg-name="Евразия" group-title="Телеканалы",Евразия
 https://bl.rutube.ru/livestream/ce34005d3db841e15eecb7e31749adf6/index.m3u8?s=3akJEkanz-U5fvTWzsTqUw&e=2068506955&scheme=https
-#EXTINF:-1, МТВ Волгоград
+#EXTINF:-1 tvg-name="МТВ Волгоград" group-title="Телеканалы",МТВ Волгоград
 https://bl.rutube.ru/livestream/1839496ed8242ed47f5c540e25d4ba3f/index.m3u8?s=FJLErVuiYbfw6IUn_-ryUg&e=2068506956&scheme=https
-#EXTINF:-1, Енисей +4
+#EXTINF:-1 tvg-name="Енисей +4" group-title="Телеканалы",Енисей +4
 https://bl.rutube.ru/livestream/5835cd10c04311e400f2ed19b1b2fe8b/index.m3u8?s=CbDfspRbVf113fWS6Gjvzg&e=2068506956&scheme=https
-#EXTINF:-1, Юрган
+#EXTINF:-1 tvg-name="Юрган" group-title="Телеканалы",Юрган
 https://bl.rutube.ru/livestream/601ca3d760de90391c18772e43d5190e/index.m3u8?s=zxUoqLRoZxpyw5-hyHxewA&e=2068506956&scheme=https
-#EXTINF:-1, Омск ТВ
+#EXTINF:-1 tvg-name="Омск ТВ" group-title="Телеканалы",Омск ТВ
 https://bl.rutube.ru/livestream/9927a61345cbec5aac6558f6c5454d61/index.m3u8?s=9dIdlqaQYWPAE65FWDpBfA&e=2068506958&scheme=https
-#EXTINF:-1, ТБВ
+#EXTINF:-1 tvg-name="ТБВ" group-title="Телеканалы",ТБВ
 https://bl.rutube.ru/livestream/68b2533a29f7de163842baf1b9dfc17e/index.m3u8?s=BXZIDi_Ik0AAarQrLg1uxQ&e=2068506958&scheme=https
-#EXTINF:-1, Мир Белогорья
+#EXTINF:-1 tvg-name="Мир Белогорья" group-title="Телеканалы",Мир Белогорья
 https://bl.rutube.ru/livestream/31bd9a668e5dfe5feddb988c96c0998c/index.m3u8?s=2VnTlXtCWNGjuqe54eKaPg&e=2068506959&scheme=https
-#EXTINF:-1, Ямал-Медиа
+#EXTINF:-1 tvg-name="Ямал-Медиа" group-title="Телеканалы",Ямал-Медиа
 https://bl.rutube.ru/livestream/c0de1d61969a7fbdf6c68ca0b8a67769/index.m3u8?s=K7T_EANSMWzi8ynQcGKLcg&e=2068506959&scheme=https
-#EXTINF:-1, БТВ
+#EXTINF:-1 tvg-name="БТВ" group-title="Телеканалы",БТВ
 https://bl.rutube.ru/livestream/671239d68ada3000a154a68efa0c7813/index.m3u8?s=6UA2ut2U6ACdw4uPwkCkaw&e=2068506959&scheme=https
-#EXTINF:-1, UNIVER TV
+#EXTINF:-1 tvg-name="UNIVER TV" group-title="Телеканалы",UNIVER TV
 https://bl.rutube.ru/livestream/2372550cb9fd4b970a274ebec6c71839/index.m3u8?s=DXEIqMq6He7Hw3HdpYdDTQ&e=2068506960&scheme=https
-#EXTINF:-1, Магас
+#EXTINF:-1 tvg-name="Магас" group-title="Телеканалы",Магас
 https://bl.rutube.ru/livestream/15bb032337c7425983757d211713eb7d/index.m3u8?s=usYcG68wztfPI9913hX07A&e=2068506960&scheme=https
-#EXTINF:-1, Первый Ярославский
+#EXTINF:-1 tvg-name="Первый Ярославский" group-title="Телеканалы",Первый Ярославский
 https://bl.rutube.ru/livestream/b7d879feefadde4e04e516dde89012cd/index.m3u8?s=VQcjSQESIj1rD68Kj54MNA&e=2068506960&scheme=https
-#EXTINF:-1, Первый Тульский
+#EXTINF:-1 tvg-name="Первый Тульский" group-title="Телеканалы",Первый Тульский
 https://bl.rutube.ru/livestream/8bdbf725a882473a1e558d00a882cf03/index.m3u8?s=pcjielrH6M1ao9LlihheYA&e=2068506961&scheme=https
-#EXTINF:-1, Истоки Орёл
+#EXTINF:-1 tvg-name="Истоки Орёл" group-title="Телеканалы",Истоки Орёл
 https://bl.rutube.ru/livestream/503a8ac5ca6d738f05a147764f70215b/index.m3u8?s=lJsRclRwjyB_etOvBR5PZw&e=2068506961&scheme=https
-#EXTINF:-1, ТВ-ИН Магнитогорск
+#EXTINF:-1 tvg-name="ТВ-ИН Магнитогорск" group-title="Телеканалы",ТВ-ИН Магнитогорск
 https://bl.rutube.ru/livestream/9feaea12e270b1e23f7c7e65da5652af/index.m3u8?s=KxqRF6w_RNJLrB8pw0m6RA&e=2068506962&scheme=https
-#EXTINF:-1, Rutube TV
+#EXTINF:-1 tvg-name="Rutube TV" group-title="Телеканалы",Rutube TV
 https://bl.rutube.ru/livestream/9ae8e8a6dc58bdad66190475f9872ecd/index.m3u8?s=BB38oulqX9y3TSbPkK6_Kw&e=2068506930&scheme=https
-#EXTINF:-1, HHQ
+#EXTINF:-1 tvg-name="HHQ" group-title="Телеканалы",HHQ
 https://bl.rutube.ru/livestream/2d7fa51716500fba52586d594201777f/index.m3u8?s=1axCFUwM5UmTNQNRotjmDg&e=2068506938&scheme=https
-#EXTINF:-1, Спас
+#EXTINF:-1 tvg-name="СПАС" group-title="Второй мультиплекс (РТРС-2)",СПАС
 https://bl.rutube.ru/livestream/2bbfa9ebf9d79ade480d7281fcef1008/index.m3u8?s=Dh7uOoGZBCslhSfLLkxvAg&e=2068506963&scheme=https
-#EXTINF:-1, Резонанс ТВ
+#EXTINF:-1 tvg-name="Резонанс ТВ" group-title="Телеканалы",Резонанс ТВ
 https://bl.rutube.ru/livestream/e2d1a304d55b9a807ec5df1837859304/index.m3u8?s=1LOv8p19I6Xqi6tKnGA7aw&e=2068506964&scheme=https
-#EXTINF:-1, Смайлик ТВ
+#EXTINF:-1 tvg-name="Смайлик ТВ" group-title="Телеканалы",Смайлик ТВ
 https://bl.rutube.ru/livestream/2f052691c75d72b3ed7f3c33ea956a41/index.m3u8?s=QkuMcRYb3s5QP8UeGEtUGw&e=2068506964&scheme=https
-#EXTINF:-1, Солнце
+#EXTINF:-1 tvg-name="Солнце" group-title="Телеканалы",Солнце
 https://bl.rutube.ru/livestream/2dba20a8405e57935827cb5721c2b759/index.m3u8?s=4oilZ0DLjJD_Dbc3ruPV3w&e=2068506965&scheme=https
-#EXTINF:-1, Activa TV
+#EXTINF:-1 tvg-name="ActivaTV" group-title="Телеканалы мира онлайн - кино и музыка",ActivaTV
 https://bl.rutube.ru/livestream/8e9da41366fcb497aaeade579f0d715f/index.m3u8?s=R8hNC3yL0_zjp_QjCPOyTg&e=2068506965&scheme=https
+#EXTINF:-1 tvg-name="Россия 1" group-title="Первый мультиплекс (РТРС-1)",Россия 1
+https://rutube.ru/live/video/2742a3c42be661ea732705f80adb7bdd/
+#EXTINF:-1 tvg-name="Пятый канал" group-title="Первый мультиплекс (РТРС-1)",Пятый канал
+https://rutube.ru/live/video/b2b32a7d6f2323f3a113ff44b0404bf2/
+#EXTINF:-1 tvg-name="Россия К (Культура)" group-title="Первый мультиплекс (РТРС-1)",Россия К (Культура)
+https://rutube.ru/live/video/d0c0d69362edfbe706cb82d973439bb5/
+#EXTINF:-1 tvg-name="Россия 24" group-title="Первый мультиплекс (РТРС-1)",Россия 24
+https://rutube.ru/live/video/ad6ba2e9e587406b29978b861b7b7dd1/
+#EXTINF:-1 tvg-name="ОТР" group-title="Первый мультиплекс (РТРС-1)",ОТР
+https://rutube.ru/live/video/faa934385b83f9e8a92f5484defae5fa/
+#EXTINF:-1 tvg-name="ТВ Центр" group-title="Первый мультиплекс (РТРС-1)",ТВ Центр
+https://rutube.ru/live/video/7015ad3690d4ef70d75a6e26d0e58565/
+#EXTINF:-1 tvg-name="РЕН ТВ" group-title="Второй мультиплекс (РТРС-2)",РЕН ТВ
+https://rutube.ru/live/video/54395b96ad1a7b49966f46a6eee370a4/
+#EXTINF:-1 tvg-name="СТС" group-title="Второй мультиплекс (РТРС-2)",СТС
+https://rutube.ru/live/video/ffc110c6785e57f4c329179b555547b4/
+#EXTINF:-1 tvg-name="Домашний" group-title="Второй мультиплекс (РТРС-2)",Домашний
+https://rutube.ru/live/video/49848b06c0fe2dae124419ffce1a1bab/
+#EXTINF:-1 tvg-name="Пятница!" group-title="Второй мультиплекс (РТРС-2)",Пятница!
+https://rutube.ru/live/video/9f87a9a0cecbe773be6fddcbd93585ac/
+#EXTINF:-1 tvg-name="Звезда" group-title="Второй мультиплекс (РТРС-2)",Звезда
+https://rutube.ru/live/video/5ab908fccfac5bb43ef2b1e4182256b0/
+#EXTINF:-1 tvg-name="МИР ТВ" group-title="Второй мультиплекс (РТРС-2)",МИР ТВ
+https://rutube.ru/live/video/afef67d151b5a607dee1ef0aa299a52c/
+#EXTINF:-1 tvg-name="National Geographic" group-title="Телеканалы мира онлайн - Discovery",National Geographic
+https://rutube.ru/live/video/2619fc295c16585ef018041b0b90000/
+#EXTINF:-1 tvg-name="National Geographic Wild" group-title="Телеканалы мира онлайн - Discovery",National Geographic Wild
+https://rutube.ru/live/video/c11af26c0ab831ce6c37a4888056479b/
+#EXTINF:-1 tvg-name="Discovery Channel" group-title="Телеканалы мира онлайн - Discovery",Discovery Channel
+https://rutube.ru/live/video/6422d62f7e1f87bc3aec45b462cd89ea/
+#EXTINF:-1 tvg-name="TLC" group-title="Телеканалы мира онлайн - Discovery",TLC
+https://rutube.ru/live/video/7c3d1a4cc0b4dff1176aa2dbb0b90000/
+#EXTINF:-1 tvg-name="Animal Planet" group-title="Телеканалы мира онлайн - Discovery",Animal Planet
+https://rutube.ru/live/video/4004c8f6817b9ae1bd0d418905ae2b02/
+#EXTINF:-1 tvg-name="ID Xtra" group-title="Телеканалы мира онлайн - Discovery",ID Xtra
+https://rutube.ru/live/video/a91d58870b9a0d23b2309d020ac4b354/
+#EXTINF:-1 tvg-name="Travel Channel HD" group-title="Телеканалы мира онлайн - Discovery",Travel Channel HD
+https://rutube.ru/live/video/4196566bc9c3b7b854074ad1a9a2db36/
+#EXTINF:-1 tvg-name="FX" group-title="Телеканалы мира онлайн - FX и развлечения",FX
+https://rutube.ru/live/video/bcf8e82a331067e567f765d65ed52b21/
+#EXTINF:-1 tvg-name="FX Life" group-title="Телеканалы мира онлайн - FX и развлечения",FX Life
+https://rutube.ru/live/video/f27b804a6f805cb66ff83d4930bd17ff/
+#EXTINF:-1 tvg-name="Telemundo TV" group-title="Телеканалы мира онлайн - FX и развлечения",Telemundo TV
+https://rutube.ru/live/video/d080f8ee5c63ea2ba83bd6d2969d1e84/
+#EXTINF:-1 tvg-name="World Fashion Channel" group-title="Телеканалы мира онлайн - FX и развлечения",World Fashion Channel
+https://rutube.ru/live/video/ee6a3d5ba98066c2aaace3c428a3170c/
+#EXTINF:-1 tvg-name="Nickelodeon" group-title="Телеканалы мира онлайн - детские",Nickelodeon
+https://rutube.ru/live/video/e902c1a059034a1537430b2aa5aedece/
+#EXTINF:-1 tvg-name="Cartoon Network" group-title="Телеканалы мира онлайн - детские",Cartoon Network
+https://rutube.ru/live/video/d2119cfb95146b3983cf05c1fe35e66f/
+#EXTINF:-1 tvg-name="Moonbug Kids TV" group-title="Телеканалы мира онлайн - детские",Moonbug Kids TV
+https://rutube.ru/live/video/2b06a5c4c688fdc05014acb4cba83de0/
+#EXTINF:-1 tvg-name="Kartoon Channel" group-title="Телеканалы мира онлайн - детские",Kartoon Channel
+https://rutube.ru/live/video/38106c2840071d79284ead045e2a5858/
+#EXTINF:-1 tvg-name="Wasabi (аниме)" group-title="Телеканалы мира онлайн - детские",Wasabi (аниме)
+https://rutube.ru/live/video/ee3c34823d370bae91c0a7c1bd5b502c/
+#EXTINF:-1 tvg-name="Water Bear" group-title="Телеканалы мира онлайн - детские",Water Bear
+https://rutube.ru/live/video/8ceccbefd972496f7c2dd5a7acc476fc/
+#EXTINF:-1 tvg-name="Sony Cine" group-title="Телеканалы мира онлайн - кино и музыка",Sony Cine
+https://rutube.ru/live/video/053ac917a4334e240103ca55941f869f/
+#EXTINF:-1 tvg-name="ActivaTV" group-title="Телеканалы мира онлайн - кино и музыка",ActivaTV
+https://rutube.ru/live/video/8e9da41366fcb497aaeade579f0d715f/
+#EXTINF:-1 tvg-name="AKC.tv" group-title="Телеканалы мира онлайн - кино и музыка",AKC.tv
+https://rutube.ru/live/video/89e4d6310399df1d824f861e4b312b49/
+#EXTINF:-1 tvg-name="NOW: Rock" group-title="Телеканалы мира онлайн - кино и музыка",NOW: Rock
+https://rutube.ru/live/video/047ba54d846ee185b4209a797a2ae138/
+#EXTINF:-1 tvg-name="Classic Arts Showcase" group-title="Телеканалы мира онлайн - кино и музыка",Classic Arts Showcase
+https://rutube.ru/live/video/9e3983e7a21a86ad0b9475543d31ad2a/
+#EXTINF:-1 tvg-name="Kronehit TV" group-title="Телеканалы мира онлайн - кино и музыка",Kronehit TV
+https://rutube.ru/live/video/bc1b811349f526188c839d377913e16a/
+#EXTINF:-1 tvg-name="Sky Sports Cricket" group-title="Спорт (Live. Спортивные трансляции)",Sky Sports Cricket
+https://rutube.ru/live/video/7c13a51576b9ff2601f08f5d57dd5169/
