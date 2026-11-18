@@ -7,9 +7,9 @@ Phoenix Hub "Baryshnikov" — Shirt.uz Collector
 
 FULL BUILD
 
-DOWNLOAD : 40 workers
-PARSING  : 58 workers
-VALIDATE : 58 workers
+DOWNLOAD : 50 workers
+PARSING  : 60 workers
+VALIDATE : 70 workers
 
 VALIDATION:
     HEAD
@@ -18,19 +18,28 @@ VALIDATION:
 
 FFPROBE:
     Mandatory
-    Automatic download
-    Automatic extraction
-    Binary verification
+    Downloaded for this run only
+    Extracted into temporary run directory
+    Used exclusively for stream processing
+    Removed after all processing workers finish
 
 LOGGING:
-    SCALA / DREG — general
-    TITAN / DREG — extended
+    SCALA / DREG — all events
+    TITAN / DREG — all events + extended diagnostics
+    COMBINED — SCALA first, TITAN second
+
+DEDUPLICATION:
+    COMPLETELY DISABLED
+    No URL deduplication
+    No channel-name deduplication
+    No source deduplication
 
 OUTPUT:
     Main/donors_uz.m3u
     Main/stable_uz.m3u
     Shirt_uz/donors_uz.m3u
     Shirt_uz/stable_uz.m3u
+    UZ_data/ — copies of all four playlists
 """
 
 from __future__ import annotations
@@ -72,12 +81,14 @@ else:
     MAIN_DIR = ROOT_DIR / "Main"
 
 SHIRT_DIR = ROOT_DIR / "Shirt_uz"
+UZ_DATA_DIR = ROOT_DIR / "UZ_data"
 
 MAIN_LOG_DIR = MAIN_DIR / "logs"
 SHIRT_LOG_DIR = SHIRT_DIR / "logs"
 
 SCALA_LOG = MAIN_LOG_DIR / "SCALA_DREG.log"
 TITAN_LOG = MAIN_LOG_DIR / "TITAN_DREG.log"
+COMBINED_LOG = MAIN_LOG_DIR / "SCALA_DREG_TITAN.log"
 
 MAIN_DONORS = MAIN_DIR / "donors_uz.m3u"
 MAIN_STABLE = MAIN_DIR / "stable_uz.m3u"
@@ -85,19 +96,23 @@ MAIN_STABLE = MAIN_DIR / "stable_uz.m3u"
 SHIRT_DONORS = SHIRT_DIR / "donors_uz.m3u"
 SHIRT_STABLE = SHIRT_DIR / "stable_uz.m3u"
 
-TOOLS_DIR = ROOT_DIR / ".tools" / "ffmpeg"
-FFPROBE_DIR = TOOLS_DIR
+UZ_DONORS = UZ_DATA_DIR / "donors_uz.m3u"
+UZ_STABLE = UZ_DATA_DIR / "stable_uz.m3u"
+UZ_SHIRT_DONORS = UZ_DATA_DIR / "Shirt_donors_uz.m3u"
+UZ_SHIRT_STABLE = UZ_DATA_DIR / "Shirt_stable_uz.m3u"
 
-FFPROBE_ARCHIVE = TOOLS_DIR / "ffprobe_download"
+TOOLS_DIR = ROOT_DIR / ".tools" / "ffmpeg"
+
+# Уникальный временный каталог конкретного запуска.
+# Другие файлы в .tools/ffmpeg не затрагиваются.
+FFPROBE_RUN_DIR = TOOLS_DIR / RUN_ID if "RUN_ID" in globals() else None
 
 # Multithreading
-
-MAX_DOWNLOAD_WORKERS = 40
-MAX_PARSE_WORKERS = 58
-MAX_VALIDATION_WORKERS = 58
+MAX_DOWNLOAD_WORKERS = 50
+MAX_PARSE_WORKERS = 60
+MAX_VALIDATION_WORKERS = 70
 
 # HTTP
-
 REQUEST_TIMEOUT = 25
 HEAD_TIMEOUT = 12
 GET_TIMEOUT = 15
@@ -108,7 +123,6 @@ RETRY_DELAY = 1.5
 GET_RANGE = "bytes=0-4095"
 
 # FFprobe
-
 ENABLE_HEAD_CHECK = True
 ENABLE_GET_CHECK = True
 ENABLE_FFPROBE = True
@@ -123,11 +137,9 @@ FFPROBE_ANALYZE_DURATION = 5000000
 FFPROBE_PROBE_SIZE = 5000000
 
 # Validation policy
-
 KEEP_INCONCLUSIVE = True
 
 # Adult filter
-
 ADULT_MARKERS = [
     "18+",
     "xxx",
@@ -138,17 +150,20 @@ ADULT_MARKERS = [
 ]
 
 # GitHub release source for FFmpeg builds
-
 FFPROBE_RELEASE_API = (
     "https://api.github.com/repos/"
     "BtbN/FFmpeg-Builds/releases/latest"
 )
+
 
 # ============================================================
 # RUNTIME
 # ============================================================
 
 RUN_ID = uuid.uuid4().hex[:12].upper()
+
+FFPROBE_RUN_DIR = TOOLS_DIR / RUN_ID
+FFPROBE_ARCHIVE = FFPROBE_RUN_DIR / "ffprobe_download"
 
 STOP_EVENT = threading.Event()
 
@@ -157,6 +172,7 @@ HTTP_LOCAL = threading.local()
 LOG_LOCK = threading.RLock()
 COUNTER_LOCK = threading.Lock()
 SOURCE_ERRORS_LOCK = threading.Lock()
+PROCESS_LOCK = threading.RLock()
 
 DOWNLOAD_SEMAPHORE = threading.BoundedSemaphore(
     MAX_DOWNLOAD_WORKERS
@@ -171,6 +187,7 @@ FFPROBE_SEMAPHORE = threading.BoundedSemaphore(
 )
 
 SOURCE_ERRORS = []
+ACTIVE_PROCESSES = set()
 
 FFPROBE_BINARY = None
 
@@ -183,7 +200,6 @@ COUNTERS = {
 
     "donor_entries": 0,
     "adult_filtered": 0,
-    "duplicates_removed": 0,
 
     "checked": 0,
     "accepted": 0,
@@ -213,32 +229,23 @@ COUNTERS = {
 # ============================================================
 
 def counter_add(name, value=1):
-
     with COUNTER_LOCK:
         COUNTERS[name] = COUNTERS.get(name, 0) + value
 
 
 def counter_snapshot():
-
     with COUNTER_LOCK:
         return dict(COUNTERS)
 
 
 # ============================================================
-# DUAL LOGGING
+# LOGGING
 # ============================================================
 
 def initialize_logs():
 
-    MAIN_LOG_DIR.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-    SHIRT_LOG_DIR.mkdir(
-        parents=True,
-        exist_ok=True
-    )
+    MAIN_LOG_DIR.mkdir(parents=True, exist_ok=True)
+    SHIRT_LOG_DIR.mkdir(parents=True, exist_ok=True)
 
     header = (
         "\n"
@@ -250,12 +257,17 @@ def initialize_logs():
         + "\n"
         + f"START UTC: {datetime.now(timezone.utc).isoformat()}"
         + "\n"
+        + f"DOWNLOAD WORKERS: {MAX_DOWNLOAD_WORKERS}"
+        + "\n"
+        + f"PARSE WORKERS: {MAX_PARSE_WORKERS}"
+        + "\n"
+        + f"VALIDATION WORKERS: {MAX_VALIDATION_WORKERS}"
+        + "\n"
         + "=" * 90
         + "\n"
     )
 
     with LOG_LOCK:
-
         with SCALA_LOG.open("a", encoding="utf-8") as f:
             f.write(header)
 
@@ -263,7 +275,7 @@ def initialize_logs():
             f.write(header)
 
 
-def log(message, level="INFO", detail=True):
+def log(message, level="INFO", titan_only=False):
 
     timestamp = datetime.now().astimezone().isoformat(
         timespec="seconds"
@@ -278,46 +290,75 @@ def log(message, level="INFO", detail=True):
 
     with LOG_LOCK:
 
-        # Общий журнал: только основные события.
-        if not detail or level in (
-            "WARNING",
-            "ERROR",
-            "FATAL",
-        ):
-
-            with SCALA_LOG.open(
-                "a",
-                encoding="utf-8"
-            ) as f:
-
+        # SCALA — полный журнал событий.
+        if not titan_only:
+            with SCALA_LOG.open("a", encoding="utf-8") as f:
                 f.write(line + "\n")
 
-        # Расширенный журнал: все события.
-        with TITAN_LOG.open(
-            "a",
-            encoding="utf-8"
-        ) as f:
-
+        # TITAN — общий контекст и технические подробности.
+        with TITAN_LOG.open("a", encoding="utf-8") as f:
             f.write(line + "\n")
 
     print(line, flush=True)
 
 
 def scala(message, level="INFO"):
-
-    log(
-        message,
-        level=level,
-        detail=False
-    )
+    log(message, level=level)
 
 
 def titan(message, level="INFO"):
+    log(message, level=level)
 
-    log(
-        message,
-        level=level,
-        detail=True
+
+def titan_detail(message, level="DEBUG"):
+    log(message, level=level, titan_only=True)
+
+
+def write_combined_log():
+
+    MAIN_LOG_DIR.mkdir(parents=True, exist_ok=True)
+
+    temporary = COMBINED_LOG.with_name(
+        COMBINED_LOG.name + f".{RUN_ID}.tmp"
+    )
+
+    with LOG_LOCK:
+
+        with temporary.open("w", encoding="utf-8") as output:
+
+            output.write("=" * 90 + "\n")
+            output.write("SCALA_DREG — COMPLETE LOG\n")
+            output.write("=" * 90 + "\n\n")
+
+            if SCALA_LOG.exists():
+                with SCALA_LOG.open(
+                    "r",
+                    encoding="utf-8",
+                    errors="replace"
+                ) as source:
+                    shutil.copyfileobj(source, output)
+
+            output.write("\n\n")
+            output.write("=" * 90 + "\n")
+            output.write("TITAN_DREG — EXTENDED LOG\n")
+            output.write("=" * 90 + "\n\n")
+
+            if TITAN_LOG.exists():
+                with TITAN_LOG.open(
+                    "r",
+                    encoding="utf-8",
+                    errors="replace"
+                ) as source:
+                    shutil.copyfileobj(source, output)
+
+            output.flush()
+            os.fsync(output.fileno())
+
+        temporary.replace(COMBINED_LOG)
+
+    print(
+        f"COMBINED LOG WRITTEN: {COMBINED_LOG}",
+        flush=True
     )
 
 
@@ -327,31 +368,21 @@ def titan(message, level="INFO"):
 
 def get_session():
 
-    session = getattr(
-        HTTP_LOCAL,
-        "session",
-        None
-    )
+    session = getattr(HTTP_LOCAL, "session", None)
 
     if session is None:
 
         session = requests.Session()
 
         session.headers.update({
-
             "User-Agent": (
                 "Mozilla/5.0 "
                 "(Windows NT 10.0; Win64; x64) "
                 "AppleWebKit/537.36 "
                 "Chrome/122.0.0.0 Safari/537.36"
             ),
-
             "Accept": "*/*",
-
-            "Accept-Language": (
-                "ru-RU,ru;q=0.9,en;q=0.8"
-            ),
-
+            "Accept-Language": "ru-RU,ru;q=0.9,en;q=0.8",
         })
 
         HTTP_LOCAL.session = session
@@ -363,26 +394,15 @@ def get_session():
 # HTTP FETCH
 # ============================================================
 
-def fetch(
-    url,
-    is_html=False,
-    referer=None
-):
+def fetch(url, is_html=False, referer=None):
 
-    headers = {}
-
-    if is_html:
-
-        headers["Accept"] = (
-            "text/html,"
-            "application/xhtml+xml,"
-            "application/xml;q=0.9,"
-            "*/*;q=0.8"
+    headers = {
+        "Accept": (
+            "text/html,application/xhtml+xml,"
+            "application/xml;q=0.9,*/*;q=0.8"
+            if is_html else "*/*"
         )
-
-    else:
-
-        headers["Accept"] = "*/*"
+    }
 
     if referer:
         headers["Referer"] = referer
@@ -398,7 +418,7 @@ def fetch(
 
         try:
 
-            titan(
+            titan_detail(
                 f"DOWNLOAD START url={url} attempt={attempt + 1}"
             )
 
@@ -409,13 +429,16 @@ def fetch(
                 allow_redirects=True
             )
 
-            response.raise_for_status()
-
-            data = response.content
+            try:
+                response.raise_for_status()
+                data = response.content
+                status = response.status_code
+            finally:
+                response.close()
 
             titan(
                 f"DOWNLOAD OK url={url} bytes={len(data)} "
-                f"status={response.status_code}"
+                f"status={status}"
             )
 
             return data
@@ -434,12 +457,9 @@ def fetch(
                     level="WARNING"
                 )
 
-                time.sleep(
-                    RETRY_DELAY * (attempt + 1)
-                )
+                time.sleep(RETRY_DELAY * (attempt + 1))
 
         finally:
-
             DOWNLOAD_SEMAPHORE.release()
 
     raise RuntimeError(
@@ -454,19 +474,13 @@ def fetch(
 def get_platform_asset_pattern():
 
     system = platform.system().lower()
-
     machine = platform.machine().lower()
 
     if machine in ("x86_64", "amd64"):
-
         arch = "x64"
-
     elif machine in ("aarch64", "arm64"):
-
         arch = "arm64"
-
     else:
-
         raise RuntimeError(
             f"Unsupported architecture: {machine}"
         )
@@ -503,7 +517,7 @@ def download_ffprobe_archive():
     )
 
     scala(
-        f"FFPROBE: поиск сборки {platform_name}"
+        f"FFPROBE: поиск временной сборки {platform_name}"
     )
 
     titan(
@@ -519,12 +533,13 @@ def download_ffprobe_archive():
         }
     )
 
-    response.raise_for_status()
-
-    release = response.json()
+    try:
+        response.raise_for_status()
+        release = response.json()
+    finally:
+        response.close()
 
     assets = release.get("assets", [])
-
     matches = []
 
     for asset in assets:
@@ -546,12 +561,10 @@ def download_ffprobe_archive():
         matches.append(asset)
 
     if not matches:
-
         raise RuntimeError(
             f"FFprobe asset not found for {platform_name}"
         )
 
-    # Выбираем актуальную сборку нужной платформы.
     asset = max(
         matches,
         key=lambda item: item.get("size", 0)
@@ -562,17 +575,17 @@ def download_ffprobe_archive():
     if not download_url:
         raise RuntimeError("FFprobe download URL missing")
 
-    FFPROBE_DIR.mkdir(
+    FFPROBE_RUN_DIR.mkdir(
         parents=True,
         exist_ok=True
     )
 
-    archive_path = (
-        FFPROBE_ARCHIVE.with_suffix(extension)
+    archive_path = FFPROBE_RUN_DIR / (
+        "ffprobe_archive" + extension
     )
 
     titan(
-        f"FFPROBE DOWNLOAD: {asset['name']}"
+        f"FFPROBE TEMPORARY DOWNLOAD: {asset['name']}"
     )
 
     with get_session().get(
@@ -598,7 +611,7 @@ def download_ffprobe_archive():
                     file.write(chunk)
 
     titan(
-        f"FFPROBE ARCHIVE SAVED: {archive_path}"
+        f"FFPROBE TEMPORARY ARCHIVE: {archive_path}"
     )
 
     return archive_path, executable
@@ -610,7 +623,7 @@ def download_ffprobe_archive():
 
 def extract_ffprobe(archive_path, executable):
 
-    destination = FFPROBE_DIR / executable
+    destination = FFPROBE_RUN_DIR / executable
 
     extracted = False
 
@@ -627,13 +640,8 @@ def extract_ffprobe(archive_path, executable):
                     continue
 
                 with archive.open(member) as source:
-
                     with destination.open("wb") as target:
-
-                        shutil.copyfileobj(
-                            source,
-                            target
-                        )
+                        shutil.copyfileobj(source, target)
 
                 extracted = True
                 break
@@ -659,31 +667,28 @@ def extract_ffprobe(archive_path, executable):
                     continue
 
                 with source:
-
                     with destination.open("wb") as target:
-
-                        shutil.copyfileobj(
-                            source,
-                            target
-                        )
+                        shutil.copyfileobj(source, target)
 
                 extracted = True
                 break
 
     if not extracted:
-
         raise RuntimeError(
             "FFprobe executable not found inside archive"
         )
 
     if platform.system().lower() != "windows":
-
         destination.chmod(0o755)
 
     try:
         archive_path.unlink()
     except OSError:
         pass
+
+    titan(
+        f"FFPROBE EXTRACTED TEMPORARILY: {destination}"
+    )
 
     return destination
 
@@ -695,24 +700,17 @@ def extract_ffprobe(archive_path, executable):
 def verify_ffprobe(binary):
 
     result = subprocess.run(
-        [
-            str(binary),
-            "-version"
-        ],
-
+        [str(binary), "-version"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-
         text=True,
         encoding="utf-8",
         errors="replace",
-
         timeout=15,
         shell=False
     )
 
     if result.returncode != 0:
-
         raise RuntimeError(
             f"FFprobe verification failed: {result.stderr[:500]}"
         )
@@ -723,11 +721,9 @@ def verify_ffprobe(binary):
         else "FFprobe version unknown"
     )
 
-    scala(
-        f"FFPROBE READY: {first_line}"
-    )
+    scala(f"FFPROBE READY: {first_line}")
 
-    titan(
+    titan_detail(
         f"FFPROBE VERIFIED: {binary} | {first_line}"
     )
 
@@ -747,67 +743,20 @@ def initialize_ffprobe():
             "FFPROBE IS REQUIRED BUT DISABLED"
         )
 
-    executable = (
-        "ffprobe.exe"
-        if platform.system().lower() == "windows"
-        else "ffprobe"
-    )
-
-    local_binary = FFPROBE_DIR / executable
-
-    system_binary = shutil.which("ffprobe")
-
-    # Приоритет локальной сборке.
-    if local_binary.is_file():
-
-        try:
-
-            verify_ffprobe(local_binary)
-
-            FFPROBE_BINARY = str(local_binary)
-
-            return
-
-        except Exception as error:
-
-            titan(
-                f"LOCAL FFPROBE INVALID: {error}",
-                level="WARNING"
-            )
-
-            try:
-                local_binary.unlink()
-            except OSError:
-                pass
-
-    # Системный бинарник.
-    if system_binary:
-
-        try:
-
-            verify_ffprobe(system_binary)
-
-            FFPROBE_BINARY = system_binary
-
-            return
-
-        except Exception as error:
-
-            titan(
-                f"SYSTEM FFPROBE INVALID: {error}",
-                level="WARNING"
-            )
-
     if not AUTO_DOWNLOAD_FFPROBE:
-
         raise RuntimeError(
-            "FFPROBE MISSING AND AUTO DOWNLOAD DISABLED"
+            "TEMPORARY FFPROBE DOWNLOAD IS DISABLED"
         )
 
-    # Автоматическая загрузка.
+    # Не используем системный ffprobe.
+    # Каждый запуск получает собственную временную копию.
     scala(
-        "FFPROBE отсутствует — начинаю автоматическую загрузку",
-        level="WARNING"
+        "FFPROBE: подготовка временного инструмента обработки"
+    )
+
+    FFPROBE_RUN_DIR.mkdir(
+        parents=True,
+        exist_ok=True
     )
 
     archive, executable = download_ffprobe_archive()
@@ -822,7 +771,11 @@ def initialize_ffprobe():
     FFPROBE_BINARY = str(binary)
 
     scala(
-        "FFPROBE успешно установлен"
+        "FFPROBE: временный инструмент готов"
+    )
+
+    titan_detail(
+        f"FFPROBE RUN DIRECTORY: {FFPROBE_RUN_DIR}"
     )
 
 
@@ -832,9 +785,7 @@ def initialize_ffprobe():
 
 def discover_playlist_urls():
 
-    scala(
-        "Загрузка каталога Shirt.uz"
-    )
+    scala("Загрузка каталога Shirt.uz")
 
     html_bytes = fetch(
         INDEX_URL,
@@ -847,21 +798,15 @@ def discover_playlist_urls():
     )
 
     patterns = [
-
         r'href=["\'](playlists/[^"\']+\.m3u8?)["\']',
-
         r'data-url=["\'](https?://shirtv\.uz/playlists/[^"\']+\.m3u8?)["\']',
-
         r'(https?://shirtv\.uz/playlists/[^"\'\s<>]+\.m3u8?)',
-
         r'(playlists/[^"\'\s<>]+\.m3u8?)',
-
     ]
 
     candidates = []
 
     for pattern in patterns:
-
         candidates.extend(
             re.findall(
                 pattern,
@@ -871,7 +816,11 @@ def discover_playlist_urls():
         )
 
     result = []
-    seen = set()
+
+    # ВАЖНО:
+    # Здесь намеренно отсутствует seen/set.
+    # Одинаковые URL не удаляются.
+    # Все найденные совпадения передаются дальше.
 
     for href in candidates:
 
@@ -880,40 +829,25 @@ def discover_playlist_urls():
         if not href:
             continue
 
-        absolute = urljoin(
-            INDEX_URL,
-            href
-        )
+        absolute = urljoin(INDEX_URL, href)
 
         if absolute.startswith("http://"):
+            absolute = "https://" + absolute[7:]
 
-            absolute = (
-                "https://" + absolute[7:]
-            )
+        check_path = absolute.split("#", 1)[0].split("?", 1)[0]
 
-        key = absolute.lower().split("?")[0]
-
-        if key in seen:
+        if not check_path.lower().endswith((".m3u", ".m3u8")):
             continue
-
-        if not key.endswith((".m3u", ".m3u8")):
-            continue
-
-        seen.add(key)
 
         result.append(absolute)
 
-    counter_add(
-        "sources_discovered",
-        len(result)
-    )
+    counter_add("sources_discovered", len(result))
 
     scala(
-        f"Найдено источников: {len(result)}"
+        f"Найдено источников без дедупликации: {len(result)}"
     )
 
     for index, url in enumerate(result, 1):
-
         titan(
             f"SOURCE DISCOVERED [{index}/{len(result)}] {url}"
         )
@@ -963,7 +897,6 @@ def download_one_source(url):
         counter_add("source_errors")
 
         with SOURCE_ERRORS_LOCK:
-
             SOURCE_ERRORS.append({
                 "url": url,
                 "error": str(error),
@@ -984,7 +917,8 @@ def download_one_source(url):
 def download_all_sources(sources):
 
     scala(
-        f"DOWNLOAD STAGE: {len(sources)} sources / {MAX_DOWNLOAD_WORKERS} workers"
+        f"DOWNLOAD STAGE: {len(sources)} sources / "
+        f"{MAX_DOWNLOAD_WORKERS} workers"
     )
 
     downloaded = []
@@ -995,10 +929,7 @@ def download_all_sources(sources):
     ) as pool:
 
         futures = [
-            pool.submit(
-                download_one_source,
-                url
-            )
+            pool.submit(download_one_source, url)
             for url in sources
         ]
 
@@ -1035,7 +966,6 @@ def download_all_sources(sources):
 def parse_m3u(content, source):
 
     entries = []
-
     current_extinf = None
 
     for raw_line in content.splitlines():
@@ -1046,48 +976,51 @@ def parse_m3u(content, source):
             continue
 
         if line.startswith("#EXTINF:"):
-
             current_extinf = line
             continue
 
         if line.startswith("#"):
             continue
 
-        url = urljoin(
-            source,
-            line
-        )
+        url = urljoin(source, line)
 
-        if not url.startswith(
-            ("http://", "https://")
-        ):
+        if not url.startswith(("http://", "https://")):
             continue
 
         name = "Без названия"
 
         if current_extinf and "," in current_extinf:
-
             name = (
                 current_extinf.split(",", 1)[1].strip()
                 or name
             )
 
         entries.append({
-
             "extinf": (
                 current_extinf
                 or f"#EXTINF:-1,{name}"
             ),
-
             "url": url,
-
             "source": source,
-
         })
 
         current_extinf = None
 
     return entries
+
+
+def is_adult(entry):
+
+    value = (
+        entry.get("extinf", "")
+        + " "
+        + entry.get("url", "")
+    ).lower()
+
+    return any(
+        marker in value
+        for marker in ADULT_MARKERS
+    )
 
 
 def parse_one_source(item):
@@ -1122,10 +1055,7 @@ def parse_one_source(item):
 
             clean.append(entry)
 
-        counter_add(
-            "donor_entries",
-            len(clean)
-        )
+        counter_add("donor_entries", len(clean))
 
         titan(
             f"PARSED: {source} | entries={len(clean)}"
@@ -1145,20 +1075,6 @@ def parse_one_source(item):
         return []
 
 
-def is_adult(entry):
-
-    value = (
-        entry.get("extinf", "")
-        + " "
-        + entry.get("url", "")
-    ).lower()
-
-    return any(
-        marker in value
-        for marker in ADULT_MARKERS
-    )
-
-
 # ============================================================
 # PARALLEL PARSING STAGE
 # ============================================================
@@ -1166,7 +1082,8 @@ def is_adult(entry):
 def parse_all_sources(downloaded):
 
     scala(
-        f"PARSING STAGE: {len(downloaded)} sources / {MAX_PARSE_WORKERS} workers"
+        f"PARSING STAGE: {len(downloaded)} sources / "
+        f"{MAX_PARSE_WORKERS} workers"
     )
 
     all_entries = []
@@ -1177,10 +1094,7 @@ def parse_all_sources(downloaded):
     ) as pool:
 
         futures = [
-            pool.submit(
-                parse_one_source,
-                item
-            )
+            pool.submit(parse_one_source, item)
             for item in downloaded
         ]
 
@@ -1190,10 +1104,7 @@ def parse_all_sources(downloaded):
                 break
 
             try:
-
-                all_entries.extend(
-                    future.result()
-                )
+                all_entries.extend(future.result())
 
             except Exception as error:
 
@@ -1209,41 +1120,6 @@ def parse_all_sources(downloaded):
     )
 
     return all_entries
-
-
-# ============================================================
-# DEDUPLICATION
-# ============================================================
-
-def deduplicate_entries(entries):
-
-    result = []
-
-    seen = set()
-
-    for entry in entries:
-
-        key = entry["url"].split("#")[0]
-
-        if key in seen:
-            continue
-
-        seen.add(key)
-
-        result.append(entry)
-
-    removed = len(entries) - len(result)
-
-    counter_add(
-        "duplicates_removed",
-        removed
-    )
-
-    scala(
-        f"DEDUPLICATION: removed={removed}, remaining={len(result)}"
-    )
-
-    return result
 
 
 # ============================================================
@@ -1270,7 +1146,10 @@ def check_head(url):
             allow_redirects=True
         )
 
-        status = response.status_code
+        try:
+            status = response.status_code
+        finally:
+            response.close()
 
         elapsed = time.monotonic() - started
 
@@ -1314,7 +1193,6 @@ def check_head(url):
         return None
 
     finally:
-
         VALIDATION_SEMAPHORE.release()
 
 
@@ -1340,13 +1218,11 @@ def check_get(url):
 
         response = get_session().get(
             url,
-
             headers={
                 "Range": GET_RANGE,
                 "Accept": "*/*",
                 "Referer": INDEX_URL,
             },
-
             timeout=GET_TIMEOUT,
             allow_redirects=True,
             stream=True
@@ -1376,9 +1252,7 @@ def check_get(url):
             return None
 
         chunk = next(
-            response.iter_content(
-                chunk_size=4096
-            ),
+            response.iter_content(chunk_size=4096),
             b""
         )
 
@@ -1422,13 +1296,48 @@ def check_get(url):
 
 
 # ============================================================
+# PROCESS REGISTRY
+# ============================================================
+
+def register_process(process):
+
+    with PROCESS_LOCK:
+        ACTIVE_PROCESSES.add(process)
+
+
+def unregister_process(process):
+
+    with PROCESS_LOCK:
+        ACTIVE_PROCESSES.discard(process)
+
+
+def terminate_active_processes():
+
+    with PROCESS_LOCK:
+        processes = list(ACTIVE_PROCESSES)
+
+    for process in processes:
+
+        try:
+
+            if process.poll() is None:
+                process.kill()
+
+        except Exception as error:
+
+            titan(
+                f"PROCESS TERMINATION ERROR: {error}",
+                level="ERROR"
+            )
+
+
+# ============================================================
 # FFPROBE STREAM VALIDATION
 # ============================================================
 
 def check_ffprobe(url):
 
     if not FFPROBE_BINARY:
-
         raise RuntimeError(
             "FFPROBE WAS NOT INITIALIZED"
         )
@@ -1439,11 +1348,11 @@ def check_ffprobe(url):
     FFPROBE_SEMAPHORE.acquire()
 
     started = time.monotonic()
+    process = None
 
     try:
 
         command = [
-
             FFPROBE_BINARY,
 
             "-hide_banner",
@@ -1472,49 +1381,57 @@ def check_ffprobe(url):
 
             "-of",
             "json",
-
         ]
 
-        result = subprocess.run(
-
+        process = subprocess.Popen(
             command,
-
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-
             text=True,
             encoding="utf-8",
             errors="replace",
-
-            timeout=FFPROBE_TIMEOUT,
-
             shell=False
-
         )
 
-        elapsed = time.monotonic() - started
+        register_process(process)
 
-        if result.returncode != 0:
+        try:
 
-            counter_add(
-                "ffprobe_inconclusive"
+            stdout, stderr = process.communicate(
+                timeout=FFPROBE_TIMEOUT
             )
 
+        except subprocess.TimeoutExpired:
+
+            process.kill()
+
+            stdout, stderr = process.communicate()
+
+            counter_add("ffprobe_inconclusive")
+
             titan(
-                f"FFPROBE ERROR | {elapsed:.2f}s "
-                f"| {url} | {result.stderr[:400]}"
+                f"FFPROBE TIMEOUT | {url}",
+                level="WARNING"
             )
 
             return None
 
-        data = json.loads(
-            result.stdout
-        )
+        elapsed = time.monotonic() - started
 
-        streams = data.get(
-            "streams",
-            []
-        )
+        if process.returncode != 0:
+
+            counter_add("ffprobe_inconclusive")
+
+            titan(
+                f"FFPROBE ERROR | {elapsed:.2f}s "
+                f"| {url} | {stderr[:400]}"
+            )
+
+            return None
+
+        data = json.loads(stdout)
+
+        streams = data.get("streams", [])
 
         media_types = [
             stream.get("codec_type")
@@ -1544,17 +1461,6 @@ def check_ffprobe(url):
 
         return False
 
-    except subprocess.TimeoutExpired:
-
-        counter_add("ffprobe_inconclusive")
-
-        titan(
-            f"FFPROBE TIMEOUT | {url}",
-            level="WARNING"
-        )
-
-        return None
-
     except Exception as error:
 
         counter_add("ffprobe_inconclusive")
@@ -1567,6 +1473,18 @@ def check_ffprobe(url):
         return None
 
     finally:
+
+        if process is not None:
+
+            if process.poll() is None:
+
+                try:
+                    process.kill()
+                    process.communicate(timeout=5)
+                except Exception:
+                    pass
+
+            unregister_process(process)
 
         FFPROBE_SEMAPHORE.release()
 
@@ -1598,12 +1516,9 @@ def check_stream(url):
 
     ffprobe_result = check_ffprobe(url)
 
-    # FFprobe has confirmed an audio/video stream.
     if ffprobe_result is True:
         return True
 
-    # GET has confirmed that content is returned,
-    # but FFprobe could not identify media.
     if ffprobe_result is False:
 
         if get_result is True:
@@ -1617,11 +1532,9 @@ def check_stream(url):
 
         return None
 
-    # FFprobe was inconclusive.
     if get_result is True:
         return True
 
-    # Two independent HTTP methods confirm 404/410.
     if (
         head_result is False
         and get_result is False
@@ -1641,9 +1554,7 @@ def validation_worker(entry):
 
     try:
 
-        result = check_stream(
-            entry["url"]
-        )
+        result = check_stream(entry["url"])
 
         elapsed = time.monotonic() - started
 
@@ -1673,11 +1584,11 @@ def validation_worker(entry):
 def validate_entries(entries):
 
     stable = []
-
     total = len(entries)
 
     scala(
-        f"VALIDATION STAGE: {total} channels / {MAX_VALIDATION_WORKERS} workers"
+        f"VALIDATION STAGE: {total} channels / "
+        f"{MAX_VALIDATION_WORKERS} workers"
     )
 
     completed = 0
@@ -1688,14 +1599,8 @@ def validate_entries(entries):
     ) as pool:
 
         futures = [
-
-            pool.submit(
-                validation_worker,
-                entry
-            )
-
+            pool.submit(validation_worker, entry)
             for entry in entries
-
         ]
 
         for future in concurrent.futures.as_completed(futures):
@@ -1714,7 +1619,6 @@ def validate_entries(entries):
                 if result is True:
 
                     stable.append(entry)
-
                     counter_add("accepted")
 
                 elif result is False:
@@ -1726,15 +1630,10 @@ def validate_entries(entries):
                     counter_add("inconclusive")
 
                     if KEEP_INCONCLUSIVE:
-
                         stable.append(entry)
-
                         counter_add("accepted")
 
-                if (
-                    completed % 25 == 0
-                    or completed == total
-                ):
+                if completed % 25 == 0 or completed == total:
 
                     counts = counter_snapshot()
 
@@ -1806,9 +1705,46 @@ def write_m3u(path, entries):
         f"PLAYLIST WRITTEN: {path} | {len(entries)} entries"
     )
 
-    titan(
+    titan_detail(
         f"WRITE COMPLETE: {path} | entries={len(entries)}"
     )
+
+
+# ============================================================
+# COPY OUTPUTS TO UZ_DATA
+# ============================================================
+
+def copy_output_to_uz_data():
+
+    UZ_DATA_DIR.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    copies = [
+        (MAIN_DONORS, UZ_DONORS),
+        (MAIN_STABLE, UZ_STABLE),
+        (SHIRT_DONORS, UZ_SHIRT_DONORS),
+        (SHIRT_STABLE, UZ_SHIRT_STABLE),
+    ]
+
+    for source, destination in copies:
+
+        if not source.is_file():
+            raise FileNotFoundError(
+                f"Required output missing: {source}"
+            )
+
+        temporary = destination.with_name(
+            destination.name + f".{RUN_ID}.tmp"
+        )
+
+        shutil.copy2(source, temporary)
+        temporary.replace(destination)
+
+        scala(
+            f"UZ_DATA COPY COMPLETE: {destination}"
+        )
 
 
 # ============================================================
@@ -1825,7 +1761,6 @@ def write_error_report():
     )
 
     with SOURCE_ERRORS_LOCK:
-
         data = list(SOURCE_ERRORS)
 
     report_path.write_text(
@@ -1851,13 +1786,9 @@ def print_report(elapsed, stable_count):
     counts = counter_snapshot()
 
     report = [
-
         "=" * 70,
-
         'PHOENIX HUB "BARYSHNIKOV" — SHIRT.UZ COLLECTOR',
-
         f"RUN ID: {RUN_ID}",
-
         "=" * 70,
 
         f"Sources discovered       : {counts['sources_discovered']}",
@@ -1868,7 +1799,8 @@ def print_report(elapsed, stable_count):
 
         f"Donor entries            : {counts['donor_entries']}",
         f"Adult filtered           : {counts['adult_filtered']}",
-        f"Duplicates removed       : {counts['duplicates_removed']}",
+
+        "Deduplication            : DISABLED",
 
         "-" * 70,
 
@@ -1876,9 +1808,11 @@ def print_report(elapsed, stable_count):
 
         f"HEAD OK                  : {counts['head_ok']}",
         f"HEAD FAILED              : {counts['head_failed']}",
+        f"HEAD INCONCLUSIVE        : {counts['head_inconclusive']}",
 
         f"GET OK                   : {counts['get_ok']}",
         f"GET FAILED               : {counts['get_failed']}",
+        f"GET INCONCLUSIVE         : {counts['get_inconclusive']}",
 
         f"FFprobe OK               : {counts['ffprobe_ok']}",
         f"FFprobe FAILED           : {counts['ffprobe_failed']}",
@@ -1890,7 +1824,7 @@ def print_report(elapsed, stable_count):
         f"Rejected                 : {counts['rejected']}",
         f"Inconclusive             : {counts['inconclusive']}",
 
-        f"Stable entries            : {stable_count}",
+        f"Stable entries           : {stable_count}",
 
         "-" * 70,
 
@@ -1905,11 +1839,11 @@ def print_report(elapsed, stable_count):
         f"Validation workers       : {MAX_VALIDATION_WORKERS}",
 
         f"FFprobe                  : {FFPROBE_BINARY}",
+        f"FFprobe temporary dir    : {FFPROBE_RUN_DIR}",
 
         f"Elapsed                  : {elapsed:.2f} seconds",
 
         "=" * 70,
-
     ]
 
     output = "\n".join(report)
@@ -1924,6 +1858,58 @@ def print_report(elapsed, stable_count):
 
 
 # ============================================================
+# TEMPORARY FFPROBE CLEANUP
+# ============================================================
+
+def cleanup_ffprobe():
+
+    global FFPROBE_BINARY
+
+    scala(
+        "FFPROBE CLEANUP: ожидание завершения процессов"
+    )
+
+    # Останавливаем только зарегистрированные процессы
+    # текущего запуска.
+    terminate_active_processes()
+
+    # Сброс ссылки на бинарник перед удалением.
+    old_binary = FFPROBE_BINARY
+    FFPROBE_BINARY = None
+
+    try:
+
+        if FFPROBE_RUN_DIR.exists():
+
+            shutil.rmtree(
+                FFPROBE_RUN_DIR
+            )
+
+        if FFPROBE_RUN_DIR.exists():
+
+            raise RuntimeError(
+                "Temporary FFprobe directory still exists"
+            )
+
+        scala(
+            "FFPROBE CLEANUP SUCCESS: временные файлы удалены"
+        )
+
+        titan_detail(
+            f"FFPROBE REMOVED: {old_binary}"
+        )
+
+    except Exception as error:
+
+        log(
+            f"FFPROBE CLEANUP FAILED: {error}",
+            level="ERROR"
+        )
+
+        raise
+
+
+# ============================================================
 # MAIN
 # ============================================================
 
@@ -1933,29 +1919,34 @@ def main():
 
     START_TIME = time.time()
 
-    initialize_logs()
-
-    print("=" * 70)
-
-    print(
-        'Phoenix Hub "Baryshnikov" — Shirt.uz Collector'
-    )
-
-    print(
-        f"RUN ID: {RUN_ID}"
-    )
-
-    print("=" * 70)
-
-    scala("COLLECTOR STARTED")
-
-    scala(
-        f"THREAD CONFIG: DOWNLOAD={MAX_DOWNLOAD_WORKERS}, "
-        f"PARSE={MAX_PARSE_WORKERS}, "
-        f"VALIDATION={MAX_VALIDATION_WORKERS}"
-    )
+    exit_code = 1
 
     try:
+
+        initialize_logs()
+
+        print("=" * 70)
+
+        print(
+            'Phoenix Hub "Baryshnikov" — Shirt.uz Collector'
+        )
+
+        print(f"RUN ID: {RUN_ID}")
+
+        print("=" * 70)
+
+        scala("COLLECTOR STARTED")
+
+        scala(
+            f"THREAD CONFIG: DOWNLOAD={MAX_DOWNLOAD_WORKERS}, "
+            f"PARSE={MAX_PARSE_WORKERS}, "
+            f"VALIDATION={MAX_VALIDATION_WORKERS}"
+        )
+
+        titan_detail(
+            "DEDUPLICATION DISABLED: "
+            "URL, channel name and source duplicates are preserved"
+        )
 
         MAIN_DIR.mkdir(
             parents=True,
@@ -1967,131 +1958,110 @@ def main():
             exist_ok=True
         )
 
+        UZ_DATA_DIR.mkdir(
+            parents=True,
+            exist_ok=True
+        )
+
         # ----------------------------------------------------
-        # 1. Mandatory FFprobe initialization
+        # 1. Mandatory temporary FFprobe initialization
         # ----------------------------------------------------
 
-        scala(
-            "STAGE 1: FFPROBE INITIALIZATION"
-        )
+        scala("STAGE 1: TEMPORARY FFPROBE INITIALIZATION")
 
         initialize_ffprobe()
 
         if REQUIRE_FFPROBE and not FFPROBE_BINARY:
-
             raise RuntimeError(
                 "MANDATORY FFPROBE NOT AVAILABLE"
             )
 
         # ----------------------------------------------------
-        # 2. Discover all playlist sources
+        # 2. Discover playlist sources
         # ----------------------------------------------------
 
-        scala(
-            "STAGE 2: PLAYLIST DISCOVERY"
-        )
+        scala("STAGE 2: PLAYLIST DISCOVERY")
 
         sources = discover_playlist_urls()
 
         # ----------------------------------------------------
-        # 3. Download with 40 workers
+        # 3. Download with 50 workers
         # ----------------------------------------------------
 
-        scala(
-            "STAGE 3: PARALLEL DOWNLOAD"
-        )
+        scala("STAGE 3: PARALLEL DOWNLOAD")
 
-        downloaded = download_all_sources(
-            sources
-        )
+        downloaded = download_all_sources(sources)
 
         if not downloaded:
-
             raise RuntimeError(
                 "No playlist sources downloaded"
             )
 
         # ----------------------------------------------------
-        # 4. Parse with 58 workers
+        # 4. Parse with 60 workers
         # ----------------------------------------------------
 
-        scala(
-            "STAGE 4: PARALLEL PARSING"
-        )
+        scala("STAGE 4: PARALLEL PARSING")
 
-        donors = parse_all_sources(
-            downloaded
-        )
+        donors = parse_all_sources(downloaded)
 
-        # Release downloaded source contents.
         del downloaded
 
         if not donors:
-
             raise RuntimeError(
                 "No playlist entries collected"
             )
 
         # ----------------------------------------------------
-        # 5. Deduplicate
+        # 5. No deduplication stage
         # ----------------------------------------------------
 
         scala(
-            "STAGE 5: DEDUPLICATION"
+            "STAGE 5: DEDUPLICATION SKIPPED — ALL RECORDS PRESERVED"
         )
 
-        donors = deduplicate_entries(
-            donors
-        )
-
-        # ----------------------------------------------------
-        # 6. HEAD + GET + FFprobe with 58 workers
-        # ----------------------------------------------------
-
-        scala(
-            "STAGE 6: STREAM VALIDATION"
-        )
-
-        stable = validate_entries(
-            donors
+        titan_detail(
+            f"RECORDS ENTERING VALIDATION: {len(donors)}"
         )
 
         # ----------------------------------------------------
-        # 7. Write four output playlists
+        # 6. HEAD + GET + FFprobe with 70 workers
         # ----------------------------------------------------
 
-        scala(
-            "STAGE 7: PLAYLIST OUTPUT"
-        )
+        scala("STAGE 6: STREAM VALIDATION")
 
-        write_m3u(
-            MAIN_DONORS,
-            donors
-        )
-
-        write_m3u(
-            MAIN_STABLE,
-            stable
-        )
-
-        write_m3u(
-            SHIRT_DONORS,
-            donors
-        )
-
-        write_m3u(
-            SHIRT_STABLE,
-            stable
-        )
+        stable = validate_entries(donors)
 
         # ----------------------------------------------------
-        # 8. Error report
+        # 7. Write four original playlists
         # ----------------------------------------------------
+
+        scala("STAGE 7: PLAYLIST OUTPUT")
+
+        write_m3u(MAIN_DONORS, donors)
+        write_m3u(MAIN_STABLE, stable)
+
+        write_m3u(SHIRT_DONORS, donors)
+        write_m3u(SHIRT_STABLE, stable)
+
+        # ----------------------------------------------------
+        # 8. Copy all playlists to UZ_data
+        # ----------------------------------------------------
+
+        scala("STAGE 8: UZ_DATA OUTPUT")
+
+        copy_output_to_uz_data()
+
+        # ----------------------------------------------------
+        # 9. Error report
+        # ----------------------------------------------------
+
+        scala("STAGE 9: ERROR REPORT")
 
         write_error_report()
 
         # ----------------------------------------------------
-        # 9. Final statistics
+        # 10. Final statistics
         # ----------------------------------------------------
 
         elapsed = time.time() - START_TIME
@@ -2101,11 +2071,9 @@ def main():
             len(stable)
         )
 
-        scala(
-            "COLLECTOR FINISHED SUCCESSFULLY"
-        )
+        scala("COLLECTOR FINISHED SUCCESSFULLY")
 
-        return 0
+        exit_code = 0
 
     except KeyboardInterrupt:
 
@@ -2116,7 +2084,7 @@ def main():
             level="WARNING"
         )
 
-        return 130
+        exit_code = 130
 
     except Exception as error:
 
@@ -2127,20 +2095,47 @@ def main():
             level="FATAL"
         )
 
-        titan(
+        titan_detail(
             f"FATAL DETAILS: {type(error).__name__}: {error}",
             level="FATAL"
         )
 
-        return 1
+        exit_code = 1
 
     finally:
+
+        # Все функции с ThreadPoolExecutor используют
+        # контекстный менеджер. Выход из них означает,
+        # что рабочие потоки завершены.
+        STOP_EVENT.set()
+
+        terminate_active_processes()
+
+        try:
+            cleanup_ffprobe()
+        except Exception:
+            exit_code = 1
 
         elapsed = time.time() - START_TIME
 
         titan(
-            f"PROCESS TERMINATED | elapsed={elapsed:.2f}s"
+            f"PROCESS TERMINATED | exit_code={exit_code} "
+            f"| elapsed={elapsed:.2f}s"
         )
+
+        try:
+            write_combined_log()
+        except Exception as error:
+
+            print(
+                f"COMBINED LOG ERROR: {error}",
+                file=sys.stderr,
+                flush=True
+            )
+
+            exit_code = 1
+
+    return exit_code
 
 
 # ============================================================
@@ -2148,5 +2143,4 @@ def main():
 # ============================================================
 
 if __name__ == "__main__":
-
     sys.exit(main())
