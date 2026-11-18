@@ -4,10 +4,10 @@ Output: Rutube_TV.m3u
 Seed entries: 135
 Discovered candidates: 0
 Unique IDs processed: 135
-Fresh HLS from Rutube API: 73
-Kept previous signed HLS fallback: 33
+Fresh HLS from Rutube API: 74
+Kept previous signed HLS fallback: 32
 Final M3U entries: 106
-Unresolved / warnings: 62
+Unresolved / warnings: 61
 
 Unresolved entries:
 Мир 24 [43269ba8fb179e298b1e497f557e8d2d]: API не вернул live HLS; оставлена исходная HLS-ссылка
@@ -27,7 +27,6 @@ Sky Sports Tennis [5f5dc9d64b43dfc740e92f2bdf2b0d38]: API не вернул live
 Sky Sports F1 [e5df6984021365a58b3ba22dab2f670a]: API не вернул live HLS; оставлена исходная HLS-ссылка
 Sky Sports Premier League [e5bacac3b8e730791d4cab20ae81cd8f]: API не вернул live HLS; оставлена исходная HLS-ссылка
 Sky Sports Main Event [9585fdae92af45f113fdcc9f6c4ba442]: API не вернул live HLS; оставлена исходная HLS-ссылка
-Большая азия [495ab964b755baa2c9fc7481a2e40f7d]: API не вернул live HLS; оставлена исходная HLS-ссылка
 MIXM [88eba514854a55d87a4b66b66b1977e7]: API не вернул live HLS; оставлена исходная HLS-ссылка
 NOW: Rock [047ba54d846ee185b4209a797a2ae138]: API не вернул live HLS; оставлена исходная HLS-ссылка
 Deluxe Dance [47fdffd6ab82bbab0a19039d7018839f]: API не вернул live HLS; оставлена исходная HLS-ссылка
@@ -43,7 +42,7 @@ UNIVER TV [2372550cb9fd4b970a274ebec6c71839]: API не вернул live HLS; о
 Резонанс ТВ [e2d1a304d55b9a807ec5df1837859304]: API не вернул live HLS; оставлена исходная HLS-ссылка
 Солнце [2dba20a8405e57935827cb5721c2b759]: API не вернул live HLS; оставлена исходная HLS-ссылка
 Activa TV [8e9da41366fcb497aaeade579f0d715f]: API не вернул live HLS; оставлена исходная HLS-ссылка
-Пятый канал [b2b32a7d6f2323f3a113ff44b0404bf2]: ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+Пятый канал [b2b32a7d6f2323f3a113ff44b0404bf2]: действующий HLS не получен; запись пропущена
 ТВ Центр [7015ad3690d4ef70d75a6e26d0e58565]: действующий HLS не получен; запись пропущена
 РЕН ТВ [54395b96ad1a7b49966f46a6eee370a4]: действующий HLS не получен; запись пропущена
 СТС [ffc110c6785e57f4c329179b555547b4]: действующий HLS не получен; запись пропущена
