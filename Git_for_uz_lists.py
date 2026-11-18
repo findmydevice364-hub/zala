@@ -16,6 +16,7 @@ Revision:      16-SOURCE-DREG-DUAL
 
 PURPOSE:
     Shirt.uz IPTV collector.
+    Full page parser for shirtv.uz/playlists.html
     Recursive M3U/M3U8 parser.
     Automatic FFprobe installer.
     IPTV stream validator.
@@ -189,7 +190,7 @@ ADULT_PATTERNS = (
 )
 
 PLAYLIST_LINK_PATTERN = re.compile(
-    r"""(?i)(?:https?://|/|\.{1,2}/)[^\s"'<>]+\.(?:m3u8?|m3u\.txt)(?:\?[^\s"'<>]*)?""",
+    r"""(?i)(?:https?://|/|\.{1,2}/)?[^\s"'<>]*\.(?:m3u8?|m3u\.txt)(?:\?[^\s"'<>]*)?""",
     re.VERBOSE,
 )
 
@@ -377,7 +378,6 @@ def get_http_session():
     if session is None:
         session = requests.Session()
         session.max_redirects = MAX_REDIRECTS
-        # Браузерные заголовки — исправляет 415 Unsupported Media Type
         session.headers.update({
             "User-Agent": (
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -418,8 +418,6 @@ def fetch_url(url, max_bytes=MAX_PLAYLIST_SIZE, referer=None, is_html=False):
     if referer:
         headers["Referer"] = referer
 
-    # Для HTML-страницы используем браузерный Accept,
-    # для плейлистов — более широкий.
     if is_html:
         headers["Accept"] = (
             "text/html,application/xhtml+xml,application/xml;q=0.9,"
@@ -551,67 +549,112 @@ def is_playlist_url(url):
 
 
 # =============================================================================
-# 12. HTML SOURCE DISCOVERY
+# 12. HTML SOURCE DISCOVERY (FULL PAGE PARSER)
 # =============================================================================
 
 class ShirtPlaylistHTMLParser(HTMLParser):
+    """Парсер, ориентированный на реальную разметку shirtv.uz/playlists.html"""
+
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.links = []
-        self.text_fragments = []
+        self._current_classes = ""
 
-    def _add_candidate(self, value):
+    def _add(self, value: str):
         if not value:
             return
-        value = str(value).strip().strip("\"'")
-        if value:
+        value = str(value).strip().strip("'\"")
+        if not value:
+            return
+        # Берём только то, что похоже на плейлист
+        if re.search(r"\.(m3u8?|m3u\.txt)(?:\?|$)", value, re.I):
             self.links.append(value)
 
     def handle_starttag(self, tag, attrs):
-        attributes = dict(attrs)
-        for key in ("href", "data-href", "data-url", "data-src", "src"):
-            self._add_candidate(attributes.get(key))
+        attrs_dict = dict(attrs)
+        classes = (attrs_dict.get("class") or "").lower()
+        self._current_classes = classes
 
-        onclick = attributes.get("onclick", "")
+        # Собираем все возможные атрибуты со ссылками
+        for key in ("href", "data-url", "data-href", "data-src", "src", "data-link"):
+            self._add(attrs_dict.get(key))
+
+        # Иногда ссылка лежит в onclick
+        onclick = attrs_dict.get("onclick", "")
         if onclick:
-            matches = re.findall(
+            found = re.findall(
                 r"""['"]([^'"]+\.(?:m3u8?|m3u\.txt)(?:\?[^'"]*)?)['"]""",
                 onclick,
                 re.I,
             )
-            for match in matches:
-                self._add_candidate(match)
+            for item in found:
+                self._add(item)
 
     def handle_data(self, data):
-        if data:
-            self.text_fragments.append(data)
+        # URL иногда лежит текстом внутри .url-display
+        if data and ("shirtv.uz/playlists/" in data or "playlists/" in data):
+            if ".m3u" in data.lower():
+                self._add(data.strip())
 
 
 def discover_playlist_urls():
     log_skala("Loading Shirt.uz playlist catalogue", url=INDEX_URL)
 
-    # Важно: is_html=True — используем правильный Accept
     page = fetch_url(INDEX_URL, max_bytes=MAX_PAGE_SIZE, is_html=True)
     html = page.decode("utf-8", errors="replace")
 
+    # --- Способ 1: HTMLParser ---
     parser = ShirtPlaylistHTMLParser()
     parser.feed(html)
     parser.close()
 
-    candidates = list(parser.links)
-    embedded_matches = PLAYLIST_LINK_PATTERN.findall(html)
-    candidates.extend(embedded_matches)
+    # --- Способ 2: Мощные регулярки по всему HTML ---
+    regex_patterns = [
+        # href="playlists/XXX.m3u" или href="/playlists/XXX.m3u"
+        r"""href\s*=\s*['"]([^'"]*playlists/[^'"]+\.(?:m3u8?|m3u\.txt)(?:\?[^'"]*)?)['"]""",
+        # data-url="http://shirtv.uz/playlists/XXX.m3u"
+        r"""data-url\s*=\s*['"]([^'"]+\.(?:m3u8?|m3u\.txt)(?:\?[^'"]*)?)['"]""",
+        # data-href=...
+        r"""data-href\s*=\s*['"]([^'"]+\.(?:m3u8?|m3u\.txt)(?:\?[^'"]*)?)['"]""",
+        # Полный URL в тексте
+        r"""(https?://shirtv\.uz/playlists/[^"'<>\s]+\.(?:m3u8?|m3u\.txt)(?:\?[^"'<>\s]*)?)""",
+        # Относительные ссылки playlists/XXX.m3u
+        r"""(?:^|["'\s>/])(playlists/[^"'<>\s]+\.(?:m3u8?|m3u\.txt)(?:\?[^"'<>\s]*)?)""",
+        # Просто любые .m3u в кавычках
+        r"""['"]([^'"]+\.(?:m3u8?|m3u\.txt)(?:\?[^'"]*)?)['"]""",
+    ]
+
+    regex_links = []
+    for pattern in regex_patterns:
+        found = re.findall(pattern, html, re.I | re.M)
+        regex_links.extend(found)
+
+    # Объединяем всё
+    candidates = parser.links + regex_links
 
     result = []
     seen = set()
 
     for href in candidates:
         href = unquote(str(href).strip())
+        if not href:
+            continue
+
+        # Превращаем относительную ссылку в абсолютную
         absolute = urljoin(INDEX_URL, href)
+
+        # Принудительно https
+        if absolute.startswith("http://shirtv.uz"):
+            absolute = "https://" + absolute[7:]
 
         if not is_http_url(absolute):
             continue
+
         if not is_playlist_url(absolute):
+            continue
+
+        # Отбрасываем мусор (например, если попал index.html)
+        if "playlists.html" in absolute.lower():
             continue
 
         normalized = normalize_url_for_compare(absolute)
@@ -632,11 +675,15 @@ def discover_playlist_urls():
     log_titan(
         "Catalogue parser diagnostics",
         html_size=len(page),
-        raw_links=len(parser.links),
-        embedded_matches=len(embedded_matches),
         unique_sources=len(result),
-        sources=result[:30],  # не логируем всё
+        sample_sources=result[:25],
     )
+
+    print(f"\nНайдено плейлистов: {len(result)}")
+    for i, url in enumerate(result[:20], 1):
+        print(f"  {i:2d}. {url}")
+    if len(result) > 20:
+        print(f"  ... и ещё {len(result) - 20}")
 
     if not result:
         raise RuntimeError("No M3U/M3U8 links discovered on Shirt.uz")
