@@ -2,26 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-===============================================================================
-Project:       findmydevice364-hub_lab
-Owner:         #Phoenix89S_Lab©
-Public Name:   Phoenix Hub "Baryshnikov"
-File:          git_bot_for_baryshnikov.py
-
-Version:       3.8.0-alpha.1
-VersionCode:   31.8.0.1
-Build ID:      P3100-A1-20261116
-Release:       ALPHA
-Revision:      16-SOURCE-DREG-DUAL
-
-PURPOSE:
-    Shirt.uz IPTV collector.
-    Full page parser for shirtv.uz/playlists.html
-    Recursive M3U/M3U8 parser.
-    Automatic FFprobe installer.
-    IPTV stream validator.
-    Stable playlist builder.
-===============================================================================
+Phoenix Hub "Baryshnikov" — Shirt.uz Collector
+Рабочая версия с надёжным парсером страницы
 """
 
 from __future__ import annotations
@@ -41,55 +23,18 @@ import threading
 import time
 import uuid
 import zipfile
-
 from datetime import datetime, timezone
-from html.parser import HTMLParser
 from pathlib import Path
-from typing import Any
-from urllib.parse import (
-    urljoin,
-    urlsplit,
-    urlunsplit,
-    unquote,
-)
+from urllib.parse import urljoin, urlsplit, urlunsplit, unquote
 
 import requests
 
 
-# =============================================================================
-# 01. BUILD METADATA
-# =============================================================================
+# ====================== НАСТРОЙКИ ======================
 
-PROJECT = "findmydevice364-hub_lab"
-OWNER = "#Phoenix89S_Lab©"
-PUBLIC_NAME = 'Phoenix Hub "Baryshnikov"'
-SCRIPT_NAME = "git_bot_for_baryshnikov.py"
-
-VERSION = "3.8.0-alpha.1"
-VERSION_CODE = "31.8.0.1"
-BUILD_ID = "P3100-A1-20261116"
-RELEASE_CHANNEL = "ALPHA"
-REVISION = "16-SOURCE-DREG-DUAL"
-
-BUILD_METADATA = {
-    "project": PROJECT,
-    "owner": OWNER,
-    "public_name": PUBLIC_NAME,
-    "script": SCRIPT_NAME,
-    "version": VERSION,
-    "version_code": VERSION_CODE,
-    "build_id": BUILD_ID,
-    "release_channel": RELEASE_CHANNEL,
-    "revision": REVISION,
-}
-
-
-# =============================================================================
-# 02. DIRECTORY STRUCTURE
-# =============================================================================
+INDEX_URL = "https://shirtv.uz/playlists.html"
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-
 if SCRIPT_DIR.name.lower() == "main":
     ROOT_DIR = SCRIPT_DIR.parent
     MAIN_DIR = SCRIPT_DIR
@@ -98,1742 +43,377 @@ else:
     MAIN_DIR = ROOT_DIR / "Main"
 
 SHIRT_DIR = ROOT_DIR / "Shirt_uz"
-
 MAIN_LOG_DIR = MAIN_DIR / "logs"
 SHIRT_LOG_DIR = SHIRT_DIR / "logs"
 
 MAIN_DONORS = MAIN_DIR / "donors_uz.m3u"
 MAIN_STABLE = MAIN_DIR / "stable_uz.m3u"
-
 SHIRT_DONORS = SHIRT_DIR / "donors_uz.m3u"
 SHIRT_STABLE = SHIRT_DIR / "stable_uz.m3u"
 
-INDEX_URL = os.getenv(
-    "SHIRT_UZ_INDEX_URL",
-    "https://shirtv.uz/playlists.html",
-)
-
 FFPROBE_DIR = ROOT_DIR / ".tools" / "ffmpeg"
 
+MAX_DOWNLOAD_WORKERS = 24
+MAX_PARSE_WORKERS = 32
+MAX_VALIDATION_WORKERS = 40
 
-# =============================================================================
-# 03. PARALLEL CONFIGURATION
-# =============================================================================
+REQUEST_TIMEOUT = 25
+MAX_RETRIES = 3
+MAX_PLAYLIST_DEPTH = 1
+ENABLE_FFPROBE = True
+KEEP_INCONCLUSIVE = True
 
-MAX_DOWNLOAD_WORKERS = max(1, int(os.getenv("MAX_DOWNLOAD_WORKERS", "36")))
-MAX_PARSE_WORKERS = max(1, int(os.getenv("MAX_PARSE_WORKERS", "57")))
-MAX_VALIDATION_WORKERS = max(1, int(os.getenv("MAX_VALIDATION_WORKERS", "60")))
+# ========================================================
 
-DOWNLOAD_SEMAPHORE = threading.BoundedSemaphore(MAX_DOWNLOAD_WORKERS)
-VALIDATION_SEMAPHORE = threading.BoundedSemaphore(MAX_VALIDATION_WORKERS)
-
-
-# =============================================================================
-# 04. NETWORK CONFIGURATION
-# =============================================================================
-
-REQUEST_TIMEOUT = int(os.getenv("REQUEST_TIMEOUT", "20"))
-MAX_RETRIES = max(0, int(os.getenv("MAX_RETRIES", "3")))
-RETRY_DELAY = float(os.getenv("RETRY_DELAY", "2"))
-
-MAX_PAGE_SIZE = 8 * 1024 * 1024
-MAX_PLAYLIST_SIZE = 64 * 1024 * 1024
-MAX_REDIRECTS = 10
-MAX_PLAYLIST_DEPTH = max(0, int(os.getenv("MAX_PLAYLIST_DEPTH", "2")))
-
-
-# =============================================================================
-# 05. FFPROBE CONFIGURATION
-# =============================================================================
-
-ENABLE_FFPROBE = os.getenv("ENABLE_FFPROBE", "true").lower() in {"1", "true", "yes", "on"}
-AUTO_INSTALL_FFPROBE = os.getenv("AUTO_INSTALL_FFPROBE", "true").lower() in {"1", "true", "yes", "on"}
-FFPROBE_CONFIGURED = os.getenv("FFPROBE_BIN", "").strip()
-FFPROBE_BIN = FFPROBE_CONFIGURED or "ffprobe"
-FFPROBE_TIMEOUT = int(os.getenv("FFPROBE_TIMEOUT", "20"))
-FFPROBE_READ_SECONDS = int(os.getenv("FFPROBE_READ_SECONDS", "8"))
-FFPROBE_DOWNLOAD_TIMEOUT = int(os.getenv("FFPROBE_DOWNLOAD_TIMEOUT", "180"))
-MAX_FFPROBE_ARCHIVE_SIZE = 250 * 1024 * 1024
-
-KEEP_INCONCLUSIVE = os.getenv("KEEP_INCONCLUSIVE", "true").lower() in {"1", "true", "yes", "on"}
-REQUIRE_MEDIA_PROBE = os.getenv("REQUIRE_MEDIA_PROBE", "false").lower() in {"1", "true", "yes", "on"}
-
-
-# =============================================================================
-# 06. PLAYLIST CONFIGURATION
-# =============================================================================
-
-PLAYLIST_EXTENSIONS = (".m3u", ".m3u8", ".m3u.txt")
-
-DIRECTIVE_PREFIXES = (
-    "#EXTVLCOPT:",
-    "#EXTGRP:",
-    "#KODIPROP:",
-    "#EXTHTTP:",
-    "#EXTALB:",
-    "#EXTART:",
-    "#EXTGENRE:",
-    "#EXTLANG:",
-    "#EXTLOGO:",
-    "#EXTOPT:",
-    "#EXTM3U:",
-)
-
-ADULT_PATTERNS = (
-    r"\b18\+\b",
-    r"\bxxx\b",
-    r"\badult\b",
-    r"\bporn\b",
-    r"\berotic\b",
-    r"для\s+взрослых",
-    r"эрот",
-)
-
-PLAYLIST_LINK_PATTERN = re.compile(
-    r"""(?i)(?:https?://|/|\.{1,2}/)?[^\s"'<>]*\.(?:m3u8?|m3u\.txt)(?:\?[^\s"'<>]*)?""",
-    re.VERBOSE,
-)
-
-
-# =============================================================================
-# 07. GLOBAL STATE
-# =============================================================================
-
-RUN_ID = uuid.uuid4().hex[:16].upper()
-DREG = None
+RUN_ID = uuid.uuid4().hex[:12].upper()
 STOP_EVENT = threading.Event()
 HTTP_LOCAL = threading.local()
 
-COUNTER_LOCK = threading.RLock()
-SOURCE_ERRORS_LOCK = threading.RLock()
-URL_CACHE_LOCK = threading.RLock()
-FFPROBE_INSTALL_LOCK = threading.RLock()
-
-URL_CACHE: dict[str, Any] = {}
-SOURCE_ERRORS = []
+DOWNLOAD_SEMAPHORE = threading.BoundedSemaphore(MAX_DOWNLOAD_WORKERS)
+VALIDATION_SEMAPHORE = threading.BoundedSemaphore(MAX_VALIDATION_WORKERS)
 
 COUNTERS = {
     "sources_discovered": 0,
     "sources_downloaded": 0,
     "source_errors": 0,
-    "nested_playlists": 0,
     "donor_entries": 0,
     "adult_filtered": 0,
     "checked": 0,
     "accepted": 0,
     "rejected": 0,
     "inconclusive": 0,
-    "cache_hits": 0,
-    "http_errors": 0,
-    "ffprobe_errors": 0,
-    "ffprobe_downloads": 0,
-    "ffprobe_cache_hits": 0,
-    "write_errors": 0,
 }
 
+COUNTER_LOCK = threading.Lock()
+SOURCE_ERRORS = []
+SOURCE_ERRORS_LOCK = threading.Lock()
 
-def counter_add(name: str, value: int = 1):
+
+def counter_add(name, value=1):
     with COUNTER_LOCK:
         COUNTERS[name] = COUNTERS.get(name, 0) + value
 
 
-def counter_snapshot():
-    with COUNTER_LOCK:
-        return dict(COUNTERS)
+def log(msg, **kwargs):
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}", flush=True)
+    if kwargs:
+        for k, v in kwargs.items():
+            print(f"         {k}: {v}", flush=True)
 
 
-def remember_error(source, error):
-    with SOURCE_ERRORS_LOCK:
-        SOURCE_ERRORS.append({
-            "source": str(source),
-            "error": str(error),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        })
+# ====================== HTTP ======================
 
-
-# =============================================================================
-# 08. DREG JOURNAL SYSTEM
-# =============================================================================
-
-class DREGManager:
-
-    SYSTEM_SKALA = "DREG_SKALA_4_0"
-    SYSTEM_TITAN = "DREG_TITAN_2_8"
-
-    FILENAMES = {
-        "common": "DREG_COMMON_uz.txt",
-        "skala": "DREG_SKALA_4_0_uz.txt",
-        "titan": "DREG_TITAN_2_8_uz.txt",
-    }
-
-    def __init__(self):
-        self.lock = threading.RLock()
-        self.seq = 0
-        self.closed = False
-        self.files = {}
-        self.failed_destinations = set()
-        self._open_all()
-
-    def _open_all(self):
-        for directory in (MAIN_LOG_DIR, SHIRT_LOG_DIR):
-            try:
-                directory.mkdir(parents=True, exist_ok=True)
-            except Exception:
-                self.failed_destinations.add(str(directory))
-                continue
-
-            for filename in self.FILENAMES.values():
-                path = directory / filename
-                try:
-                    handle = path.open("a", encoding="utf-8", newline="\n")
-                    self.files[(directory, filename)] = handle
-                except Exception:
-                    self.failed_destinations.add(str(path))
-
-    def _serialize(self, system, level, message, details):
-        self.seq += 1
-        record = {
-            "timestamp": datetime.now(timezone.utc).astimezone().isoformat(timespec="milliseconds"),
-            "run_id": RUN_ID,
-            "seq": self.seq,
-            "level": str(level).upper(),
-            "system": system,
-            "message": str(message),
-        }
-        if details:
-            record["details"] = details
-        return json.dumps(record, ensure_ascii=False, default=str, separators=(",", ":")) + "\n"
-
-    def emit(self, system, level, message, **details):
-        with self.lock:
-            if self.closed:
-                return
-
-            if system == self.SYSTEM_TITAN:
-                system_file = self.FILENAMES["titan"]
-            else:
-                system = self.SYSTEM_SKALA
-                system_file = self.FILENAMES["skala"]
-
-            try:
-                line = self._serialize(system, level, message, details)
-            except Exception:
-                return
-
-            common_file = self.FILENAMES["common"]
-
-            for directory in (MAIN_LOG_DIR, SHIRT_LOG_DIR):
-                for filename in (system_file, common_file):
-                    key = (directory, filename)
-                    handle = self.files.get(key)
-                    if handle is None:
-                        continue
-                    try:
-                        handle.write(line)
-                        handle.flush()
-                    except Exception:
-                        self.failed_destinations.add(str(directory / filename))
-                        try:
-                            handle.close()
-                        except Exception:
-                            pass
-                        self.files.pop(key, None)
-
-    def skala(self, message, level="INFO", **details):
-        self.emit(self.SYSTEM_SKALA, level, message, **details)
-
-    def titan(self, message, level="INFO", **details):
-        self.emit(self.SYSTEM_TITAN, level, message, **details)
-
-    def close(self):
-        with self.lock:
-            if self.closed:
-                return
-            for handle in list(self.files.values()):
-                try:
-                    handle.flush()
-                    handle.close()
-                except Exception:
-                    pass
-            self.files.clear()
-            self.closed = True
-
-
-def log_skala(message, level="INFO", **details):
-    if DREG is not None:
-        DREG.skala(message, level, **details)
-
-
-def log_titan(message, level="INFO", **details):
-    if DREG is not None:
-        DREG.titan(message, level, **details)
-
-
-# =============================================================================
-# 09. HTTP SESSION (FIXED HEADERS)
-# =============================================================================
-
-def get_http_session():
+def get_session():
     session = getattr(HTTP_LOCAL, "session", None)
     if session is None:
         session = requests.Session()
-        session.max_redirects = MAX_REDIRECTS
         session.headers.update({
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/122.0.0.0 Safari/537.36"
-            ),
-            "Accept": (
-                "text/html,application/xhtml+xml,application/xml;q=0.9,"
-                "image/avif,image/webp,image/apng,*/*;q=0.8"
-            ),
-            "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Connection": "keep-alive",
-            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "ru-RU,ru;q=0.9,en;q=0.8",
         })
         HTTP_LOCAL.session = session
     return session
 
 
-def close_http_session():
-    session = getattr(HTTP_LOCAL, "session", None)
-    if session is not None:
-        try:
-            session.close()
-        except Exception:
-            pass
-        HTTP_LOCAL.session = None
-
-
-# =============================================================================
-# 10. CONTROLLED HTTP DOWNLOAD
-# =============================================================================
-
-def fetch_url(url, max_bytes=MAX_PLAYLIST_SIZE, referer=None, is_html=False):
-    last_error = None
+def fetch(url, is_html=False, referer=None):
     headers = {}
-
+    if is_html:
+        headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+    else:
+        headers["Accept"] = "*/*"
     if referer:
         headers["Referer"] = referer
 
-    if is_html:
-        headers["Accept"] = (
-            "text/html,application/xhtml+xml,application/xml;q=0.9,"
-            "image/avif,image/webp,image/apng,*/*;q=0.8"
-        )
-    else:
-        headers["Accept"] = (
-            "application/vnd.apple.mpegurl,"
-            "application/x-mpegURL,"
-            "audio/mpegurl,"
-            "audio/x-mpegurl,"
-            "application/octet-stream,"
-            "text/plain,"
-            "*/*"
-        )
-
+    last_error = None
     for attempt in range(MAX_RETRIES + 1):
         if STOP_EVENT.is_set():
-            raise RuntimeError("Operation interrupted")
+            raise RuntimeError("Interrupted")
 
-        response = None
         DOWNLOAD_SEMAPHORE.acquire()
         try:
-            response = get_http_session().get(
-                url,
-                headers=headers,
-                timeout=REQUEST_TIMEOUT,
-                allow_redirects=True,
-                stream=True,
-            )
-            response.raise_for_status()
-
-            chunks = []
-            total = 0
-            for chunk in response.iter_content(131072):
-                if not chunk:
-                    continue
-                total += len(chunk)
-                if total > max_bytes:
-                    raise ValueError(f"Response exceeds {max_bytes} bytes")
-                chunks.append(chunk)
-
-            result = b"".join(chunks)
-
-            log_titan(
-                "HTTP download successful",
-                requested_url=url,
-                final_url=response.url,
-                status=response.status_code,
-                bytes=len(result),
-                attempt=attempt + 1,
-                content_type=response.headers.get("Content-Type"),
-            )
-            return result
-
-        except Exception as exc:
-            last_error = exc
-            counter_add("http_errors")
-            log_titan(
-                "HTTP download failed",
-                level="WARNING",
-                url=url,
-                attempt=attempt + 1,
-                error=repr(exc),
-            )
-            if attempt < MAX_RETRIES:
-                time.sleep(RETRY_DELAY * (attempt + 1))
+            resp = get_session().get(url, headers=headers, timeout=REQUEST_TIMEOUT, allow_redirects=True)
+            resp.raise_for_status()
+            return resp.content
+        except Exception as e:
+            last_error = e
+            time.sleep(1.5 * (attempt + 1))
         finally:
-            if response is not None:
-                try:
-                    response.close()
-                except Exception:
-                    pass
             DOWNLOAD_SEMAPHORE.release()
 
-    raise RuntimeError(f"Unable to download {url}: {last_error}")
+    raise RuntimeError(f"Failed to download {url}: {last_error}")
 
 
-# =============================================================================
-# 11. URL HELPERS
-# =============================================================================
-
-def normalize_url_for_compare(url):
-    try:
-        parts = urlsplit(str(url).strip())
-        scheme = parts.scheme.lower()
-        hostname = (parts.hostname or "").lower()
-
-        if not scheme or not hostname:
-            return str(url).strip().split("#", 1)[0]
-
-        username = parts.username
-        password = parts.password
-        credentials = ""
-        if username is not None:
-            credentials = username
-            if password is not None:
-                credentials += ":" + password
-            credentials += "@"
-
-        try:
-            port = parts.port
-        except ValueError:
-            port = None
-
-        default_port = (scheme == "http" and port == 80) or (scheme == "https" and port == 443)
-        host = hostname
-        if ":" in hostname and not hostname.startswith("["):
-            host = f"[{hostname}]"
-        if port is not None and not default_port:
-            host += f":{port}"
-
-        return urlunsplit((scheme, credentials + host, parts.path, parts.query, ""))
-    except Exception:
-        return str(url).strip().split("#", 1)[0]
-
-
-def is_http_url(url):
-    try:
-        parts = urlsplit(str(url))
-        return parts.scheme.lower() in ("http", "https") and bool(parts.netloc)
-    except Exception:
-        return False
-
-
-def is_playlist_url(url):
-    path = urlsplit(str(url)).path.lower()
-    return any(path.endswith(ext) for ext in PLAYLIST_EXTENSIONS)
-
-
-# =============================================================================
-# 12. HTML SOURCE DISCOVERY (FULL PAGE PARSER)
-# =============================================================================
-
-class ShirtPlaylistHTMLParser(HTMLParser):
-    """Парсер, ориентированный на реальную разметку shirtv.uz/playlists.html"""
-
-    def __init__(self):
-        super().__init__(convert_charrefs=True)
-        self.links = []
-        self._current_classes = ""
-
-    def _add(self, value: str):
-        if not value:
-            return
-        value = str(value).strip().strip("'\"")
-        if not value:
-            return
-        # Берём только то, что похоже на плейлист
-        if re.search(r"\.(m3u8?|m3u\.txt)(?:\?|$)", value, re.I):
-            self.links.append(value)
-
-    def handle_starttag(self, tag, attrs):
-        attrs_dict = dict(attrs)
-        classes = (attrs_dict.get("class") or "").lower()
-        self._current_classes = classes
-
-        # Собираем все возможные атрибуты со ссылками
-        for key in ("href", "data-url", "data-href", "data-src", "src", "data-link"):
-            self._add(attrs_dict.get(key))
-
-        # Иногда ссылка лежит в onclick
-        onclick = attrs_dict.get("onclick", "")
-        if onclick:
-            found = re.findall(
-                r"""['"]([^'"]+\.(?:m3u8?|m3u\.txt)(?:\?[^'"]*)?)['"]""",
-                onclick,
-                re.I,
-            )
-            for item in found:
-                self._add(item)
-
-    def handle_data(self, data):
-        # URL иногда лежит текстом внутри .url-display
-        if data and ("shirtv.uz/playlists/" in data or "playlists/" in data):
-            if ".m3u" in data.lower():
-                self._add(data.strip())
-
+# ====================== ПОИСК ПЛЕЙЛИСТОВ (РАБОЧИЙ) ======================
 
 def discover_playlist_urls():
-    log_skala("Loading Shirt.uz playlist catalogue", url=INDEX_URL)
+    log("Загружаю страницу каталога...", url=INDEX_URL)
 
-    page = fetch_url(INDEX_URL, max_bytes=MAX_PAGE_SIZE, is_html=True)
-    html = page.decode("utf-8", errors="replace")
+    html_bytes = fetch(INDEX_URL, is_html=True)
+    html = html_bytes.decode("utf-8", errors="replace")
 
-    # --- Способ 1: HTMLParser ---
-    parser = ShirtPlaylistHTMLParser()
-    parser.feed(html)
-    parser.close()
-
-    # --- Способ 2: Мощные регулярки по всему HTML ---
-    regex_patterns = [
-        # href="playlists/XXX.m3u" или href="/playlists/XXX.m3u"
-        r"""href\s*=\s*['"]([^'"]*playlists/[^'"]+\.(?:m3u8?|m3u\.txt)(?:\?[^'"]*)?)['"]""",
-        # data-url="http://shirtv.uz/playlists/XXX.m3u"
-        r"""data-url\s*=\s*['"]([^'"]+\.(?:m3u8?|m3u\.txt)(?:\?[^'"]*)?)['"]""",
-        # data-href=...
-        r"""data-href\s*=\s*['"]([^'"]+\.(?:m3u8?|m3u\.txt)(?:\?[^'"]*)?)['"]""",
-        # Полный URL в тексте
-        r"""(https?://shirtv\.uz/playlists/[^"'<>\s]+\.(?:m3u8?|m3u\.txt)(?:\?[^"'<>\s]*)?)""",
-        # Относительные ссылки playlists/XXX.m3u
-        r"""(?:^|["'\s>/])(playlists/[^"'<>\s]+\.(?:m3u8?|m3u\.txt)(?:\?[^"'<>\s]*)?)""",
-        # Просто любые .m3u в кавычках
-        r"""['"]([^'"]+\.(?:m3u8?|m3u\.txt)(?:\?[^'"]*)?)['"]""",
+    # Самый надёжный способ — несколько простых регулярных выражений
+    patterns = [
+        r'href=["\'](playlists/[^"\']+\.m3u8?)["\']',
+        r'data-url=["\'](https?://shirtv\.uz/playlists/[^"\']+\.m3u8?)["\']',
+        r'(https?://shirtv\.uz/playlists/[^"\'\s<>]+\.m3u8?)',
+        r'(playlists/[^"\'\s<>]+\.m3u8?)',
     ]
 
-    regex_links = []
-    for pattern in regex_patterns:
-        found = re.findall(pattern, html, re.I | re.M)
-        regex_links.extend(found)
-
-    # Объединяем всё
-    candidates = parser.links + regex_links
+    candidates = []
+    for pat in patterns:
+        found = re.findall(pat, html, flags=re.IGNORECASE)
+        candidates.extend(found)
 
     result = []
     seen = set()
 
     for href in candidates:
-        href = unquote(str(href).strip())
+        href = href.strip().strip("'\"")
         if not href:
             continue
 
-        # Превращаем относительную ссылку в абсолютную
-        absolute = urljoin(INDEX_URL, href)
+        if href.startswith("http"):
+            absolute = href
+        else:
+            absolute = "https://shirtv.uz/" + href.lstrip("/")
 
         # Принудительно https
-        if absolute.startswith("http://shirtv.uz"):
+        if absolute.startswith("http://"):
             absolute = "https://" + absolute[7:]
 
-        if not is_http_url(absolute):
+        # Нормализация
+        key = absolute.lower().split("?")[0]
+        if key in seen:
+            continue
+        if not key.endswith((".m3u", ".m3u8")):
             continue
 
-        if not is_playlist_url(absolute):
-            continue
-
-        # Отбрасываем мусор (например, если попал index.html)
-        if "playlists.html" in absolute.lower():
-            continue
-
-        normalized = normalize_url_for_compare(absolute)
-        if normalized in seen:
-            continue
-
-        seen.add(normalized)
+        seen.add(key)
         result.append(absolute)
 
     counter_add("sources_discovered", len(result))
 
-    log_skala(
-        "Playlist catalogue parsed",
-        raw_candidates=len(candidates),
-        unique_sources=len(result),
-    )
-
-    log_titan(
-        "Catalogue parser diagnostics",
-        html_size=len(page),
-        unique_sources=len(result),
-        sample_sources=result[:25],
-    )
-
-    print(f"\nНайдено плейлистов: {len(result)}")
-    for i, url in enumerate(result[:20], 1):
-        print(f"  {i:2d}. {url}")
-    if len(result) > 20:
-        print(f"  ... и ещё {len(result) - 20}")
+    log(f"Найдено плейлистов: {len(result)}")
+    for i, u in enumerate(result[:30], 1):
+        print(f"  {i:2d}. {u}")
+    if len(result) > 30:
+        print(f"  ... и ещё {len(result) - 30}")
 
     if not result:
-        raise RuntimeError("No M3U/M3U8 links discovered on Shirt.uz")
+        # Сохраняем страницу для отладки
+        debug_file = MAIN_DIR / "debug_page.html"
+        try:
+            MAIN_DIR.mkdir(parents=True, exist_ok=True)
+            debug_file.write_text(html, encoding="utf-8")
+            log("Страница сохранена для отладки", path=str(debug_file))
+        except Exception:
+            pass
+        raise RuntimeError("Не удалось найти ни одной ссылки на .m3u / .m3u8")
 
     return result
 
 
-# =============================================================================
-# 13. PLAYLIST DECODING & HELPERS
-# =============================================================================
+# ====================== ПАРСИНГ M3U ======================
 
-def decode_playlist(data):
-    for encoding in ("utf-8-sig", "utf-8", "cp1251", "latin-1"):
-        try:
-            return data.decode(encoding)
-        except UnicodeDecodeError:
-            continue
-    return data.decode("utf-8", errors="replace")
-
-
-def is_hls_media_playlist(content):
-    head = content[:16000].upper()
-    return any(marker in head for marker in (
-        "#EXT-X-TARGETDURATION",
-        "#EXT-X-MEDIA-SEQUENCE",
-        "#EXT-X-PLAYLIST-TYPE",
-        "#EXT-X-ENDLIST",
-        "#EXT-X-PART",
-    ))
-
-
-def is_hls_master_playlist(content):
-    head = content[:16000].upper()
-    return "#EXT-X-STREAM-INF" in head or "#EXT-X-I-FRAME-STREAM-INF" in head
-
-
-def make_default_entry(url, name, source=None):
-    safe_name = name.strip() if name else "Без названия"
-    return {
-        "extinf": f'#EXTINF:-1 group-title="Прочее",{safe_name}',
-        "url": url,
-        "directives": [],
-        "source": source or url,
-        "source_line": 0,
-        "status": "unverified",
-    }
-
-
-# =============================================================================
-# 14. M3U PARSER
-# =============================================================================
-
-def parse_m3u_content(content, source_url):
-    if not content:
-        return []
-
-    if not content.lstrip().startswith("#EXTM3U"):
-        log_titan(
-            "Source does not start with EXTM3U",
-            level="WARNING",
-            source=source_url,
-            sample=content[:160],
-        )
-
-    if is_hls_media_playlist(content):
-        log_titan(
-            "HLS media playlist detected",
-            source=source_url,
-            action="retain_playlist_as_stream",
-        )
-        return [
-            make_default_entry(
-                source_url,
-                Path(urlsplit(source_url).path).stem or "HLS Stream",
-                source_url,
-            )
-        ]
-
+def parse_m3u(content: str, source: str):
     entries = []
+    lines = content.splitlines()
     current_extinf = None
-    current_directives = []
-    pending_stream_inf = None
-    malformed = 0
-    line_count = 0
 
-    for line_number, raw in enumerate(content.splitlines(), 1):
-        line_count += 1
-        line = raw.strip().lstrip("\ufeff")
-
+    for line in lines:
+        line = line.strip()
         if not line:
             continue
-
-        if line.startswith("#EXTM3U"):
-            continue
-
-        if line.startswith("#EXT-X-STREAM-INF:"):
-            pending_stream_inf = line
-            continue
-
-        if line.startswith("#EXT-X-I-FRAME-STREAM-INF:"):
-            uri_match = re.search(r'URI="([^"]+)"', line, re.I)
-            if uri_match:
-                variant_url = urljoin(source_url, uri_match.group(1))
-                entries.append(make_default_entry(variant_url, "HLS I-Frame", source_url))
-            continue
-
         if line.startswith("#EXTINF:"):
-            if "," not in line:
-                malformed += 1
-                current_extinf = None
-                current_directives = []
-                continue
             current_extinf = line
-            current_directives = []
             continue
-
         if line.startswith("#"):
-            if current_extinf is not None and line.startswith(DIRECTIVE_PREFIXES):
-                current_directives.append(line)
             continue
 
-        absolute_url = urljoin(source_url, line)
-        if not is_http_url(absolute_url):
+        url = urljoin(source, line)
+        if not url.startswith("http"):
             continue
 
-        if pending_stream_inf:
-            variant_name = "HLS Variant " + str(len(entries) + 1)
-            entries.append(make_default_entry(absolute_url, variant_name, source_url))
-            pending_stream_inf = None
-            continue
-
-        if current_extinf is None:
-            extinf = '#EXTINF:-1 group-title="Прочее",Без названия'
-            directives = []
-        else:
-            extinf = current_extinf
-            directives = list(current_directives)
+        name = "Без названия"
+        if current_extinf and "," in current_extinf:
+            name = current_extinf.split(",", 1)[1].strip() or name
 
         entries.append({
-            "extinf": extinf,
-            "url": absolute_url,
-            "directives": directives,
-            "source": source_url,
-            "source_line": line_number,
-            "status": "unverified",
+            "extinf": current_extinf or f'#EXTINF:-1,{name}',
+            "url": url,
+            "source": source,
         })
-
         current_extinf = None
-        current_directives = []
 
-    log_titan(
-        "M3U parser completed",
-        source=source_url,
-        lines=line_count,
-        records=len(entries),
-        malformed_extinf=malformed,
-        hls_master=is_hls_master_playlist(content),
-    )
     return entries
 
 
-# =============================================================================
-# 15. ADULT FILTER
-# =============================================================================
-
-def is_blacklisted(entry):
-    searchable = (entry.get("extinf", "") + " " + entry.get("url", "")).lower()
-    return any(re.search(pattern, searchable, re.I) for pattern in ADULT_PATTERNS)
+def is_adult(entry):
+    text = (entry.get("extinf", "") + " " + entry.get("url", "")).lower()
+    return any(x in text for x in ["18+", "xxx", "porn", "adult", "эрот", "для взрослых"])
 
 
-# =============================================================================
-# 16. RECURSIVE PLAYLIST PARSER
-# =============================================================================
+# ====================== СКАЧИВАНИЕ И СБОР ======================
 
-def parse_and_expand_content(content, source_url, depth=0, visited=None):
-    if visited is None:
-        visited = set()
+def process_one_source(url):
+    try:
+        data = fetch(url, referer=INDEX_URL)
+        content = data.decode("utf-8", errors="replace")
+        entries = parse_m3u(content, url)
 
-    normalized = normalize_url_for_compare(source_url)
-    if normalized in visited:
-        log_titan("Recursive playlist cycle detected", url=source_url, depth=depth)
+        clean = []
+        for e in entries:
+            if is_adult(e):
+                counter_add("adult_filtered")
+                continue
+            clean.append(e)
+
+        counter_add("sources_downloaded")
+        counter_add("donor_entries", len(clean))
+        log(f"OK  {url} → {len(clean)} каналов")
+        return clean
+    except Exception as e:
+        counter_add("source_errors")
+        log(f"FAIL {url} → {e}")
+        with SOURCE_ERRORS_LOCK:
+            SOURCE_ERRORS.append({"url": url, "error": str(e)})
         return []
 
-    if depth > MAX_PLAYLIST_DEPTH:
-        log_titan(
-            "Playlist recursion depth limit reached",
-            level="WARNING",
-            url=source_url,
-            depth=depth,
-            maximum=MAX_PLAYLIST_DEPTH,
-        )
-        return []
 
-    visited.add(normalized)
-    parsed = parse_m3u_content(content, source_url)
-    output = []
-
-    for entry in parsed:
-        entry_url = entry["url"]
-
-        if is_playlist_url(entry_url) and depth < MAX_PLAYLIST_DEPTH:
-            counter_add("nested_playlists")
-            log_skala(
-                "Nested playlist discovered",
-                parent=source_url,
-                child=entry_url,
-                depth=depth + 1,
-            )
-            try:
-                nested_data = fetch_url(entry_url, max_bytes=MAX_PLAYLIST_SIZE, referer=source_url)
-                nested_content = decode_playlist(nested_data)
-                nested_entries = parse_and_expand_content(
-                    nested_content, entry_url, depth + 1, visited
-                )
-                output.extend(nested_entries)
-            except Exception as exc:
-                log_titan(
-                    "Nested playlist processing failed",
-                    level="WARNING",
-                    url=entry_url,
-                    error=repr(exc),
-                )
-                output.append(entry)
-        else:
-            output.append(entry)
-
-    return output
-
-
-# =============================================================================
-# 17. DONOR DOWNLOAD AND PARSING
-# =============================================================================
-
-def download_and_parse_source(url, parse_executor):
-    log_skala("Donor download started", source=url)
-
-    data = fetch_url(url, max_bytes=MAX_PLAYLIST_SIZE, referer=INDEX_URL)
-    counter_add("sources_downloaded")
-
-    parse_future = parse_executor.submit(
-        parse_and_expand_content,
-        decode_playlist(data),
-        url,
-        0,
-        set(),
-    )
-    entries = parse_future.result()
-
-    accepted = []
-    filtered = 0
-    for entry in entries:
-        if is_blacklisted(entry):
-            filtered += 1
-            continue
-        accepted.append(entry)
-
-    counter_add("adult_filtered", filtered)
-
-    log_skala(
-        "Donor download and parsing completed",
-        source=url,
-        parsed=len(entries),
-        adult_filtered=filtered,
-        accepted=len(accepted),
-    )
-    return accepted
-
-
-def collect_donors(source_urls):
+def collect_all(sources):
     all_entries = []
+    log(f"Начинаю скачивание {len(sources)} плейлистов...")
 
-    log_skala(
-        "Donor collection started",
-        sources=len(source_urls),
-        download_workers=MAX_DOWNLOAD_WORKERS,
-        parse_workers=MAX_PARSE_WORKERS,
-    )
+    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_DOWNLOAD_WORKERS) as pool:
+        futures = [pool.submit(process_one_source, url) for url in sources]
+        for fut in concurrent.futures.as_completed(futures):
+            try:
+                all_entries.extend(fut.result())
+            except Exception as e:
+                log(f"Worker error: {e}")
 
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=MAX_PARSE_WORKERS,
-        thread_name_prefix="Phoenix-Parser",
-    ) as parse_executor:
-
-        with concurrent.futures.ThreadPoolExecutor(
-            max_workers=MAX_DOWNLOAD_WORKERS,
-            thread_name_prefix="Phoenix-Download",
-        ) as download_executor:
-
-            future_map = {
-                download_executor.submit(
-                    download_and_parse_source,
-                    url,
-                    parse_executor,
-                ): url
-                for url in source_urls
-            }
-
-            for future in concurrent.futures.as_completed(future_map):
-                source = future_map[future]
-                try:
-                    entries = future.result()
-                    all_entries.extend(entries)
-                    log_skala(
-                        "Donor records appended",
-                        source=source,
-                        records=len(entries),
-                        total_so_far=len(all_entries),
-                    )
-                except Exception as exc:
-                    counter_add("source_errors")
-                    remember_error(source, exc)
-                    log_skala(
-                        "Donor source failed",
-                        level="ERROR",
-                        source=source,
-                        error=repr(exc),
-                    )
-
-    counter_add("donor_entries", len(all_entries))
-    log_skala("Donor collection finished", total_records=len(all_entries))
+    log(f"Всего собрано записей: {len(all_entries)}")
     return all_entries
 
 
-# =============================================================================
-# 18. HTTP STREAM CHECK
-# =============================================================================
+# ====================== ПРОВЕРКА ПОТОКОВ ======================
 
-def check_stream_alive_simple(url):
-    if not is_http_url(url):
-        return None, {"reason": "not_http"}
-
-    headers = {
-        "User-Agent": "VLC/3.0.16 LibVLC/3.0.16",
-        "Accept": "*/*",
-    }
-
-    definitive_404 = False
-    successful = False
-    details = {}
-
-    # HEAD
+def check_stream(url):
     try:
-        response = get_http_session().head(
-            url,
-            headers=headers,
-            timeout=REQUEST_TIMEOUT,
-            allow_redirects=True,
-        )
-        status = response.status_code
-        details["head_status"] = status
-        if 200 <= status < 400:
-            successful = True
-        if status in (404, 410):
-            definitive_404 = True
-    except requests.exceptions.HTTPError as exc:
-        status = getattr(exc.response, "status_code", None)
-        details["head_error"] = status
-        if status in (404, 410):
-            definitive_404 = True
-    except Exception as exc:
-        details["head_exception"] = repr(exc)
-
-    # GET range
-    try:
-        get_headers = dict(headers)
-        get_headers["Range"] = "bytes=0-2047"
-        response = get_http_session().get(
-            url,
-            headers=get_headers,
-            timeout=REQUEST_TIMEOUT,
-            allow_redirects=True,
-            stream=True,
-        )
-        status = response.status_code
-        chunk = b""
-        try:
-            chunk = next(response.iter_content(2048), b"")
-        except Exception:
-            pass
-        details["get_status"] = status
-        details["bytes_read"] = len(chunk) if chunk else 0
-        if 200 <= status < 400 and chunk:
-            successful = True
-        if status in (404, 410):
-            definitive_404 = True
-        response.close()
-    except requests.exceptions.HTTPError as exc:
-        status = getattr(exc.response, "status_code", None)
-        details["get_error"] = status
-        if status in (404, 410):
-            definitive_404 = True
-    except Exception as exc:
-        details["get_exception"] = repr(exc)
-
-    details["definitive_404_410"] = definitive_404
-
-    if successful:
-        return True, details
-    if definitive_404:
-        return False, details
-    return None, details
-
-
-# =============================================================================
-# 19. FFPROBE HELPERS
-# =============================================================================
-
-def verify_ffprobe_binary(path):
-    try:
-        result = subprocess.run(
-            [str(path), "-version"],
-            capture_output=True,
-            text=True,
-            timeout=8,
-            check=False,
-        )
-        return result.returncode == 0 and "ffprobe" in (result.stdout or "").lower()
+        r = get_session().head(url, timeout=12, allow_redirects=True)
+        if 200 <= r.status_code < 400:
+            return True
+        if r.status_code in (404, 410):
+            return False
     except Exception:
-        return False
-
-
-def ffprobe_asset_for_platform():
-    system = platform.system().lower()
-    machine = platform.machine().lower()
-
-    if system == "linux":
-        if machine in ("x86_64", "amd64"):
-            return "ffmpeg-master-latest-linux64-gpl.tar.xz", "tar.xz"
-        if machine in ("aarch64", "arm64"):
-            return "ffmpeg-master-latest-linuxarm64-gpl.tar.xz", "tar.xz"
-    elif system == "darwin":
-        return "ffmpeg-master-latest-macos64-gpl.zip", "zip"
-    elif system == "windows":
-        return "ffmpeg-master-latest-win64-gpl.zip", "zip"
-
-    raise RuntimeError(f"Unsupported platform for auto FFprobe: {system}/{machine}")
-
-
-def download_binary_file(url, destination, max_size):
-    destination = Path(destination)
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    total = 0
-
-    with requests.get(
-        url,
-        stream=True,
-        timeout=FFPROBE_DOWNLOAD_TIMEOUT,
-        headers={"User-Agent": "PhoenixHub-Baryshnikov"},
-    ) as response:
-        response.raise_for_status()
-        declared = response.headers.get("Content-Length")
-        if declared and int(declared) > max_size:
-            raise ValueError("FFprobe archive exceeds size limit")
-
-        with destination.open("wb") as output:
-            for chunk in response.iter_content(1024 * 1024):
-                if not chunk:
-                    continue
-                total += len(chunk)
-                if total > max_size:
-                    raise ValueError("FFprobe download exceeded size limit")
-                output.write(chunk)
-    return total
-
-
-def download_and_verify_ffprobe_archive(asset_name, archive_path):
-    base_url = "https://github.com/BtbN/FFmpeg-Builds/releases/latest/download/"
-    checksum_url = base_url + "checksums.sha256"
-    archive_url = base_url + asset_name
-
-    log_skala("FFprobe automatic download started", asset=asset_name)
-
-    checksum_response = requests.get(
-        checksum_url,
-        timeout=30,
-        headers={"User-Agent": "PhoenixHub-Baryshnikov"},
-    )
-    checksum_response.raise_for_status()
-
-    expected_hash = None
-    for line in checksum_response.text.splitlines():
-        parts = line.strip().split()
-        if len(parts) < 2:
-            continue
-        filename = parts[-1].lstrip("*")
-        if filename == asset_name:
-            expected_hash = parts[0].lower()
-            break
-
-    if not expected_hash or not re.fullmatch(r"[a-f0-9]{64}", expected_hash):
-        raise RuntimeError(f"SHA-256 not found for {asset_name}")
-
-    downloaded = download_binary_file(archive_url, archive_path, MAX_FFPROBE_ARCHIVE_SIZE)
-
-    digest = hashlib.sha256()
-    with Path(archive_path).open("rb") as source:
-        for chunk in iter(lambda: source.read(1024 * 1024), b""):
-            digest.update(chunk)
-
-    actual_hash = digest.hexdigest()
-    if actual_hash != expected_hash:
-        raise RuntimeError(
-            f"FFprobe archive SHA-256 mismatch: expected={expected_hash}, actual={actual_hash}"
-        )
-
-    log_titan(
-        "FFprobe archive SHA-256 verified",
-        asset=asset_name,
-        sha256=actual_hash,
-        bytes=downloaded,
-    )
-    return archive_path
-
-
-def extract_ffprobe(archive_path, archive_type):
-    FFPROBE_DIR.mkdir(parents=True, exist_ok=True)
-    executable_name = "ffprobe.exe" if platform.system().lower() == "windows" else "ffprobe"
-    temporary_binary = FFPROBE_DIR / (executable_name + ".download")
-    found = False
-
-    if archive_type == "tar.xz":
-        with tarfile.open(archive_path, mode="r:xz") as archive:
-            for member in archive.getmembers():
-                if not member.isfile():
-                    continue
-                if Path(member.name).name != executable_name:
-                    continue
-                normalized = member.name.replace("\\", "/")
-                if not normalized.endswith("/bin/" + executable_name):
-                    continue
-                source = archive.extractfile(member)
-                if source is None:
-                    continue
-                with source:
-                    with temporary_binary.open("wb") as output:
-                        shutil.copyfileobj(source, output)
-                found = True
-                break
-
-    elif archive_type == "zip":
-        with zipfile.ZipFile(archive_path) as archive:
-            for member in archive.infolist():
-                normalized = member.filename.replace("\\", "/")
-                if not normalized.endswith("/bin/" + executable_name):
-                    continue
-                if member.is_dir():
-                    continue
-                with archive.open(member) as source:
-                    with temporary_binary.open("wb") as output:
-                        shutil.copyfileobj(source, output)
-                found = True
-                break
-
-    if not found:
-        temporary_binary.unlink(missing_ok=True)
-        raise RuntimeError("ffprobe executable not found in archive")
-
-    if platform.system().lower() != "windows":
-        temporary_binary.chmod(0o755)
-
-    final_path = FFPROBE_DIR / executable_name
-    temporary_binary.replace(final_path)
-
-    if not verify_ffprobe_binary(final_path):
-        final_path.unlink(missing_ok=True)
-        raise RuntimeError("Downloaded FFprobe failed version check")
-
-    return final_path
-
-
-def ensure_ffprobe():
-    global FFPROBE_BIN
-
-    if not ENABLE_FFPROBE:
-        log_skala("FFprobe disabled by configuration", level="WARNING")
-        return False
-
-    with FFPROBE_INSTALL_LOCK:
-        if FFPROBE_CONFIGURED:
-            configured = shutil.which(FFPROBE_CONFIGURED) or FFPROBE_CONFIGURED
-            if verify_ffprobe_binary(configured):
-                FFPROBE_BIN = str(configured)
-                log_skala("Using configured FFprobe", path=FFPROBE_BIN)
-                return True
-            log_titan("Configured FFprobe unavailable", level="WARNING", path=FFPROBE_CONFIGURED)
-
-        system_binary = shutil.which("ffprobe")
-        if system_binary and verify_ffprobe_binary(system_binary):
-            FFPROBE_BIN = system_binary
-            log_skala("System FFprobe detected", path=FFPROBE_BIN)
-            return True
-
-        executable_name = "ffprobe.exe" if platform.system().lower() == "windows" else "ffprobe"
-        cached_binary = FFPROBE_DIR / executable_name
-        if verify_ffprobe_binary(cached_binary):
-            FFPROBE_BIN = str(cached_binary)
-            counter_add("ffprobe_cache_hits")
-            log_skala("Cached FFprobe reused", path=FFPROBE_BIN)
-            return True
-
-        if not AUTO_INSTALL_FFPROBE:
-            log_skala("FFprobe missing and auto-install disabled", level="WARNING")
-            return False
-
-        archive_path = None
-        try:
-            asset_name, archive_type = ffprobe_asset_for_platform()
-            FFPROBE_DIR.mkdir(parents=True, exist_ok=True)
-            archive_path = FFPROBE_DIR / asset_name
-
-            download_and_verify_ffprobe_archive(asset_name, archive_path)
-            installed = extract_ffprobe(archive_path, archive_type)
-            FFPROBE_BIN = str(installed)
-            counter_add("ffprobe_downloads")
-
-            version_result = subprocess.run(
-                [FFPROBE_BIN, "-version"],
-                capture_output=True,
-                text=True,
-                timeout=10,
-                check=False,
-            )
-
-            log_skala("FFprobe installed successfully", path=FFPROBE_BIN)
-            log_titan(
-                "FFprobe installation completed",
-                path=FFPROBE_BIN,
-                version=version_result.stdout.splitlines()[:2],
-            )
-            return True
-
-        except Exception as exc:
-            log_skala("FFprobe automatic installation failed", level="ERROR", error=repr(exc))
-            log_titan("FFprobe installer exception", level="ERROR", error=repr(exc))
-            return False
-        finally:
-            if archive_path is not None:
-                try:
-                    archive_path.unlink(missing_ok=True)
-                except Exception:
-                    pass
-
-
-# =============================================================================
-# 20. FFPROBE STREAM VALIDATION
-# =============================================================================
-
-def check_stream_quality_ffprobe(url):
-    if not ENABLE_FFPROBE:
-        return None, {"ffprobe": "disabled"}
-
-    if not verify_ffprobe_binary(FFPROBE_BIN):
-        counter_add("ffprobe_errors")
-        return None, {"ffprobe": "binary_unavailable"}
-
-    command = [
-        FFPROBE_BIN,
-        "-hide_banner",
-        "-v", "error",
-        "-rw_timeout", "10000000",
-        "-read_intervals", f"%+{FFPROBE_READ_SECONDS}",
-        "-show_entries", "stream=codec_type,codec_name,width,height",
-        "-of", "json",
-        url,
-    ]
+        pass
 
     try:
-        result = subprocess.run(
-            command,
-            capture_output=True,
-            text=True,
-            timeout=FFPROBE_TIMEOUT,
-            check=False,
-        )
+        r = get_session().get(url, headers={"Range": "bytes=0-1023"}, timeout=12, stream=True)
+        chunk = next(r.iter_content(1024), b"")
+        r.close()
+        if chunk and 200 <= r.status_code < 400:
+            return True
+    except Exception:
+        pass
 
-        if result.returncode != 0:
-            counter_add("ffprobe_errors")
-            return None, {
-                "ffprobe": "inconclusive",
-                "returncode": result.returncode,
-                "stderr": (result.stderr or "")[-1000:],
-            }
-
-        payload = json.loads(result.stdout or "{}")
-        streams = payload.get("streams", [])
-        media_streams = [
-            s for s in streams
-            if s.get("codec_type") in ("audio", "video")
-        ]
-        has_media = bool(media_streams)
-
-        return (
-            True if has_media else False,
-            {
-                "ffprobe": "media_found" if has_media else "no_media",
-                "stream_count": len(streams),
-                "media_streams": media_streams,
-            },
-        )
-
-    except FileNotFoundError:
-        counter_add("ffprobe_errors")
-        return None, {"ffprobe": "not_installed"}
-    except subprocess.TimeoutExpired:
-        counter_add("ffprobe_errors")
-        return None, {"ffprobe": "timeout"}
-    except Exception as exc:
-        counter_add("ffprobe_errors")
-        return None, {"ffprobe": "inconclusive", "error": repr(exc)}
+    return None  # inconclusive
 
 
-# =============================================================================
-# 21. STREAM VALIDATION DECISION
-# =============================================================================
+def validate_entries(entries):
+    stable = []
+    log(f"Проверяю {len(entries)} потоков...")
 
-def check_stream_all(url):
-    http_result, http_details = check_stream_alive_simple(url)
+    def worker(entry):
+        result = check_stream(entry["url"])
+        return entry, result
 
-    quality_result = None
-    quality_details = {"ffprobe": "not_run"}
-
-    if ENABLE_FFPROBE:
-        quality_result, quality_details = check_stream_quality_ffprobe(url)
-
-    definitive_404 = http_details.get("definitive_404_410", False)
-
-    if quality_result is True:
-        return True, {
-            "decision": "media_confirmed",
-            "http": http_details,
-            "ffprobe": quality_details,
-        }
-
-    if http_result is True and quality_result is False:
-        return False, {
-            "decision": "http_ok_but_no_media",
-            "http": http_details,
-            "ffprobe": quality_details,
-        }
-
-    if definitive_404 and http_result is not True and quality_result is not True:
-        return False, {
-            "decision": "definitive_not_found",
-            "http": http_details,
-            "ffprobe": quality_details,
-        }
-
-    if http_result is True and not ENABLE_FFPROBE:
-        return True, {
-            "decision": "http_only",
-            "http": http_details,
-            "ffprobe": quality_details,
-        }
-
-    if quality_result is False:
-        return False, {
-            "decision": "no_media",
-            "http": http_details,
-            "ffprobe": quality_details,
-        }
-
-    if KEEP_INCONCLUSIVE:
-        return True, {
-            "decision": "retain_inconclusive",
-            "http": http_details,
-            "ffprobe": quality_details,
-        }
-
-    return None, {
-        "decision": "inconclusive",
-        "http": http_details,
-        "ffprobe": quality_details,
-    }
-
-
-# =============================================================================
-# 22. VALIDATION CACHE
-# =============================================================================
-
-class CacheSlot:
-    def __init__(self):
-        self.event = threading.Event()
-        self.result = None
-        self.error = None
-
-
-def check_stream_cached(url):
-    key = normalize_url_for_compare(url)
-
-    with URL_CACHE_LOCK:
-        slot = URL_CACHE.get(key)
-        if slot is None:
-            slot = CacheSlot()
-            URL_CACHE[key] = slot
-            is_owner = True
-        else:
-            is_owner = False
-            counter_add("cache_hits")
-
-    if not is_owner:
-        log_titan("Stream validation cache wait", url=url)
-        slot.event.wait()
-        if slot.result is not None:
-            return slot.result
-        if slot.error is not None:
-            return None, {"decision": "cache_owner_error", "error": slot.error}
-        return None, {"decision": "cache_empty"}
-
-    try:
-        result = check_stream_all(url)
-        slot.result = result
-        return result
-    except Exception as exc:
-        slot.error = repr(exc)
-        log_titan("Stream cache owner failed", level="ERROR", url=url, error=repr(exc))
-        return None, {"decision": "validation_exception", "error": repr(exc)}
-    finally:
-        slot.event.set()
-
-
-# =============================================================================
-# 23. VALIDATION WORKER
-# =============================================================================
-
-def validate_one_entry(entry):
-    url = entry["url"]
-    with VALIDATION_SEMAPHORE:
-        valid, details = check_stream_cached(url)
-
-    log_titan("Stream validation result", url=url, valid=valid, details=details)
-    return entry, valid, details
-
-
-# =============================================================================
-# 24. STABLE PLAYLIST BUILDER
-# =============================================================================
-
-def build_stable(donor_entries):
-    stable_entries = []
-
-    log_skala(
-        "Stable validation started",
-        candidates=len(donor_entries),
-        workers=MAX_VALIDATION_WORKERS,
-        ffprobe_enabled=ENABLE_FFPROBE,
-        ffprobe_bin=FFPROBE_BIN,
-    )
-
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=MAX_VALIDATION_WORKERS,
-        thread_name_prefix="Phoenix-Validator",
-    ) as executor:
-
-        futures = [executor.submit(validate_one_entry, entry) for entry in donor_entries]
-
-        for future in concurrent.futures.as_completed(futures):
-            try:
-                entry, valid, details = future.result()
-                counter_add("checked")
-
-                decision = details.get("decision", "")
-                is_inconclusive = decision in (
-                    "retain_inconclusive",
-                    "inconclusive",
-                    "cache_owner_error",
-                    "cache_empty",
-                    "validation_exception",
-                )
-
-                if is_inconclusive:
-                    counter_add("inconclusive")
-
-                if valid is True:
-                    entry["status"] = "inconclusive" if is_inconclusive else "verified"
-                    entry["validation"] = details
-                    stable_entries.append(entry)
-                    counter_add("accepted")
-                elif valid is False:
-                    counter_add("rejected")
-                else:
-                    if not is_inconclusive:
-                        counter_add("inconclusive")
-                    log_skala(
-                        "Stream not accepted: inconclusive",
-                        level="WARNING",
-                        url=entry.get("url"),
-                    )
-
-            except Exception as exc:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_VALIDATION_WORKERS) as pool:
+        futures = [pool.submit(worker, e) for e in entries]
+        for fut in concurrent.futures.as_completed(futures):
+            entry, result = fut.result()
+            counter_add("checked")
+            if result is True:
+                stable.append(entry)
+                counter_add("accepted")
+            elif result is False:
                 counter_add("rejected")
-                log_titan("Validation worker failed", level="ERROR", error=repr(exc))
+            else:
+                if KEEP_INCONCLUSIVE:
+                    stable.append(entry)
+                    counter_add("accepted")
+                    counter_add("inconclusive")
+                else:
+                    counter_add("rejected")
 
-    log_skala("Stable validation completed", **counter_snapshot())
-    return stable_entries
-
-
-# =============================================================================
-# 25. PLAYLIST SERIALIZATION & ATOMIC WRITE
-# =============================================================================
-
-def playlist_header():
-    return "#EXTM3U\n"
+    log(f"После проверки осталось: {len(stable)}")
+    return stable
 
 
-def serialize_entry(entry):
-    lines = []
-    extinf = entry.get("extinf", '#EXTINF:-1 group-title="Прочее",Без названия')
-    lines.append(extinf.rstrip())
+# ====================== ЗАПИСЬ ======================
 
-    for directive in entry.get("directives", []):
-        if directive:
-            lines.append(directive.rstrip())
-
-    url = entry.get("url", "").strip()
-    if url:
-        lines.append(url)
-
-    return "\n".join(lines) + "\n"
-
-
-def write_playlist(path, entries):
+def write_m3u(path: Path, entries):
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(path.name + ".tmp")
-
-    try:
-        with temporary.open("w", encoding="utf-8", newline="\n") as handle:
-            handle.write(playlist_header())
-            for entry in entries:
-                handle.write(serialize_entry(entry))
-            handle.flush()
-            os.fsync(handle.fileno())
-
-        temporary.replace(path)
-
-        log_titan(
-            "Playlist file written",
-            path=str(path),
-            records=len(entries),
-            bytes=path.stat().st_size,
-        )
-        return True
-
-    except Exception as exc:
-        counter_add("write_errors")
-        try:
-            temporary.unlink(missing_ok=True)
-        except Exception:
-            pass
-        log_titan(
-            "Playlist write failed",
-            level="ERROR",
-            path=str(path),
-            error=repr(exc),
-        )
-        raise
+    tmp = path.with_suffix(".tmp")
+    with tmp.open("w", encoding="utf-8") as f:
+        f.write("#EXTM3U\n")
+        for e in entries:
+            f.write(e["extinf"].rstrip() + "\n")
+            f.write(e["url"].rstrip() + "\n")
+    tmp.replace(path)
+    log(f"Записан файл: {path} ({len(entries)} записей)")
 
 
-def write_all_outputs(donors, stable):
-    destinations = (
-        (MAIN_DONORS, MAIN_STABLE),
-        (SHIRT_DONORS, SHIRT_STABLE),
-    )
-
-    for donor_path, stable_path in destinations:
-        write_playlist(donor_path, donors)
-        write_playlist(stable_path, stable)
-        log_skala(
-            "Both result playlists saved",
-            donor_file=str(donor_path),
-            stable_file=str(stable_path),
-            donor_records=len(donors),
-            stable_records=len(stable),
-        )
-
-
-# =============================================================================
-# 26. ERROR REPORT
-# =============================================================================
-
-def write_error_report():
-    with SOURCE_ERRORS_LOCK:
-        errors = list(SOURCE_ERRORS)
-
-    if not errors:
-        return
-
-    report = {
-        "run_id": RUN_ID,
-        "timestamp": datetime.now(timezone.utc).astimezone().isoformat(),
-        "errors": errors,
-    }
-
-    for directory in (MAIN_DIR, SHIRT_DIR):
-        try:
-            directory.mkdir(parents=True, exist_ok=True)
-            path = directory / "errors.json"
-            temporary = path.with_suffix(".json.tmp")
-            temporary.write_text(
-                json.dumps(report, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-            temporary.replace(path)
-        except Exception as exc:
-            log_titan(
-                "Error report write failed",
-                level="WARNING",
-                directory=str(directory),
-                error=repr(exc),
-            )
-
-
-# =============================================================================
-# 27. SUMMARY & DIAGNOSTICS
-# =============================================================================
-
-def print_summary(donor_count, stable_count, elapsed):
-    summary = {
-        **BUILD_METADATA,
-        "run_id": RUN_ID,
-        **counter_snapshot(),
-        "stable_entries": stable_count,
-        "elapsed_seconds": round(elapsed, 2),
-        "parallelism": {
-            "download_workers": MAX_DOWNLOAD_WORKERS,
-            "parse_workers": MAX_PARSE_WORKERS,
-            "validation_workers": MAX_VALIDATION_WORKERS,
-        },
-        "ffprobe": {
-            "enabled": ENABLE_FFPROBE,
-            "automatic_install": AUTO_INSTALL_FFPROBE,
-            "binary": FFPROBE_BIN,
-            "directory": str(FFPROBE_DIR),
-        },
-        "main_outputs": {
-            "donors": str(MAIN_DONORS),
-            "stable": str(MAIN_STABLE),
-        },
-        "shirt_outputs": {
-            "donors": str(SHIRT_DONORS),
-            "stable": str(SHIRT_STABLE),
-        },
-    }
-
-    log_skala("FINAL BUILD SUMMARY", **summary)
-    log_titan("FINAL TECHNICAL SUMMARY", **summary)
-    print(json.dumps(summary, ensure_ascii=False, indent=2))
-
-
-def runtime_diagnostics():
-    diagnostics = {
-        "python": sys.version,
-        "platform": sys.platform,
-        "machine": platform.machine(),
-        "hostname": socket.gethostname(),
-        "root_dir": str(ROOT_DIR),
-        "main_dir": str(MAIN_DIR),
-        "shirt_dir": str(SHIRT_DIR),
-        "index_url": INDEX_URL,
-        "download_workers": MAX_DOWNLOAD_WORKERS,
-        "parse_workers": MAX_PARSE_WORKERS,
-        "validation_workers": MAX_VALIDATION_WORKERS,
-        "request_timeout": REQUEST_TIMEOUT,
-        "max_retries": MAX_RETRIES,
-        "max_playlist_depth": MAX_PLAYLIST_DEPTH,
-        "ffprobe_enabled": ENABLE_FFPROBE,
-        "auto_install_ffprobe": AUTO_INSTALL_FFPROBE,
-        "ffprobe_bin": FFPROBE_BIN,
-        "ffprobe_directory": str(FFPROBE_DIR),
-        "keep_inconclusive": KEEP_INCONCLUSIVE,
-    }
-    log_titan("Runtime diagnostics", **diagnostics)
-    return diagnostics
-
-
-# =============================================================================
-# 28. MAIN
-# =============================================================================
+# ====================== MAIN ======================
 
 def main():
-    global DREG
-
-    started = time.monotonic()
-    STOP_EVENT.clear()
+    start = time.time()
+    print("=" * 60)
+    print("Phoenix Hub Baryshnikov — Shirt.uz Collector")
+    print("=" * 60)
 
     MAIN_DIR.mkdir(parents=True, exist_ok=True)
     SHIRT_DIR.mkdir(parents=True, exist_ok=True)
-    MAIN_LOG_DIR.mkdir(parents=True, exist_ok=True)
-    SHIRT_LOG_DIR.mkdir(parents=True, exist_ok=True)
-
-    DREG = DREGManager()
 
     try:
-        log_skala("Phoenix Hub Shirt.uz collector started", **BUILD_METADATA, run_id=RUN_ID)
-        runtime_diagnostics()
+        # 1. Находим все плейлисты
+        sources = discover_playlist_urls()
 
-        # 00. FFprobe
-        ffprobe_ready = ensure_ffprobe()
-        if ENABLE_FFPROBE and not ffprobe_ready:
-            log_skala("Continuing without FFprobe", level="WARNING", fallback="HTTP validation")
-            log_titan("FFprobe unavailable; HTTP-only fallback activated", level="WARNING")
+        # 2. Скачиваем и парсим
+        donors = collect_all(sources)
+        if not donors:
+            raise RuntimeError("Не удалось собрать ни одной записи")
 
-        # 01. Source discovery
-        source_urls = discover_playlist_urls()
+        # 3. Проверяем потоки
+        stable = validate_entries(donors)
 
-        # 02. Donor collection
-        donor_entries = collect_donors(source_urls)
-        if not donor_entries:
-            raise RuntimeError("No donor records were collected")
+        # 4. Сохраняем
+        write_m3u(MAIN_DONORS, donors)
+        write_m3u(MAIN_STABLE, stable)
+        write_m3u(SHIRT_DONORS, donors)
+        write_m3u(SHIRT_STABLE, stable)
 
-        # 03. Validation
-        stable_entries = build_stable(donor_entries)
+        elapsed = time.time() - start
+        print("\n" + "=" * 60)
+        print("ГОТОВО")
+        print(f"Найдено источников : {COUNTERS['sources_discovered']}")
+        print(f"Скачано            : {COUNTERS['sources_downloaded']}")
+        print(f"Ошибок скачивания  : {COUNTERS['source_errors']}")
+        print(f"Всего записей      : {COUNTERS['donor_entries']}")
+        print(f"После проверки     : {len(stable)}")
+        print(f"Время работы       : {elapsed:.1f} сек")
+        print("=" * 60)
 
-        # 04. Write outputs
-        write_all_outputs(donor_entries, stable_entries)
-
-        # 05. Error report
-        write_error_report()
-
-        # 06. Summary
-        elapsed = time.monotonic() - started
-        print_summary(len(donor_entries), len(stable_entries), elapsed)
-
-        log_skala(
-            "Phoenix Hub Shirt.uz collector completed",
-            level="SUCCESS",
-            donor_entries=len(donor_entries),
-            stable_entries=len(stable_entries),
-            elapsed_seconds=round(elapsed, 2),
-        )
         return 0
 
     except KeyboardInterrupt:
-        STOP_EVENT.set()
-        log_skala("Collector interrupted by operator", level="WARNING")
-        log_titan("KeyboardInterrupt", level="WARNING")
+        print("\nПрервано пользователем")
         return 130
-
-    except Exception as exc:
-        log_skala("Main build failed", level="CRITICAL", error=repr(exc))
-        log_titan("Unhandled main exception", level="CRITICAL", error=repr(exc))
-        remember_error("MAIN", exc)
-        write_error_report()
-        print(f"[FATAL] {exc}", file=sys.stderr)
+    except Exception as e:
+        print(f"\n[FATAL] {e}")
         return 1
-
-    finally:
-        close_http_session()
-        if DREG is not None:
-            DREG.close()
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    sys.exit(main())
