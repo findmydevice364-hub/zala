@@ -4,7 +4,7 @@ name: Git_for_uz_lists.py
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 21 * * 6" # 00:00 МСК каждое воскресенье (проверка интервала 14 дней)
+    - cron: "0 21 * * 6" # 00:00 МСК каждое воскресенье
 
 permissions:
   contents: write
@@ -38,7 +38,6 @@ jobs:
             exit 0
           fi
 
-          # Фиксированная точка отсчёта: 16 ноября 2026 года.
           START_DATE="2026-11-16"
           TODAY="$(date -u +%Y-%m-%d)"
 
@@ -101,7 +100,71 @@ jobs:
           set -euo pipefail
           python -u Git_for_uz_lists.py
 
-      - name: Commit and push changes safely
+      - name: Prepare playlists and three DREG logs
+        if: success() && steps.schedule.outputs.run == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p Main/logs
+
+          # Обязательные плейлисты.
+          for file in \
+            Main/donors_uz.m3u \
+            Main/stable_uz.m3u
+          do
+            if [ ! -s "$file" ]; then
+              echo "::error::Required playlist missing or empty: $file"
+              exit 1
+            fi
+          done
+
+          # Обязательные исходные журналы.
+          for file in \
+            Main/logs/SCALA_DREG.log \
+            Main/logs/TITAN_DREG.log
+          do
+            if [ ! -s "$file" ]; then
+              echo "::error::Required log missing or empty: $file"
+              exit 1
+            fi
+          done
+
+          # Формирование единого журнала SCALA + TITAN.
+          COMMON_TMP="Main/logs/SCALA_DREG_TITAN.log.tmp"
+
+          {
+            echo "=================================================="
+            echo "PHOENIX HUB — SCALA DREG + TITAN DREG"
+            echo "UNIFIED COMBINED LOG"
+            echo "Generated UTC: $(date -u '+%Y-%m-%d %H:%M:%S')"
+            echo "=================================================="
+            echo
+
+            echo "=================================================="
+            echo "SCALA DREG — GENERAL DETAILS"
+            echo "=================================================="
+            cat Main/logs/SCALA_DREG.log
+            echo
+
+            echo "=================================================="
+            echo "TITAN DREG — EXTENDED DETAILS"
+            echo "=================================================="
+            cat Main/logs/TITAN_DREG.log
+            echo
+
+            echo "=================================================="
+            echo "END OF UNIFIED LOG"
+            echo "=================================================="
+          } > "$COMMON_TMP"
+
+          mv "$COMMON_TMP" Main/logs/SCALA_DREG_TITAN.log
+
+          test -s Main/logs/SCALA_DREG_TITAN.log
+
+          echo "Both playlists and all three logs are ready."
+
+      - name: Commit and push only five output files
         if: success() && steps.schedule.outputs.run == 'true'
         shell: bash
         run: |
@@ -110,14 +173,60 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -A
+          # Исключаем бинарники и временный Python-кэш.
+          touch .gitignore
+
+          grep -qxF '.tools/ffmpeg/ffprobe' .gitignore || \
+            echo '.tools/ffmpeg/ffprobe' >> .gitignore
+
+          grep -qxF '.tools/ffmpeg/ffprobe.exe' .gitignore || \
+            echo '.tools/ffmpeg/ffprobe.exe' >> .gitignore
+
+          grep -qxF '__pycache__/' .gitignore || \
+            echo '__pycache__/' >> .gitignore
+
+          grep -qxF '*.py[cod]' .gitignore || \
+            echo '*.py[cod]' >> .gitignore
+
+          # Добавляем исключительно пять результатов.
+          git add -f -- \
+            Main/donors_uz.m3u \
+            Main/stable_uz.m3u \
+            Main/logs/SCALA_DREG.log \
+            Main/logs/TITAN_DREG.log \
+            Main/logs/SCALA_DREG_TITAN.log
+
+          # Сохраняем правила исключения.
+          git add -- .gitignore
+
+          # Контроль состава коммита.
+          ACTUAL="$(git diff --cached --name-only | sort)"
+
+          EXPECTED="$(
+            printf '%s\n' \
+              .gitignore \
+              Main/donors_uz.m3u \
+              Main/logs/SCALA_DREG.log \
+              Main/logs/TITAN_DREG.log \
+              Main/logs/SCALA_DREG_TITAN.log \
+              Main/stable_uz.m3u | sort
+          )"
+
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::Unexpected files in commit."
+            echo "Actual:"
+            printf '%s\n' "$ACTUAL"
+            echo "Expected:"
+            printf '%s\n' "$EXPECTED"
+            exit 1
+          fi
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "Update files via Git_for_uz_lists.py"
+          git commit -m "Update Uzbekistan playlists and DREG logs"
 
           for attempt in 1 2 3; do
             echo "Push attempt ${attempt}/3"
