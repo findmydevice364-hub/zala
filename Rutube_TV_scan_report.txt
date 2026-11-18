@@ -43,7 +43,7 @@ UNIVER TV [2372550cb9fd4b970a274ebec6c71839]: API не вернул live HLS; о
 Резонанс ТВ [e2d1a304d55b9a807ec5df1837859304]: API не вернул live HLS; оставлена исходная HLS-ссылка
 Солнце [2dba20a8405e57935827cb5721c2b759]: API не вернул live HLS; оставлена исходная HLS-ссылка
 Activa TV [8e9da41366fcb497aaeade579f0d715f]: API не вернул live HLS; оставлена исходная HLS-ссылка
-Пятый канал [b2b32a7d6f2323f3a113ff44b0404bf2]: действующий HLS не получен; запись пропущена
+Пятый канал [b2b32a7d6f2323f3a113ff44b0404bf2]: ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
 ТВ Центр [7015ad3690d4ef70d75a6e26d0e58565]: действующий HLS не получен; запись пропущена
 РЕН ТВ [54395b96ad1a7b49966f46a6eee370a4]: действующий HLS не получен; запись пропущена
 СТС [ffc110c6785e57f4c329179b555547b4]: действующий HLS не получен; запись пропущена
