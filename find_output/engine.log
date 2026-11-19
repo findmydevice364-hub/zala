@@ -75,3 +75,30 @@
 2026-11-16 14:06:36,297 | INFO | Filtered 18+: 0
 2026-11-16 14:06:36,297 | INFO | Elapsed seconds: 0.63
 2026-11-16 14:06:36,297 | INFO | ====================================================================
+2026-11-19 14:47:39,303 | INFO | ====================================================================
+2026-11-19 14:47:39,303 | INFO | IPTV NODE MASTER AGGREGATOR v3.0.0
+2026-11-19 14:47:39,303 | INFO | Started: 2026-11-19T14:47:39.303849+00:00
+2026-11-19 14:47:39,303 | INFO | Channel deduplication: DISABLED
+2026-11-19 14:47:39,303 | INFO | 18+ filter: ENABLED
+2026-11-19 14:47:39,304 | INFO | Master count limit: DISABLED
+2026-11-19 14:47:39,304 | INFO | Depth limit: DISABLED
+2026-11-19 14:47:39,304 | INFO | ====================================================================
+2026-11-19 14:47:39,304 | INFO | [SOURCE] Downloading source playlist
+2026-11-19 14:47:39,470 | INFO | [SOURCE] Parsing source channels
+2026-11-19 14:47:39,478 | INFO | [SOURCE] Accepted records: 128
+2026-11-19 14:47:39,482 | INFO | [DISCOVERY] Initial catalog candidates: 1
+2026-11-19 14:47:39,482 | INFO | [MASTER] depth=1 | http://91.205.196.7:8000/playlist.m3u8
+2026-11-19 14:47:39,865 | INFO | [OK] 128 channel records | http://91.205.196.7:8000/playlist.m3u8
+2026-11-19 14:47:39,869 | INFO | [PROGRESS] masters=1 successful=1 channels=256 queue=0
+2026-11-19 14:47:39,869 | INFO | [EXPORT] Nodes: 17
+2026-11-19 14:47:39,870 | INFO | [EXPORT] Masters: 1
+2026-11-19 14:47:39,875 | INFO | [EXPORT] Channel occurrences: 256
+2026-11-19 14:47:39,876 | INFO | [EXPORT] Final master playlist written
+2026-11-19 14:47:39,876 | INFO | [VALIDATION] All output files checked
+2026-11-19 14:47:39,877 | INFO | ====================================================================
+2026-11-19 14:47:39,877 | INFO | [SUCCESS] Aggregation completed
+2026-11-19 14:47:39,877 | INFO | Masters: 1
+2026-11-19 14:47:39,877 | INFO | Channels: 256
+2026-11-19 14:47:39,877 | INFO | Filtered 18+: 0
+2026-11-19 14:47:39,877 | INFO | Elapsed seconds: 0.57
+2026-11-19 14:47:39,877 | INFO | ====================================================================
