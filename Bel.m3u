@@ -1,0 +1,88 @@
+﻿#EXTM3U url-tvg=https://iptvx.one/epg/epg.xml.gz
+
+#EXTINF:-1,СТВ Беларусь
+http://80.94.225.126:8080/STV/mono.m3u8
+#EXTINF:-1,СТВ (iptvlist.ru)
+http://82.209.197.187:8080/udp/239.0.100.5:1234
+#EXTINF:-1,Беларусь 1
+http://37.17.12.124:8901/play/a003#sapp_flv2mpeg4=1&sapp_live_ts=1&sapp_progressive=1
+#EXTINF:-1,Беларусь 2
+http://37.17.12.124:8901/play/a004#sapp_flv2mpeg4=1&sapp_live_ts=1&sapp_progressive=1
+#EXTINF:-1,Беларусь 3
+http://37.17.12.124:8901/play/a005#sapp_flv2mpeg4=1&sapp_live_ts=1&sapp_progressive=1
+#EXTINF:-1,Беларусь 5
+http://82.209.197.187:8080/udp/239.0.100.9:1234
+#EXTINF:-1,Беларусь 24
+http://serv30.vintera.tv:8081/belarus24/belarus24/playlist.m3u8#sapp_flv2mpeg4=1&sapp_live_ts=1&sapp_progressive=1
+#EXTINF:-1,Белрос
+http://82.209.197.187:8080/udp/239.0.100.123:1234
+#EXTINF:-1,Белрос
+http://uiptv.do.am/1ufc/116316122/playlist.m3u8#sapp_flv2mpeg4=1&sapp_live_ts=1&sapp_progressive=1
+#EXTINF:-1,Беларусь РТР
+http://37.17.12.124:8901/play/a008#sapp_flv2mpeg4=1&sapp_live_ts=1&sapp_progressive=1
+#EXTINF:-1,Бобруйск 360
+http://82.209.197.187:8080/udp/239.0.100.38:1234#sapp_flv2mpeg4=1&sapp_live_ts=1&sapp_progressive=1&sapp_tvgid=bobruysk360
+#EXTINF:-1,Беларусь 24 
+https://sc.id-tv.kz:443/Belarus24_34_35.m3u8
+#EXTINF:-1,Беларусь 1
+http://86.57.178.105:8421/bel1
+#EXTINF:-1,Беларусь 4 HD Витебск
+https://flu.vtv.by/bt4-non-by/index.m3u8
+#EXTINF:-1,СТВ (Беларусь)
+http://80.94.225.126:8080/STV/mono.m3u8
+#EXTINF:-1,Светлое ТВ
+http://194.158.218.123:8880/SvetloeTV/index.m3u8
+#EXTINF:-1,Беларусь 1
+http://37.17.12.124:8901/play/a003
+#EXTINF:-1,Беларусь 2
+http://37.17.12.124:8901/play/a004
+#EXTINF:-1,Беларусь 3
+http://37.17.12.124:8901/play/a005
+#EXTINF:-1,Белсат
+http://f1.stream.devkom.pro:1063/ramowka/tracks-v1a1/index.m3u8
+#EXTINF:-1,Белсат ТВ
+http://f1.stream.devkom.pro:1063/ramowka/video.m3u8
+#EXTINF:-1,Беларусь 24
+http://serv30.vintera.tv:8081/belarus24/belarus24/playlist.m3u8
+#EXTINF:-1,БелРос ТВ
+http://live2.mediacdn.ru/sr1/tro/playlist.m3u8
+#EXTINF:-1,Беларусь 24 (iptvlist.ru)
+http://serv30.vintera.tv:8081/belarus24/belarus24/playlist.m3u8
+#EXTINF:-1,Беларусь 1 (Mogilev)
+http://82.209.197.187:8080/udp/239.0.100.1:1234
+#EXTINF:-1,Беларусь 2
+http://82.209.197.187:8080/udp/239.0.100.2:1234
+#EXTINF:-1,Беларусь 3
+http://82.209.197.187:8080/udp/239.0.100.3:1234
+#EXTINF:-1,Беларусь 4 (Mogilev)
+http://82.209.197.187:8080/udp/239.0.100.125:1234
+#EXTINF:-1,Беларусь 4 Витебск
+https://flu.vtv.by/bt4-non-by/index.m3u8
+#EXTINF:-1,ОНТ
+http://82.209.197.187:8080/udp/239.0.100.4:1234
+#EXTINF:-1,НТВ Беларусь
+http://82.209.197.187:8080/udp/239.0.100.6:1234
+#EXTINF:-1,РТР Беларусь
+http://82.209.197.187:8080/udp/239.0.100.7:1234
+#EXTINF:-1,BTB HD
+http://82.209.197.187:8080/udp/239.0.100.26:1234
+#EXTINF:-1,Витебск HD
+https://flu.vtv.by/tvt-non-by/index.m3u8#sapp_flv2mpeg4=1&sapp_live_ts=1&sapp_progressive=1
+#EXTINF:-1,Бобруйск 360
+http://82.209.197.187:8080/udp/239.0.100.38:1234
+#EXTINF:-1,8 канал
+http://82.209.197.187:8080/udp/239.0.100.124:1234
+#EXTINF:-1,Звязда
+http://82.209.197.187:8080/udp/239.0.100.142:1234
+#EXTINF:-1,БелРос ТВ
+http://live2.mediacdn.ru/sr1/tro/playlist.m3u8
+#EXTINF:-1,Ретро
+http://82.209.197.187:8080/udp/239.0.100.92:1234
+#EXTINF:-1,Домашние животные
+http://82.209.197.187:8080/udp/239.0.100.93:1234
+#EXTINF:-1,USADBA
+http://82.209.197.187:8080/udp/239.0.100.94:1234
+#EXTINF:-1,Вопросы Ответы
+http://82.209.197.187:8080/udp/239.0.100.95:1234
+#EXTINF:-1,Союз
+http://82.209.197.187:8080/udp/239.0.100.10:1234
