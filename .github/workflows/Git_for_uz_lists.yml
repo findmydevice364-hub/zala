@@ -1,3 +1,4 @@
+
 name: Git_for_uz_lists.py
 
 on:
@@ -7,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: git-for-uz-lists
@@ -100,7 +102,23 @@ jobs:
           set -euo pipefail
           python -u Git_for_uz_lists.py
 
-      - name: Commit and push results only
+      # Сохраняем полные диагностические логи отдельно от Git.
+      # if: always() позволяет загрузить их даже при ошибке Python
+      # или последующих этапов workflow.
+      - name: Upload complete DREG logs
+        if: always() && steps.schedule.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Phoenix-Hub-DREG-Logs-${{ github.run_number }}
+          path: |
+            Main/logs/SCALA_DREG.log
+            Main/logs/TITAN_DREG.log
+            Main/logs/SCALA_DREG_TITAN.log
+          if-no-files-found: warn
+          compression-level: 6
+          retention-days: 30
+
+      - name: Commit and push playlists only
         if: success() && steps.schedule.outputs.run == 'true'
         shell: bash
         run: |
@@ -124,55 +142,51 @@ jobs:
           grep -qxF '*.py[cod]' .gitignore || \
             echo '*.py[cod]' >> .gitignore
 
-          # Проверяем наличие всех пяти результатов.
+          # Проверяем только два выходных плейлиста.
           FILES=(
             "Main/donors_uz.m3u"
             "Main/stable_uz.m3u"
-            "Main/logs/SCALA_DREG.log"
-            "Main/logs/TITAN_DREG.log"
-            "Main/logs/SCALA_DREG_TITAN.log"
           )
 
           for file in "${FILES[@]}"; do
             if [ ! -s "$file" ]; then
-              echo "::error::Missing or empty result: $file"
+              echo "::error::Missing or empty playlist: $file"
               exit 1
             fi
           done
 
-          # Добавляем только пять результатов и .gitignore.
+          # В Git добавляем только плейлисты и .gitignore.
+          # DREG-логи в Git не добавляются.
           git add -f -- "${FILES[@]}"
           git add -- .gitignore
 
-          # Строго проверяем состав коммита.
-          EXPECTED="$(printf '%s\n' \
+          # Разрешённый список файлов для коммита.
+          ALLOWED="$(printf '%s\n' \
             ".gitignore" \
             "Main/donors_uz.m3u" \
-            "Main/stable_uz.m3u" \
-            "Main/logs/SCALA_DREG.log" \
-            "Main/logs/TITAN_DREG.log" \
-            "Main/logs/SCALA_DREG_TITAN.log" | sort)"
+            "Main/stable_uz.m3u")"
 
-          ACTUAL="$(git diff --cached --name-only | sort)"
+          ACTUAL="$(git diff --cached --name-only)"
 
-          if [ "$ACTUAL" != "$EXPECTED" ]; then
-            echo "::error::Unexpected files staged for commit."
-            echo "Expected:"
-            echo "$EXPECTED"
-            echo "Actual:"
-            echo "$ACTUAL"
-            exit 1
-          fi
+          # Проверяем, что среди staged-файлов нет ничего лишнего.
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+
+            if ! printf '%s\n' "$ALLOWED" | grep -Fxq -- "$file"; then
+              echo "::error::Unexpected file staged for commit: $file"
+              exit 1
+            fi
+          done <<< "$ACTUAL"
 
           if git diff --cached --quiet; then
-            echo "No changes to commit."
+            echo "No playlist or configuration changes to commit."
             exit 0
           fi
 
           echo "Files prepared for commit:"
           git diff --cached --name-only
 
-          git commit -m "Update Uzbek playlists and DREG logs"
+          git commit -m "Update Uzbek playlists"
 
           for attempt in 1 2 3; do
             echo "Push attempt ${attempt}/3"
