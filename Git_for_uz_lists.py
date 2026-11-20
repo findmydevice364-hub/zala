@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -59,13 +58,26 @@ COMBINED:
 DEDUPLICATION
 ============================================================
 
-COMPLETELY DISABLED
+PLAYLIST SOURCE DEDUPLICATION: ENABLED EXACTLY ONCE
 
-No URL deduplication
-No channel-name deduplication
-No source deduplication
+Executed only:
+    After all playlist discovery patterns have completed
+    Before playlist downloads begin
 
-Original record order is preserved.
+Scope:
+    Discovered M3U/M3U8 source URLs only
+
+Policy:
+    Preserve first occurrence
+    Preserve first-occurrence order
+    Download each unique playlist source once
+
+DISABLED:
+    Channel URL deduplication
+    Channel-name deduplication
+    M3U record deduplication
+
+All duplicate channel records are preserved.
 
 ============================================================
 OUTPUT
@@ -102,7 +114,11 @@ import zipfile
 
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import (
+    urljoin,
+    urlsplit,
+    urlunsplit,
+)
 
 import requests
 
@@ -281,6 +297,8 @@ EXIT_CODE = 1
 
 COUNTERS = {
     "sources_discovered": 0,
+    "sources_unique": 0,
+    "sources_duplicates_removed": 0,
     "sources_downloaded": 0,
     "source_errors": 0,
 
@@ -391,7 +409,21 @@ def initialize_logs():
         + "\n"
         + "-" * 100
         + "\n"
-        + "DEDUPLICATION: COMPLETELY DISABLED"
+        + "PLAYLIST SOURCE DEDUPLICATION: ENABLED ONCE"
+        + "\n"
+        + "DEDUPLICATION STAGE: DISCOVERY BEFORE DOWNLOAD"
+        + "\n"
+        + "DEDUPLICATION SCOPE: PLAYLIST SOURCE URLS ONLY"
+        + "\n"
+        + "PRESERVE FIRST SOURCE OCCURRENCE: YES"
+        + "\n"
+        + "PRESERVE UNIQUE SOURCE ORDER: YES"
+        + "\n"
+        + "CHANNEL URL DEDUPLICATION: DISABLED"
+        + "\n"
+        + "CHANNEL NAME DEDUPLICATION: DISABLED"
+        + "\n"
+        + "M3U RECORD DEDUPLICATION: DISABLED"
         + "\n"
         + "HEAD + GET + FFPROBE: INDEPENDENT PARALLEL EXECUTORS"
         + "\n"
@@ -1287,6 +1319,234 @@ def initialize_ffprobe():
 
 
 # ============================================================
+# PLAYLIST SOURCE URL NORMALIZATION
+# ============================================================
+
+def normalize_playlist_source_url(url):
+    """
+    Нормализация исключительно адресов плейлистов.
+
+    Используется только на этапе DISCOVERY.
+
+    Не применяется:
+        - к каналам;
+        - к URL внутри M3U;
+        - к названиям каналов;
+        - к результатам парсинга;
+        - к stable/donors.
+
+    Сохраняет query-параметры, поскольку они могут быть
+    значимыми для получения содержимого плейлиста.
+
+    Удаляет fragment, который не передаётся HTTP-серверу.
+
+    Приводит схему и hostname к нижнему регистру.
+    Удаляет стандартные порты HTTP и HTTPS.
+    Сохраняет регистр пути и query-параметры.
+    """
+
+    value = str(url).strip()
+
+    if not value:
+        return None
+
+    try:
+
+        parsed = urlsplit(value)
+
+        scheme = parsed.scheme.lower()
+
+        hostname = (
+            parsed.hostname.lower()
+            if parsed.hostname
+            else ""
+        )
+
+        if not scheme or not hostname:
+            return None
+
+        username = parsed.username
+        password = parsed.password
+
+        auth = ""
+
+        if username is not None:
+
+            auth = username
+
+            if password is not None:
+                auth += ":" + password
+
+            auth += "@"
+
+        port = ""
+
+        try:
+
+            if parsed.port is not None:
+
+                default_port = (
+                    scheme == "https"
+                    and parsed.port == 443
+                ) or (
+                    scheme == "http"
+                    and parsed.port == 80
+                )
+
+                if not default_port:
+                    port = f":{parsed.port}"
+
+        except ValueError:
+            return None
+
+        # IPv6 hostnames require square brackets in netloc.
+        if ":" in hostname and not hostname.startswith("["):
+            hostname = f"[{hostname}]"
+
+        netloc = (
+            auth
+            + hostname
+            + port
+        )
+
+        normalized = urlunsplit((
+            scheme,
+            netloc,
+            parsed.path,
+            parsed.query,
+            "",
+        ))
+
+        return normalized
+
+    except Exception:
+        return None
+
+
+# ============================================================
+# PLAYLIST SOURCE DEDUPLICATION
+# ============================================================
+
+def deduplicate_discovered_playlists(candidates):
+    """
+    ЕДИНСТВЕННАЯ ТОЧКА ДЕДУПЛИКАЦИИ ПРОЕКТА.
+
+    Работает только со списком обнаруженных M3U/M3U8.
+
+    Алгоритм:
+        1. Получает весь список найденных ссылок.
+        2. Нормализует адрес каждой ссылки.
+        3. Сохраняет первое появление ссылки.
+        4. Пропускает последующие повторы.
+        5. Не изменяет порядок уникальных источников.
+
+    ВАЖНО:
+        Здесь не обрабатываются каналы.
+        Здесь не обрабатываются названия.
+        Здесь не обрабатываются записи M3U.
+
+    Функция вызывается ровно один раз из
+    discover_playlist_urls().
+    """
+
+    unique_sources = []
+
+    seen_sources = set()
+
+    duplicates_removed = 0
+    invalid_sources = 0
+
+    total_candidates = len(candidates)
+
+    for index, original_url in enumerate(
+        candidates,
+        1
+    ):
+
+        normalized_url = normalize_playlist_source_url(
+            original_url
+        )
+
+        if not normalized_url:
+
+            invalid_sources += 1
+
+            titan_detail(
+                f"SOURCE DEDUP INVALID | "
+                f"index={index} | {original_url}"
+            )
+
+            continue
+
+        if normalized_url in seen_sources:
+
+            duplicates_removed += 1
+
+            titan_detail(
+                f"SOURCE DUPLICATE REMOVED | "
+                f"index={index} | {normalized_url}"
+            )
+
+            continue
+
+        seen_sources.add(
+            normalized_url
+        )
+
+        unique_sources.append(
+            normalized_url
+        )
+
+        titan_detail(
+            f"SOURCE UNIQUE PRESERVED | "
+            f"index={index} | {normalized_url}"
+        )
+
+    counter_set(
+        "sources_discovered",
+        total_candidates
+    )
+
+    counter_set(
+        "sources_unique",
+        len(unique_sources)
+    )
+
+    counter_set(
+        "sources_duplicates_removed",
+        duplicates_removed
+    )
+
+    scala(
+        "PLAYLIST SOURCE DEDUPLICATION COMPLETE | "
+        f"discovered={total_candidates} | "
+        f"unique={len(unique_sources)} | "
+        f"duplicates_removed={duplicates_removed} | "
+        f"invalid={invalid_sources}"
+    )
+
+    titan(
+        "SOURCE DEDUPLICATION STATISTICS | "
+        f"input={total_candidates} | "
+        f"output={len(unique_sources)} | "
+        f"removed={duplicates_removed} | "
+        f"invalid={invalid_sources}"
+    )
+
+    if total_candidates != (
+        len(unique_sources)
+        + duplicates_removed
+        + invalid_sources
+    ):
+
+        raise RuntimeError(
+            "Playlist deduplication accounting mismatch"
+        )
+
+    return unique_sources
+
+
+# ============================================================
 # PLAYLIST DISCOVERY
 # ============================================================
 
@@ -1318,73 +1578,173 @@ def discover_playlist_urls():
         r'(playlists/[^"\'\s<>]+\.m3u8?)',
     ]
 
-    candidates = []
+    # Each item:
+    # (HTML position, pattern index, discovery sequence, URL)
+    #
+    # Sorting by HTML position preserves the order in which
+    # matching URLs first appear in the source document.
+    # Pattern index and sequence provide deterministic ordering
+    # when several patterns match at the same position.
 
-    for pattern in patterns:
+    located_candidates = []
 
-        found = re.findall(
-            pattern,
-            html,
-            flags=re.IGNORECASE
-        )
-
-        candidates.extend(
-            found
-        )
-
-    result = []
+    discovery_sequence = 0
 
     # --------------------------------------------------------
-    # DEDUPLICATION IS INTENTIONALLY DISABLED.
+    # PHASE 1 — COLLECT ALL MATCHES
     #
-    # Do not add:
-    #     seen = set()
-    #     if url in seen
-    #     dict.fromkeys()
-    #     list(set(...))
+    # No deduplication is performed here.
     #
-    # Repeated discovery matches are preserved.
+    # The same URL can occur:
+    #     - in href;
+    #     - in data-url;
+    #     - in an absolute link;
+    #     - in a relative link;
+    #     - several times in the HTML.
+    #
+    # All valid matches are collected before deduplication.
     # --------------------------------------------------------
 
-    for href in candidates:
+    for pattern_index, pattern in enumerate(
+        patterns,
+        1
+    ):
 
-        href = href.strip().strip("'\"")
-
-        if not href:
-            continue
-
-        absolute = urljoin(
-            INDEX_URL,
-            href
+        found = list(
+            re.finditer(
+                pattern,
+                html,
+                flags=re.IGNORECASE
+            )
         )
 
-        if absolute.startswith("http://"):
+        scala(
+            f"DISCOVERY PATTERN COMPLETE | "
+            f"pattern={pattern_index} | "
+            f"matches={len(found)}"
+        )
 
-            absolute = (
-                "https://" + absolute[7:]
+        for match in found:
+
+            href = (
+                match.group(1)
+                .strip()
+                .strip("'\"")
             )
 
-        check_path = (
-            absolute.split("#", 1)[0]
-            .split("?", 1)[0]
+            if not href:
+                continue
+
+            absolute = urljoin(
+                INDEX_URL,
+                href
+            )
+
+            if absolute.startswith("http://"):
+
+                absolute = (
+                    "https://" + absolute[7:]
+                )
+
+            check_path = (
+                absolute.split("#", 1)[0]
+                .split("?", 1)[0]
+            )
+
+            if not check_path.lower().endswith(
+                PLAYLIST_EXTENSIONS
+            ):
+                continue
+
+            discovery_sequence += 1
+
+            located_candidates.append((
+                match.start(1),
+                pattern_index,
+                discovery_sequence,
+                absolute,
+            ))
+
+    # --------------------------------------------------------
+    # PHASE 2 — RESTORE HTML DOCUMENT ORDER
+    #
+    # The patterns are evaluated independently.
+    # Sorting by the source position prevents pattern grouping
+    # from changing the order of first appearance in HTML.
+    #
+    # If multiple patterns match the same source position,
+    # pattern index and discovery sequence make the order stable.
+    # --------------------------------------------------------
+
+    located_candidates.sort(
+        key=lambda item: (
+            item[0],
+            item[1],
+            item[2],
         )
+    )
 
-        if not check_path.lower().endswith(
-            PLAYLIST_EXTENSIONS
-        ):
-            continue
+    candidates = [
+        item[3]
+        for item in located_candidates
+    ]
 
-        result.append(
-            absolute
-        )
+    # --------------------------------------------------------
+    # PHASE 3 — RAW DISCOVERY REPORT
+    #
+    # This is the total number of valid playlist matches
+    # across all patterns, including repeated matches.
+    # --------------------------------------------------------
 
-    counter_add(
+    raw_count = len(candidates)
+
+    counter_set(
         "sources_discovered",
-        len(result)
+        raw_count
     )
 
     scala(
-        f"PLAYLISTS DISCOVERED | {len(result)}"
+        f"RAW PLAYLIST MATCHES COLLECTED | {raw_count}"
+    )
+
+    titan(
+        "DISCOVERY RAW RESULT | "
+        f"all_matches={raw_count}"
+    )
+
+    for index, url in enumerate(
+        candidates,
+        1
+    ):
+
+        titan_detail(
+            f"RAW DISCOVERY MATCH "
+            f"[{index}/{raw_count}] | {url}"
+        )
+
+    # --------------------------------------------------------
+    # PHASE 4 — THE ONLY SOURCE DEDUPLICATION
+    #
+    # Exactly one call.
+    #
+    # Before download.
+    # Before parsing.
+    # Only for playlist source addresses.
+    # --------------------------------------------------------
+
+    result = deduplicate_discovered_playlists(
+        candidates
+    )
+
+    # --------------------------------------------------------
+    # PHASE 5 — FINAL UNIQUE SOURCE LIST
+    #
+    # This list alone is passed to the downloader.
+    # First-occurrence order is preserved.
+    # --------------------------------------------------------
+
+    scala(
+        f"UNIQUE PLAYLIST SOURCES READY | {len(result)}"
     )
 
     for index, url in enumerate(
@@ -1393,7 +1753,7 @@ def discover_playlist_urls():
     ):
 
         titan(
-            f"SOURCE DISCOVERED "
+            f"UNIQUE SOURCE "
             f"[{index}/{len(result)}] | {url}"
         )
 
@@ -1414,7 +1774,7 @@ def discover_playlist_urls():
         )
 
         raise RuntimeError(
-            "No M3U/M3U8 playlists discovered"
+            "No unique M3U/M3U8 playlists discovered"
         )
 
     return result
@@ -1507,10 +1867,27 @@ def download_all_sources(sources):
 
     total = len(sources)
 
+    counts = counter_snapshot()
+
     scala(
         f"DOWNLOAD STAGE | "
-        f"sources={total} | workers={MAX_DOWNLOAD_WORKERS}"
+        f"sources={total} | "
+        f"workers={MAX_DOWNLOAD_WORKERS}"
     )
+
+    scala(
+        "DOWNLOAD INPUT VERIFICATION | "
+        f"discovered={counts['sources_discovered']} | "
+        f"unique={counts['sources_unique']} | "
+        f"duplicates_removed={counts['sources_duplicates_removed']} | "
+        f"queued={total}"
+    )
+
+    if total != counts["sources_unique"]:
+
+        raise RuntimeError(
+            "Download queue does not match unique source counter"
+        )
 
     results = [None] * total
 
@@ -1567,8 +1944,11 @@ def download_all_sources(sources):
                     f"{completed}/{total}"
                 )
 
-    # Preserve source discovery order.
-    # Duplicate sources remain separate entries.
+    # Preserve unique source discovery order.
+    # Every unique source is submitted once.
+    # Source duplicates have already been removed.
+    #
+    # No channel-level deduplication is performed here.
 
     downloaded = [
         item
@@ -1580,6 +1960,13 @@ def download_all_sources(sources):
     scala(
         f"DOWNLOAD COMPLETE | "
         f"{len(downloaded)}/{total}"
+    )
+
+    titan(
+        "DOWNLOAD SOURCE ACCOUNTING | "
+        f"unique_sources={total} | "
+        f"downloaded={len(downloaded)} | "
+        f"errors={total - len(downloaded)}"
     )
 
     return downloaded
@@ -1814,8 +2201,11 @@ def parse_all_sources(downloaded):
 
     all_entries = []
 
-    # Preserve original source order.
+    # Preserve original unique source order.
     # Do not deduplicate entries.
+    # Duplicate channel URLs remain.
+    # Duplicate channel names remain.
+    # Duplicate M3U records remain.
 
     for source_entries in results:
 
@@ -1826,6 +2216,13 @@ def parse_all_sources(downloaded):
 
     scala(
         f"PARSING COMPLETE | entries={len(all_entries)}"
+    )
+
+    titan(
+        "CHANNEL RECORD PRESERVATION | "
+        "URL deduplication=DISABLED | "
+        "name deduplication=DISABLED | "
+        "M3U record deduplication=DISABLED"
     )
 
     return all_entries
@@ -3030,10 +3427,37 @@ def write_validation_report():
         },
 
         "deduplication": {
-            "enabled": False,
-            "url": False,
-            "channel_name": False,
-            "source": False,
+            "enabled": True,
+
+            "playlist_sources": {
+                "enabled": True,
+                "execution_count": 1,
+                "stage": "discovery_before_download",
+                "preserve_first_occurrence": True,
+                "preserve_order": True,
+                "normalized_url_comparison": True,
+            },
+
+            "channel_urls": {
+                "enabled": False,
+            },
+
+            "channel_names": {
+                "enabled": False,
+            },
+
+            "m3u_records": {
+                "enabled": False,
+            },
+
+            "source_counters": {
+                "discovered": counts["sources_discovered"],
+                "unique": counts["sources_unique"],
+                "duplicates_removed": counts[
+                    "sources_duplicates_removed"
+                ],
+                "downloaded": counts["sources_downloaded"],
+            },
         },
 
         "counters": counts,
@@ -3096,9 +3520,11 @@ def print_report(
 
         "SOURCE DISCOVERY AND DOWNLOAD",
 
-        f"Sources discovered       : {counts['sources_discovered']}",
-        f"Sources downloaded       : {counts['sources_downloaded']}",
-        f"Source errors            : {counts['source_errors']}",
+        f"Raw source matches       : {counts['sources_discovered']}",
+        f"Unique playlist sources : {counts['sources_unique']}",
+        f"Duplicate sources removed: {counts['sources_duplicates_removed']}",
+        f"Sources downloaded      : {counts['sources_downloaded']}",
+        f"Source errors           : {counts['source_errors']}",
 
         "-" * 90,
 
@@ -3110,11 +3536,17 @@ def print_report(
 
         "-" * 90,
 
-        "DEDUPLICATION",
+        "DEDUPLICATION POLICY",
 
-        "URL deduplication        : DISABLED",
-        "Name deduplication       : DISABLED",
-        "Source deduplication     : DISABLED",
+        "Playlist source dedup    : ENABLED",
+        "Source dedup executions  : 1",
+        "Source dedup stage      : DISCOVERY BEFORE DOWNLOAD",
+        "Source first occurrence : PRESERVED",
+        "Unique source order     : PRESERVED",
+
+        "Channel URL dedup       : DISABLED",
+        "Channel name dedup      : DISABLED",
+        "M3U record dedup        : DISABLED",
 
         "-" * 90,
 
@@ -3414,12 +3846,42 @@ def main():
             "COLLECTOR STARTED"
         )
 
-        titan_detail(
-            "DEDUPLICATION COMPLETELY DISABLED"
+        scala(
+            "PLAYLIST SOURCE DEDUPLICATION ENABLED"
+        )
+
+        scala(
+            "DEDUPLICATION SCOPE: DISCOVERED PLAYLIST URLS ONLY"
+        )
+
+        scala(
+            "DEDUPLICATION EXECUTION COUNT: EXACTLY ONE"
+        )
+
+        scala(
+            "DEDUPLICATION STAGE: AFTER DISCOVERY, BEFORE DOWNLOAD"
+        )
+
+        scala(
+            "CHANNEL URL DEDUPLICATION: DISABLED"
+        )
+
+        scala(
+            "CHANNEL NAME DEDUPLICATION: DISABLED"
+        )
+
+        scala(
+            "M3U RECORD DEDUPLICATION: DISABLED"
         )
 
         titan_detail(
-            "URL, channel-name and source duplicates are preserved"
+            "SOURCE DEDUPLICATION WILL RUN ONCE AFTER ALL "
+            "DISCOVERY PATTERNS HAVE COMPLETED"
+        )
+
+        titan_detail(
+            "CHANNEL URL, CHANNEL NAME AND M3U RECORD "
+            "DUPLICATES WILL BE PRESERVED"
         )
 
         MAIN_DIR.mkdir(
@@ -3454,14 +3916,35 @@ def main():
             )
 
         # ----------------------------------------------------
-        # STAGE 2 — DISCOVERY
+        # STAGE 2 — DISCOVERY AND SOURCE DEDUPLICATION
         # ----------------------------------------------------
 
         scala(
             "STAGE 2: PLAYLIST DISCOVERY"
         )
 
+        scala(
+            "STAGE 2.1: COLLECT ALL PLAYLIST MATCHES"
+        )
+
+        scala(
+            "STAGE 2.2: EXECUTE SOURCE DEDUPLICATION ONCE"
+        )
+
+        scala(
+            "STAGE 2.3: PRESERVE FIRST OCCURRENCE ORDER"
+        )
+
         sources = discover_playlist_urls()
+
+        source_counts = counter_snapshot()
+
+        scala(
+            "DISCOVERY FINAL ACCOUNTING | "
+            f"raw={source_counts['sources_discovered']} | "
+            f"unique={source_counts['sources_unique']} | "
+            f"removed={source_counts['sources_duplicates_removed']}"
+        )
 
         if STOP_EVENT.is_set():
 
@@ -3470,11 +3953,11 @@ def main():
             )
 
         # ----------------------------------------------------
-        # STAGE 3 — DOWNLOAD
+        # STAGE 3 — DOWNLOAD UNIQUE SOURCES ONLY
         # ----------------------------------------------------
 
         scala(
-            "STAGE 3: PARALLEL DOWNLOAD"
+            "STAGE 3: PARALLEL DOWNLOAD OF UNIQUE SOURCES"
         )
 
         downloaded = download_all_sources(
@@ -3520,19 +4003,35 @@ def main():
             )
 
         # ----------------------------------------------------
-        # STAGE 5 — DEDUPLICATION SKIPPED
+        # STAGE 5 — NO CHANNEL DEDUPLICATION
         # ----------------------------------------------------
 
         scala(
-            "STAGE 5: DEDUPLICATION SKIPPED"
+            "STAGE 5: CHANNEL RECORDS PRESERVED"
         )
 
         scala(
-            f"ALL RECORDS PRESERVED | {len(donors)}"
+            f"ALL PARSED RECORDS PRESERVED | {len(donors)}"
+        )
+
+        scala(
+            "CHANNEL URL DEDUPLICATION: DISABLED"
+        )
+
+        scala(
+            "CHANNEL NAME DEDUPLICATION: DISABLED"
+        )
+
+        scala(
+            "M3U RECORD DEDUPLICATION: DISABLED"
         )
 
         titan_detail(
             f"RECORDS ENTERING VALIDATION | {len(donors)}"
+        )
+
+        titan_detail(
+            "NO CHANNEL-LEVEL DEDUPLICATION HAS BEEN PERFORMED"
         )
 
         # ----------------------------------------------------
