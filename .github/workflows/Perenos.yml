@@ -1,0 +1,95 @@
+
+name: DONORS UZ PLAYLIST TRANSFER
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+    paths:
+      - 'perenos.py'
+      - '.github/workflows/perenos.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: donors-uz-transfer
+  cancel-in-progress: false
+
+jobs:
+  transfer:
+    name: Download and Push donors_uz.m3u
+    runs-on: ubuntu-latest
+
+    steps:
+      # Получение репозитория
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+
+      # Установка Python
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      # Установка Requests
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      # Удаляем старую копию для проверки нового скачивания
+      - name: Prepare destination
+        run: |
+          rm -f donors_uz.m3u
+
+      # Запуск perenos.py
+      - name: Run playlist downloader
+        run: |
+          python perenos.py
+
+      # Проверка результата
+      - name: Verify playlist
+        run: |
+          test -s donors_uz.m3u
+          echo "Playlist successfully downloaded"
+          ls -lh donors_uz.m3u
+
+      # Настройка Git
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # Добавление плейлиста
+      - name: Add playlist
+        run: |
+          git add donors_uz.m3u
+
+      # Создание коммита
+      - name: Commit changes
+        run: |
+          if git diff --cached --quiet; then
+            echo "No changes in playlist"
+          else
+            git commit -m "Update donors_uz.m3u"
+          fi
+
+      # Публикация в main
+      - name: Push to GitHub
+        run: |
+          git push origin HEAD:main
+
+      - name: Transfer completed
+        run: |
+          echo "=================================="
+          echo "DONORS UZ TRANSFER SUCCESS"
+          echo "File: donors_uz.m3u"
+          echo "Destination: Repository ROOT"
+          echo "Branch: main"
+          echo "=================================="
