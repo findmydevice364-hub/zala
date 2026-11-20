@@ -2,4 +2,7 @@
 *.bak
 .DS_Store
 .nomedia
-logos/.nomedia
+logos/.nomedia.tools/ffmpeg/ffprobe
+.tools/ffmpeg/ffprobe.exe
+__pycache__/
+*.py[cod]
