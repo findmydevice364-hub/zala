@@ -4,10 +4,10 @@ Output: Rutube_TV.m3u
 Seed entries: 135
 Discovered candidates: 0
 Unique IDs processed: 135
-Fresh HLS from Rutube API: 75
+Fresh HLS from Rutube API: 74
 Kept previous signed HLS fallback: 32
-Final M3U entries: 107
-Unresolved / warnings: 60
+Final M3U entries: 106
+Unresolved / warnings: 61
 
 Unresolved entries:
 Мир 24 [43269ba8fb179e298b1e497f557e8d2d]: API не вернул live HLS; оставлена исходная HLS-ссылка
@@ -56,6 +56,7 @@ TLC [7c3d1a4cc0b4dff1176aa2dbb0b90000]: действующий HLS не полу
 Animal Planet [4004c8f6817b9ae1bd0d418905ae2b02]: действующий HLS не получен; запись пропущена
 ID Xtra [a91d58870b9a0d23b2309d020ac4b354]: действующий HLS не получен; запись пропущена
 Travel Channel HD [4196566bc9c3b7b854074ad1a9a2db36]: действующий HLS не получен; запись пропущена
+FX [bcf8e82a331067e567f765d65ed52b21]: действующий HLS не получен; запись пропущена
 FX Life [f27b804a6f805cb66ff83d4930bd17ff]: действующий HLS не получен; запись пропущена
 Telemundo TV [d080f8ee5c63ea2ba83bd6d2969d1e84]: действующий HLS не получен; запись пропущена
 World Fashion Channel [ee6a3d5ba98066c2aaace3c428a3170c]: действующий HLS не получен; запись пропущена
