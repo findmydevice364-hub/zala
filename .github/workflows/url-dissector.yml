@@ -1,0 +1,69 @@
+
+name: Phoenix URL Dissector
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phoenix-url-dissector
+  cancel-in-progress: false
+
+jobs:
+  run-dissector:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download Python script from Raw GitHub
+        run: |
+          set -euo pipefail
+
+          SCRIPT_URL="https://raw.githubusercontent.com/findmydevice364-hub/zala/main/URL_Dessector.py"
+
+          curl --fail --location --silent --show-error \
+            --retry 3 \
+            --retry-delay 2 \
+            --connect-timeout 15 \
+            --max-time 90 \
+            "$SCRIPT_URL" \
+            --output URL_Dessector.py
+
+          test -s URL_Dessector.py
+
+          if head -c 300 URL_Dessector.py | grep -qiE '<!DOCTYPE html|<html'; then
+            echo "::error::Downloaded an HTML page instead of a Python script."
+            exit 1
+          fi
+
+          echo "Python script downloaded successfully."
+          wc -l URL_Dessector.py
+
+      - name: Check Python syntax
+        run: python -m py_compile URL_Dessector.py
+
+      - name: Run URL Dissector
+        run: python -u URL_Dessector.py
+
+      - name: Upload diagnostic files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phoenix-url-dissector-report
+          path: |
+            *.txt
+            *.json
+            *.log
+            *.m3u
+            *.m3u8
+          if-no-files-found: ignore
+          retention-days: 7
