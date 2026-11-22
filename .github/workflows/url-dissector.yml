@@ -1,4 +1,3 @@
-
 name: Phoenix URL Dissector
 
 on:
@@ -15,6 +14,7 @@ concurrency:
 
 jobs:
   run-dissector:
+    name: Discover and analyze LiveM3U playlists
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -25,12 +25,17 @@ jobs:
           python-version: "3.12"
 
       - name: Download Python script from Raw GitHub
+        shell: bash
         run: |
           set -euo pipefail
 
           SCRIPT_URL="https://raw.githubusercontent.com/findmydevice364-hub/zala/main/URL_Dessector.py"
 
-          curl --fail --location --silent --show-error \
+          curl \
+            --fail \
+            --location \
+            --silent \
+            --show-error \
             --retry 3 \
             --retry-delay 2 \
             --connect-timeout 15 \
@@ -40,30 +45,51 @@ jobs:
 
           test -s URL_Dessector.py
 
-          if head -c 300 URL_Dessector.py | grep -qiE '<!DOCTYPE html|<html'; then
-            echo "::error::Downloaded an HTML page instead of a Python script."
+          if head -c 500 URL_Dessector.py | grep -qiE '<!DOCTYPE html|<html'; then
+            echo "::error::Downloaded HTML instead of a Python script."
             exit 1
           fi
 
-          echo "Python script downloaded successfully."
+          echo "Downloaded script:"
           wc -l URL_Dessector.py
 
       - name: Check Python syntax
         run: python -m py_compile URL_Dessector.py
 
       - name: Run URL Dissector
-        run: python -u URL_Dessector.py
+        shell: bash
+        run: |
+          set -euo pipefail
 
-      - name: Upload diagnostic files
+          mkdir -p reports
+
+          python -u URL_Dessector.py \
+            --discover-livem3u \
+            --mode deep \
+            --timeout 15 \
+            --max-bytes 1048576 \
+            --max-total-bytes 20971520 \
+            --max-runtime 300 \
+            --max-requests 100 \
+            --max-depth 3 \
+            --max-segments 10 \
+            --max-children 20 \
+            --max-redirects 5 \
+            --max-sources 100 \
+            --output-dir reports \
+            --name livem3u
+
+      - name: Upload diagnostic reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phoenix-url-dissector-report
+          name: phoenix-url-dissector-reports
           path: |
+            reports/
             *.txt
             *.json
             *.log
             *.m3u
             *.m3u8
-          if-no-files-found: ignore
+          if-no-files-found: warn
           retention-days: 7
