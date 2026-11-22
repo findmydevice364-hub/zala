@@ -17,7 +17,7 @@ jobs:
   run-dissector:
     name: Discover and analyze LiveM3U playlists
     runs-on: ubuntu-latest
-    timeout-minutes: 760
+    timeout-minutes: 780
 
     steps:
       - name: Set up Python
@@ -55,7 +55,16 @@ jobs:
           wc -l URL_Dessector.py
 
       - name: Check Python syntax
-        run: python -m py_compile URL_Dessector.py
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile URL_Dessector.py
+
+      - name: Run Python self-test
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u URL_Dessector.py --self-test
 
       - name: Run URL Dissector
         shell: bash
@@ -66,19 +75,19 @@ jobs:
 
           python -u URL_Dessector.py \
             --discover-livem3u \
-            --mode deep \
             --timeout 30 \
             --max-bytes 52428800 \
             --max-total-bytes 5368709120 \
             --max-runtime 18000 \
             --max-requests 100000 \
             --max-depth 50 \
-            --max-segments 1000 \
             --max-children 100000 \
-            --max-redirects 50 \
             --max-sources 100000 \
-            --output-dir reports \
-            --name livem3u
+            --workers 16 \
+            --segment-probe-bytes 1048576 \
+            --hls-variant-policy all \
+            --check-hls-segment \
+            --output-dir reports
 
       - name: Upload diagnostic reports
         if: always()
