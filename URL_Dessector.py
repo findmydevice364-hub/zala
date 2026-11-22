@@ -1,30 +1,43 @@
 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
 Phoenix URL Dissector 2.3.1.0-beta
-HTTP / proxy / HLS / LiveM3U / M3U source diagnostics.
+HTTP / proxy / M3U / HLS recursive stream diagnostics.
 
-Python 3.9+, standard library only.
+Python 3.9+
+Standard library only.
 
-Многопоточные пулы:
-  50 — обнаружение источников;
-  50 — HTTP-загрузка;
-  50 — разбор плейлистов;
-  150 — независимые URL и вложенные ресурсы.
+Основные возможности:
+- многопоточная обработка исходных URL;
+- автоматическое обнаружение LiveM3U INDEX.m3u и playlist.m3u;
+- рекурсивный обход дочерних M3U и HLS master-playlist;
+- отдельная проверка конечных потоков;
+- проверка структуры HLS media-playlist и тест первого сегмента;
+- единый ограничитель HTTP-запросов и загруженных байтов;
+- ограничение глубины обхода, времени работы и количества URL;
+- защита от циклов и повторного обхода URL;
+- сохранение метаданных EXTINF и связанных директив;
+- итоговый M3U только из подтверждённых конечных адресов;
+- TXT и JSON отчёты;
+- диагностика DNS/TCP/TLS;
+- поддержка GitHub Actions и Termux.
 
-Сохраняет основные возможности версии 2.2.0.
-Не обходит DRM, авторизацию или ограничения доступа.
+Важно:
+HTTP-ответ 200 не доказывает, что поток воспроизводится в IPTV-плеере.
+Отчёт разделяет сетевую доступность, структуру HLS и результат проверки
+конечного URL. Полное декодирование аудио/видео требует внешнего декодера.
 """
 
 from __future__ import annotations
 
 import argparse
-import collections
 import concurrent.futures
 import datetime as dt
-import ipaddress
 import json
+import os
+import queue
 import re
 import socket
 import ssl
@@ -34,2082 +47,2530 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-
+from collections import Counter
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 
 VERSION = "2.3.1.0-beta"
 
 LIVE_M3U_BASE = "https://livem3u.tatnet.app"
-LIVE_M3U_INDEX = LIVE_M3U_BASE + "/data/playlists/INDEX.m3u"
-LIVE_M3U_MAIN = LIVE_M3U_BASE + "/data/playlist.m3u"
-
-DISCOVERY_WORKERS = 50
-DOWNLOAD_WORKERS = 50
-PARSER_WORKERS = 50
-URL_WORKERS = 150
-
-UA = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 Chrome/131.0 Safari/537.36"
+LIVE_M3U_INDEX = (
+    LIVE_M3U_BASE + "/data/playlists/INDEX.m3u"
+)
+LIVE_M3U_MAIN = (
+    LIVE_M3U_BASE + "/data/playlist.m3u"
 )
 
-REDIRECTS = {301, 302, 303, 307, 308}
-
-HLS_TYPES = (
-    "mpegurl",
-    "vnd.apple.mpegurl",
-    "x-mpegurl",
-    "application/m3u8",
+DEFAULT_USER_AGENT = (
+    "Mozilla/5.0 (X11; Linux x86_64) "
+    "AppleWebKit/537.36 "
+    "(KHTML, like Gecko) "
+    "Chrome/131.0 Safari/537.36 "
+    "PhoenixURLDissector/2.3.1.0-beta"
 )
 
-SECRET_KEYS = {
-    "token", "key", "auth", "authorization",
-    "password", "passwd", "secret", "signature",
-    "sig", "jwt", "session", "access_token",
-    "api_key", "apikey",
-}
+PLAYLIST_TYPES = (
+    "application/vnd.apple.mpegurl",
+    "application/x-mpegurl",
+    "audio/mpegurl",
+    "audio/x-mpegurl",
+)
 
-CLAIM_HEADERS = {
-    "x-final-url", "x-request-url",
-    "x-cors-redirect-1", "x-original-url",
-    "x-rewrite-url", "x-upstream-url",
-}
+MEDIA_TYPES = (
+    "video/",
+    "audio/",
+    "application/octet-stream",
+    "application/ogg",
+    "application/mp2t",
+)
 
+URL_RE = re.compile(
+    r"""https?://[^\s"'<>]+""",
+    re.IGNORECASE,
+)
 
-# ============================================================
-# Общие утилиты
-# ============================================================
+ATTR_RE = re.compile(
+    r"""([A-Za-z0-9_-]+)\s*=\s*"""
+    r"""(?:"((?:[^"\\]|\\.)*)"|([^,]*))"""
+)
 
-def now():
-    return dt.datetime.now(dt.timezone.utc).isoformat(
-        timespec="seconds"
-    )
-
-
-def redact(url):
-    """Маскирует типовые секреты в URL отчёта."""
-    try:
-        p = urllib.parse.urlsplit(url)
-        net = p.hostname or ""
-
-        if p.port:
-            net += ":" + str(p.port)
-
-        if p.username:
-            net = "[redacted]@" + net
-
-        query = [
-            (
-                k,
-                "[REDACTED]" if k.lower() in SECRET_KEYS else v,
-            )
-            for k, v in urllib.parse.parse_qsl(
-                p.query, keep_blank_values=True
-            )
-        ]
-
-        return urllib.parse.urlunsplit((
-            p.scheme, net, p.path,
-            urllib.parse.urlencode(query), "",
-        ))
-    except Exception:
-        return url
+HLS_TAG_RE = re.compile(r"^#EXT-X-[A-Z0-9-]+", re.I)
 
 
-def normalize(raw):
-    raw = raw.strip().strip("\"'")
+def now_iso() -> str:
+    return dt.datetime.now(dt.timezone.utc).isoformat()
 
-    if not raw or raw.startswith("#"):
+
+def normalize_url(url: str) -> str:
+    """Normalize URL without changing its query parameters."""
+    url = (url or "").strip().strip('"').strip("'")
+    if not url:
         return ""
 
-    if raw.startswith("//"):
-        raw = "https:" + raw
+    parts = urllib.parse.urlsplit(url)
 
-    if not re.match(r"^[A-Za-z][A-Za-z0-9+.-]*://", raw):
-        raw = "https://" + raw
+    if parts.scheme.lower() not in ("http", "https"):
+        return ""
 
-    p = urllib.parse.urlsplit(raw)
+    if not parts.hostname:
+        return ""
 
-    if (
-        p.scheme.lower() not in ("http", "https")
-        or not p.hostname
-    ):
-        raise ValueError("Требуется HTTP(S) URL")
+    scheme = parts.scheme.lower()
+    host = parts.hostname.lower()
 
-    return urllib.parse.urlunsplit((
-        p.scheme.lower(), p.netloc,
-        p.path or "/", p.query, "",
-    ))
-
-
-def public_ip(value):
     try:
-        return ipaddress.ip_address(value).is_global
+        port = parts.port
     except ValueError:
-        return False
+        return ""
 
+    if ":" in host and not host.startswith("["):
+        host = "[" + host + "]"
 
-def host_port(url):
-    p = urllib.parse.urlsplit(url)
-    return p.hostname or "", p.port or (
-        443 if p.scheme.lower() == "https" else 80
-    )
+    if port and not (
+        (scheme == "http" and port == 80)
+        or (scheme == "https" and port == 443)
+    ):
+        netloc = "{}:{}".format(host, port)
+    else:
+        netloc = host
 
-
-def safe_headers(headers):
-    wanted = {
-        "content-type", "content-length", "content-range",
-        "accept-ranges", "location", "server", "via",
-        "www-authenticate", "retry-after",
-        "access-control-allow-origin",
-        "x-final-url", "x-request-url", "x-cors-redirect-1",
-        "x-cache", "x-proxy-cache", "x-tatnet-cache",
-        "x-github-edge-region", "date", "etag",
-        "last-modified", "cache-control",
-    }
-    return {
-        k: str(v)[:1200]
-        for k, v in headers.items()
-        if k.lower() in wanted
-    }
-
-
-# ============================================================
-# DNS, TCP, TLS
-# ============================================================
-
-def dns_lookup(host, port, allow_private=False):
-    started = time.monotonic()
-
-    try:
-        addresses = sorted({
-            item[4][0]
-            for item in socket.getaddrinfo(
-                host, port, type=socket.SOCK_STREAM
+    if parts.username:
+        # Do not put credentials into the reconstructed netloc.
+        # URLs containing credentials are still accepted by urllib
+        # only if the caller supplied them; reports redact them.
+        userinfo = urllib.parse.quote(parts.username, safe="")
+        if parts.password:
+            userinfo += ":" + urllib.parse.quote(
+                parts.password, safe=""
             )
-        })
+        netloc = userinfo + "@" + netloc
 
-        if not addresses:
-            return {
-                "host": host, "port": port,
-                "addresses": [],
-                "error": "DNS не вернул адресов",
-            }
+    path = parts.path or "/"
 
-        blocked = [ip for ip in addresses if not public_ip(ip)]
-
-        if blocked and not allow_private:
-            return {
-                "host": host, "port": port,
-                "addresses": addresses,
-                "error": (
-                    "DNS вернул непубличные адреса; "
-                    "соединение заблокировано"
-                ),
-            }
-
-        return {
-            "host": host,
-            "port": port,
-            "addresses": addresses,
-            "elapsed_ms": round(
-                (time.monotonic() - started) * 1000, 2
-            ),
-        }
-
-    except Exception as exc:
-        return {
-            "host": host,
-            "port": port,
-            "error": f"{type(exc).__name__}: {exc}",
-        }
-
-
-def tcp_diagnostics(host, port, addresses, timeout=5):
-    started = time.monotonic()
-    attempts = []
-
-    for address in addresses:
-        try:
-            with socket.create_connection(
-                (address, port), timeout=timeout
-            ):
-                attempts.append({
-                    "address": address,
-                    "connected": True,
-                })
-                return {
-                    "host": host, "port": port,
-                    "connected": True,
-                    "attempts": attempts,
-                    "elapsed_ms": round(
-                        (time.monotonic() - started) * 1000, 2
-                    ),
-                }
-        except Exception as exc:
-            attempts.append({
-                "address": address,
-                "connected": False,
-                "error": f"{type(exc).__name__}: {exc}",
-            })
-
-    return {
-        "host": host, "port": port,
-        "connected": False,
-        "attempts": attempts,
-        "elapsed_ms": round(
-            (time.monotonic() - started) * 1000, 2
-        ),
-    }
-
-
-def tls_diagnostics(host, port, addresses, timeout=8):
-    result = {"host": host, "port": port}
-    started = time.monotonic()
-
-    if not addresses:
-        result.update({
-            "verified": False,
-            "error": "Нет разрешённых IP для TLS-проверки",
-        })
-        return result
-
-    context = ssl.create_default_context()
-
-    for address in addresses:
-        try:
-            with socket.create_connection(
-                (address, port), timeout=timeout
-            ) as raw:
-                with context.wrap_socket(
-                    raw, server_hostname=host
-                ) as tls:
-                    cert = tls.getpeercert()
-                    cipher = tls.cipher()
-
-                    result.update({
-                        "verified": True,
-                        "connected_address": address,
-                        "tls_version": tls.version(),
-                        "cipher": cipher[0] if cipher else None,
-                        "certificate_subject": cert.get(
-                            "subject", []
-                        ),
-                        "certificate_issuer": cert.get(
-                            "issuer", []
-                        ),
-                        "certificate_not_before": cert.get(
-                            "notBefore"
-                        ),
-                        "certificate_not_after": cert.get(
-                            "notAfter"
-                        ),
-                        "certificate_san": [
-                            value
-                            for kind, value
-                            in cert.get("subjectAltName", [])
-                            if kind == "DNS"
-                        ][:40],
-                    })
-                    break
-        except Exception as exc:
-            result["verified"] = False
-            result["error"] = f"{type(exc).__name__}: {exc}"
-
-    result["elapsed_ms"] = round(
-        (time.monotonic() - started) * 1000, 2
+    return urllib.parse.urlunsplit(
+        (scheme, netloc, path, parts.query, parts.fragment)
     )
+
+
+def redact_url(url: str) -> str:
+    """Hide URL credentials and common sensitive query values."""
+    try:
+        parts = urllib.parse.urlsplit(url)
+        host = parts.hostname or ""
+
+        try:
+            port = parts.port
+        except ValueError:
+            port = None
+
+        if ":" in host and not host.startswith("["):
+            host = "[" + host + "]"
+
+        netloc = host
+        if port:
+            netloc += ":" + str(port)
+
+        sensitive = {
+            "token", "access_token", "auth", "password",
+            "passwd", "key", "apikey", "api_key", "secret",
+            "signature", "sig", "session", "sessionid",
+        }
+
+        query = []
+        for key, value in urllib.parse.parse_qsl(
+            parts.query, keep_blank_values=True
+        ):
+            if key.lower() in sensitive:
+                value = "***"
+            query.append((key, value))
+
+        return urllib.parse.urlunsplit(
+            (
+                parts.scheme,
+                netloc,
+                parts.path,
+                urllib.parse.urlencode(query),
+                parts.fragment,
+            )
+        )
+    except Exception:
+        return "<redacted-url>"
+
+
+def host_port(url: str) -> Tuple[Optional[str], Optional[int]]:
+    try:
+        parts = urllib.parse.urlsplit(url)
+        if not parts.hostname:
+            return None, None
+        port = parts.port
+        if port is None:
+            port = 443 if parts.scheme.lower() == "https" else 80
+        return parts.hostname, port
+    except Exception:
+        return None, None
+
+
+def is_playlist_url(url: str) -> bool:
+    path = urllib.parse.urlsplit(url).path.lower()
+    return path.endswith((".m3u", ".m3u8", ".m3u8.gz"))
+
+
+def parse_attributes(line: str) -> Dict[str, str]:
+    result: Dict[str, str] = {}
+
+    for match in ATTR_RE.finditer(line):
+        key = match.group(1)
+        value = match.group(2)
+
+        if value is None:
+            value = (match.group(3) or "").strip()
+
+        result[key] = value
+
     return result
 
 
-# ============================================================
-# HTTP-клиент с общими потокобезопасными бюджетами
-# ============================================================
+def resolve_url(base_url: str, child_url: str) -> str:
+    child_url = (child_url or "").strip()
 
-class NoRedirect(urllib.request.HTTPRedirectHandler):
-    def redirect_request(self, *args, **kwargs):
-        return None
+    if not child_url:
+        return ""
+
+    if child_url.startswith("#"):
+        return ""
+
+    return normalize_url(
+        urllib.parse.urljoin(base_url, child_url)
+    )
+
+
+@dataclass
+class HttpResult:
+    requested_url: str
+    final_url: str = ""
+    status: Optional[int] = None
+    reason: str = ""
+    content_type: str = ""
+    content_length: Optional[int] = None
+    body: bytes = b""
+    bytes_read: int = 0
+    elapsed_seconds: float = 0.0
+    headers: Dict[str, str] = field(default_factory=dict)
+    error: str = ""
+    truncated: bool = False
+    request_method: str = "GET"
+
+    @property
+    def ok(self) -> bool:
+        return (
+            self.status is not None
+            and 200 <= self.status < 300
+            and not self.error
+        )
+
+    @property
+    def text(self) -> str:
+        charset = "utf-8"
+
+        content_type = self.content_type or ""
+        match = re.search(
+            r"charset\s*=\s*['\"]?([^;'\"\s]+)",
+            content_type,
+            re.IGNORECASE,
+        )
+
+        if match:
+            charset = match.group(1)
+
+        try:
+            return self.body.decode(charset, errors="replace")
+        except LookupError:
+            return self.body.decode("utf-8", errors="replace")
+
+    def as_dict(self, include_body: bool = False) -> Dict[str, Any]:
+        data = asdict(self)
+        data["requested_url"] = redact_url(self.requested_url)
+        data["final_url"] = redact_url(self.final_url)
+        data.pop("body", None)
+
+        if include_body:
+            data["body_preview"] = self.text[:2000]
+
+        return data
+
+
+class RequestBudgetExceeded(RuntimeError):
+    pass
 
 
 class Client:
-    def __init__(self, args):
-        self.args = args
-        self.dns = {}
+    """
+    Shared HTTP client.
+
+    Every HTTP request is reserved under one lock before opening a
+    connection. The aggregate body-byte budget is reserved as well,
+    so concurrent workers cannot independently exceed the configured
+    aggregate byte allowance.
+
+    DNS/TCP/TLS diagnostic sockets are reported separately and are
+    not HTTP requests. They are only used when --network-diagnostics
+    is enabled.
+    """
+
+    def __init__(
+        self,
+        timeout: float = 12.0,
+        max_bytes: int = 2_000_000,
+        max_total_bytes: int = 40_000_000,
+        max_runtime: float = 300.0,
+        max_requests: int = 500,
+        user_agent: str = DEFAULT_USER_AGENT,
+        insecure_tls: bool = False,
+    ) -> None:
+        self.timeout = max(1.0, float(timeout))
+        self.max_bytes = max(1, int(max_bytes))
+        self.max_total_bytes = max(1, int(max_total_bytes))
+        self.max_runtime = max(1.0, float(max_runtime))
+        self.max_requests = max(1, int(max_requests))
+        self.user_agent = user_agent
+        self.insecure_tls = insecure_tls
+
         self.started = time.monotonic()
+        self.lock = threading.RLock()
 
         self.request_count = 0
         self.bytes_read = 0
         self.bytes_reserved = 0
+        self.budget_events: List[str] = []
 
-        self._budget_lock = threading.RLock()
-        self._dns_lock = threading.RLock()
-        self._local = threading.local()
+        self._thread_local = threading.local()
 
-    def _get_opener(self):
-        """Отдельный urllib opener для каждого рабочего потока."""
-        opener = getattr(self._local, "opener", None)
+    def elapsed(self) -> float:
+        return time.monotonic() - self.started
 
-        if opener is None:
-            context = (
-                ssl._create_unverified_context()
-                if self.args.insecure_tls
-                else ssl.create_default_context()
-            )
+    def remaining_runtime(self) -> float:
+        return max(0.0, self.max_runtime - self.elapsed())
 
-            opener = urllib.request.build_opener(
-                NoRedirect(),
-                urllib.request.HTTPSHandler(context=context),
-            )
-            self._local.opener = opener
-
-        return opener
-
-    def resolve(self, host, port):
-        key = (host, port)
-
-        with self._dns_lock:
-            if key not in self.dns:
-                self.dns[key] = dns_lookup(
-                    host, port, self.args.allow_private
+    def _reserve_request(
+        self,
+        requested_limit: int,
+    ) -> int:
+        with self.lock:
+            if self.elapsed() >= self.max_runtime:
+                self.budget_events.append("runtime limit reached")
+                raise RequestBudgetExceeded(
+                    "Global runtime limit reached"
                 )
-            return self.dns[key]
 
-    def budget_error(self):
-        with self._budget_lock:
-            if self.request_count >= self.args.max_requests:
-                return "Достигнут общий лимит HTTP-запросов"
+            if self.request_count >= self.max_requests:
+                self.budget_events.append("HTTP request limit reached")
+                raise RequestBudgetExceeded(
+                    "Global HTTP request limit reached"
+                )
 
-            if (
-                self.bytes_read + self.bytes_reserved
-                >= self.args.max_total_bytes
-            ):
-                return "Достигнут общий лимит загруженных байтов"
+            remaining = (
+                self.max_total_bytes
+                - self.bytes_read
+                - self.bytes_reserved
+            )
 
-            if (
-                time.monotonic() - self.started
-                >= self.args.max_runtime
-            ):
-                return "Достигнут общий лимит времени"
+            if remaining <= 0:
+                self.budget_events.append(
+                    "aggregate byte limit reached"
+                )
+                raise RequestBudgetExceeded(
+                    "Global byte limit reached"
+                )
 
-        return None
-
-    def _reserve_request(self):
-        """Атомарно резервирует один HTTP-запрос."""
-        with self._budget_lock:
-            if self.request_count >= self.args.max_requests:
-                return "Достигнут общий лимит HTTP-запросов"
-
-            if (
-                self.bytes_read + self.bytes_reserved
-                >= self.args.max_total_bytes
-            ):
-                return "Достигнут общий лимит загруженных байтов"
-
-            if (
-                time.monotonic() - self.started
-                >= self.args.max_runtime
-            ):
-                return "Достигнут общий лимит времени"
+            allowed = min(
+                max(1, requested_limit),
+                self.max_bytes,
+                remaining,
+            )
 
             self.request_count += 1
-            return None
-
-    def _reserve_bytes(self, wanted):
-        with self._budget_lock:
-            remaining = max(
-                0,
-                self.args.max_total_bytes
-                - self.bytes_read
-                - self.bytes_reserved,
-            )
-            allowed = min(max(0, wanted), remaining)
             self.bytes_reserved += allowed
+
             return allowed
 
-    def _commit_bytes(self, reserved, actual):
-        with self._budget_lock:
-            self.bytes_reserved = max(
-                0, self.bytes_reserved - reserved
+    def _finish_request(
+        self,
+        reserved: int,
+        actual: int,
+    ) -> None:
+        with self.lock:
+            self.bytes_reserved -= reserved
+            if self.bytes_reserved < 0:
+                self.bytes_reserved = 0
+
+            self.bytes_read += actual
+
+    def _opener(self):
+        opener = getattr(self._thread_local, "opener", None)
+
+        if opener is not None:
+            return opener
+
+        handlers: List[Any] = [
+            urllib.request.ProxyHandler(),
+        ]
+
+        if self.insecure_tls:
+            context = ssl._create_unverified_context()
+            handlers.append(
+                urllib.request.HTTPSHandler(context=context)
             )
-            self.bytes_read += max(0, actual)
 
-    def _read_limited(self, response, limit):
-        """
-        Читает не более limit байтов и учитывает общий
-        бюджет даже при одновременных загрузках.
-        """
-        allowed = self._reserve_bytes(limit)
+        opener = urllib.request.build_opener(*handlers)
+        self._thread_local.opener = opener
+        return opener
 
-        if allowed <= 0:
-            return b"", False
+    def request(
+        self,
+        url: str,
+        method: str = "GET",
+        headers: Optional[Dict[str, str]] = None,
+        read_limit: Optional[int] = None,
+    ) -> HttpResult:
+        started = time.monotonic()
+        url = normalize_url(url)
 
-        body = b""
-        truncated = False
+        if not url:
+            return HttpResult(
+                requested_url=url,
+                error="Invalid HTTP(S) URL",
+                request_method=method,
+            )
+
+        requested_limit = (
+            self.max_bytes
+            if read_limit is None
+            else max(1, int(read_limit))
+        )
 
         try:
-            raw = response.read(allowed + 1)
-            truncated = len(raw) > allowed
-            body = raw[:allowed]
-            return body, truncated
-        finally:
-            self._commit_bytes(allowed, len(body))
+            reserved = self._reserve_request(requested_limit)
+        except RequestBudgetExceeded as exc:
+            return HttpResult(
+                requested_url=url,
+                error="BUDGET: " + str(exc),
+                request_method=method,
+            )
 
-    def request(self, url, method="GET", headers=None, limit=None):
-        started = time.monotonic()
-        current = url
-        chain = []
-
-        limit = min(
-            self.args.max_bytes,
-            max(
-                0,
-                limit if limit is not None
-                else self.args.max_bytes,
-            ),
+        actual = 0
+        result = HttpResult(
+            requested_url=url,
+            request_method=method,
         )
 
         request_headers = {
-            "User-Agent": self.args.user_agent,
-            "Accept": "*/*",
+            "User-Agent": self.user_agent,
+            "Accept": (
+                "application/vnd.apple.mpegurl,"
+                "application/x-mpegURL,"
+                "audio/mpegurl,"
+                "video/*,"
+                "audio/*,"
+                "*/*"
+            ),
             "Connection": "close",
         }
-        request_headers.update(headers or {})
 
-        for hop in range(self.args.max_redirects + 1):
-            budget = self._reserve_request()
+        if headers:
+            request_headers.update(headers)
 
-            if budget:
-                return self._result(
-                    url, current, method, None, {}, b"",
-                    budget, chain, started, None,
-                )
-
-            try:
-                current = normalize(current)
-            except Exception as exc:
-                return self._result(
-                    url, current, method, None, {}, b"",
-                    f"Некорректный URL: {exc}",
-                    chain, started, None,
-                )
-
-            host, port = host_port(current)
-            dns = self.resolve(host, port)
-
-            if dns.get("error"):
-                return self._result(
-                    url, current, method, None, {}, b"",
-                    dns["error"], chain, started, dns,
-                )
-
-            request = urllib.request.Request(
-                current,
-                headers=request_headers,
-                method=method,
-            )
-
-            try:
-                response = self._get_opener().open(
-                    request, timeout=self.args.timeout
-                )
-                status = getattr(response, "status", 200)
-                response_headers = dict(response.headers.items())
-
-                if method == "HEAD" or limit == 0:
-                    body = b""
-                    truncated = False
-                else:
-                    body, truncated = self._read_limited(
-                        response, limit
-                    )
-
-                response.close()
-
-                return self._result(
-                    url, current, method, status,
-                    response_headers, body, None,
-                    chain, started, dns, truncated,
-                )
-
-            except urllib.error.HTTPError as exc:
-                status = exc.code
-                response_headers = (
-                    dict(exc.headers.items()) if exc.headers else {}
-                )
-                location = response_headers.get("Location")
-
-                if (
-                    status in REDIRECTS
-                    and location
-                    and hop < self.args.max_redirects
-                ):
-                    next_url = urllib.parse.urljoin(
-                        current, location
-                    )
-
-                    try:
-                        next_url = normalize(next_url)
-                    except Exception as redirect_error:
-                        exc.close()
-                        return self._result(
-                            url, current, method, status,
-                            response_headers, b"",
-                            f"Некорректный URL редиректа: "
-                            f"{redirect_error}",
-                            chain, started, dns,
-                        )
-
-                    chain.append({
-                        "status": status,
-                        "from": redact(current),
-                        "location": redact(next_url),
-                    })
-
-                    old = urllib.parse.urlsplit(current)
-                    new = urllib.parse.urlsplit(next_url)
-
-                    if (
-                        old.scheme != new.scheme
-                        or old.netloc.lower() != new.netloc.lower()
-                    ):
-                        for header in (
-                            "Authorization", "Cookie", "Origin",
-                            "Referer", "X-Requested-With",
-                        ):
-                            request_headers.pop(header, None)
-
-                    current = next_url
-
-                    if status == 303:
-                        method = "GET"
-
-                    exc.close()
-                    continue
-
-                body = b""
-                truncated = False
-
-                try:
-                    if method != "HEAD" and limit > 0:
-                        body, truncated = self._read_limited(
-                            exc, min(limit, 65536)
-                        )
-                except Exception:
-                    body = b""
-                finally:
-                    exc.close()
-
-                return self._result(
-                    url, current, method, status,
-                    response_headers, body,
-                    f"HTTP {status}: {exc.reason}",
-                    chain, started, dns, truncated,
-                )
-
-            except Exception as exc:
-                return self._result(
-                    url, current, method, None, {}, b"",
-                    f"{type(exc).__name__}: {exc}",
-                    chain, started, dns,
-                )
-
-        return self._result(
-            url, current, method, None, {}, b"",
-            "Превышен лимит редиректов",
-            chain, started, None,
+        req = urllib.request.Request(
+            url,
+            headers=request_headers,
+            method=method,
         )
 
-    @staticmethod
-    def _result(
-        url, current, method, status, headers, body,
-        error, chain, started, dns, truncated=False,
-    ):
-        return {
-            "url": redact(url),
-            "final_url": redact(current),
-            "method": method,
-            "status": status,
-            "headers": headers,
-            "body": body,
-            "error": error,
-            "redirects": chain,
-            "dns": dns,
-            "truncated": truncated,
-            "elapsed_ms": round(
-                (time.monotonic() - started) * 1000, 2
+        try:
+            with self._opener().open(
+                req,
+                timeout=min(
+                    self.timeout,
+                    max(1.0, self.remaining_runtime()),
+                ),
+            ) as response:
+                result.status = getattr(response, "status", None)
+                result.reason = str(
+                    getattr(response, "reason", "") or ""
+                )
+                result.final_url = response.geturl()
+
+                raw_headers = response.headers
+                result.headers = {
+                    str(k).lower(): str(v)
+                    for k, v in raw_headers.items()
+                }
+
+                result.content_type = (
+                    raw_headers.get("Content-Type", "") or ""
+                ).lower()
+
+                try:
+                    raw_length = raw_headers.get("Content-Length")
+                    result.content_length = (
+                        int(raw_length) if raw_length else None
+                    )
+                except (TypeError, ValueError):
+                    result.content_length = None
+
+                if method.upper() != "HEAD":
+                    chunks = []
+                    remaining = reserved
+
+                    while remaining > 0:
+                        if self.remaining_runtime() <= 0:
+                            result.truncated = True
+                            break
+
+                        chunk = response.read(
+                            min(16_384, remaining)
+                        )
+
+                        if not chunk:
+                            break
+
+                        chunks.append(chunk)
+                        actual += len(chunk)
+                        remaining -= len(chunk)
+
+                    result.body = b"".join(chunks)
+
+                    if actual >= reserved:
+                        result.truncated = True
+
+        except urllib.error.HTTPError as exc:
+            result.status = exc.code
+            result.reason = str(exc.reason or "")
+            result.final_url = exc.geturl()
+
+            try:
+                result.headers = {
+                    str(k).lower(): str(v)
+                    for k, v in exc.headers.items()
+                }
+                result.content_type = (
+                    exc.headers.get("Content-Type", "") or ""
+                ).lower()
+            except Exception:
+                pass
+
+            result.error = "HTTPError: {}".format(exc.code)
+
+            if method.upper() != "HEAD":
+                try:
+                    remaining = reserved
+
+                    while remaining > 0:
+                        if self.remaining_runtime() <= 0:
+                            result.truncated = True
+                            break
+
+                        chunk = exc.read(
+                            min(16_384, remaining)
+                        )
+
+                        if not chunk:
+                            break
+
+                        actual += len(chunk)
+                        result.body += chunk
+                        remaining -= len(chunk)
+
+                    if actual >= reserved:
+                        result.truncated = True
+
+                except Exception:
+                    pass
+
+        except Exception as exc:
+            result.error = "{}: {}".format(
+                type(exc).__name__, str(exc)
+            )
+
+        finally:
+            result.bytes_read = actual
+            result.elapsed_seconds = time.monotonic() - started
+            self._finish_request(reserved, actual)
+
+        return result
+
+    def snapshot(self) -> Dict[str, Any]:
+        with self.lock:
+            return {
+                "http_requests": self.request_count,
+                "bytes_read": self.bytes_read,
+                "bytes_reserved": self.bytes_reserved,
+                "max_requests": self.max_requests,
+                "max_bytes_per_request": self.max_bytes,
+                "max_total_bytes": self.max_total_bytes,
+                "max_runtime_seconds": self.max_runtime,
+                "elapsed_seconds": round(self.elapsed(), 3),
+                "budget_events": list(self.budget_events),
+            }
+
+
+def network_diagnostics(
+    url: str,
+    timeout: float,
+    insecure_tls: bool = False,
+) -> Dict[str, Any]:
+    """
+    Optional low-level diagnostics.
+
+    These DNS/TCP/TLS socket operations are not HTTP requests.
+    They have their own timeout and should be used sparingly.
+    """
+    host, port = host_port(url)
+
+    report: Dict[str, Any] = {
+        "url": redact_url(url),
+        "host": host,
+        "port": port,
+        "dns": {},
+        "tcp": {},
+        "tls": {},
+    }
+
+    if not host or not port:
+        report["error"] = "Unable to parse host and port"
+        return report
+
+    started = time.monotonic()
+
+    try:
+        records = socket.getaddrinfo(
+            host,
+            port,
+            type=socket.SOCK_STREAM,
+        )
+        addresses = sorted(
+            {
+                item[4][0]
+                for item in records
+                if item and item[4]
+            }
+        )
+
+        report["dns"] = {
+            "ok": bool(addresses),
+            "addresses": addresses,
+            "elapsed_seconds": round(
+                time.monotonic() - started, 3
             ),
         }
+    except Exception as exc:
+        report["dns"] = {
+            "ok": False,
+            "error": "{}: {}".format(type(exc).__name__, exc),
+        }
+        return report
 
+    tcp_started = time.monotonic()
+    sock = None
 
-# ============================================================
-# Origin / Referer
-# ============================================================
+    try:
+        sock = socket.create_connection(
+            (host, port),
+            timeout=timeout,
+        )
+        report["tcp"] = {
+            "ok": True,
+            "elapsed_seconds": round(
+                time.monotonic() - tcp_started, 3
+            ),
+        }
+    except Exception as exc:
+        report["tcp"] = {
+            "ok": False,
+            "error": "{}: {}".format(type(exc).__name__, exc),
+        }
+        return report
 
-def origins_for(url, supplied=None):
-    result = []
+    if urllib.parse.urlsplit(url).scheme.lower() == "https":
+        tls_started = time.monotonic()
 
-    def add(value):
         try:
-            p = urllib.parse.urlsplit(value)
-            if p.scheme in ("http", "https") and p.hostname:
-                origin = f"{p.scheme}://{p.netloc}"
-                if origin not in result:
-                    result.append(origin)
+            if insecure_tls:
+                context = ssl._create_unverified_context()
+            else:
+                context = ssl.create_default_context()
+
+            with context.wrap_socket(
+                sock,
+                server_hostname=host,
+            ) as tls_sock:
+                cert = tls_sock.getpeercert()
+
+                report["tls"] = {
+                    "ok": True,
+                    "version": tls_sock.version(),
+                    "cipher": tls_sock.cipher(),
+                    "certificate_subject": cert.get("subject", []),
+                    "elapsed_seconds": round(
+                        time.monotonic() - tls_started, 3
+                    ),
+                }
+
+                sock = None
+
+        except Exception as exc:
+            report["tls"] = {
+                "ok": False,
+                "error": "{}: {}".format(
+                    type(exc).__name__, exc
+                ),
+            }
+
+    else:
+        report["tls"] = {
+            "ok": None,
+            "reason": "URL uses HTTP, not HTTPS",
+        }
+
+    if sock is not None:
+        try:
+            sock.close()
         except Exception:
             pass
 
-    if supplied:
-        add(supplied)
+    return report
 
-    p = urllib.parse.urlsplit(url)
-    current_host = (p.hostname or "").lower()
 
-    for part in urllib.parse.unquote(p.path).split("/")[:8]:
-        part = part.strip()
+@dataclass
+class M3UEntry:
+    metadata_lines: List[str]
+    info_line: str
+    title: str
+    url: str
 
-        if not re.fullmatch(
-            r"[A-Za-z0-9.-]+(?::\d+)?", part
-        ):
+
+def parse_m3u_entries(
+    text: str,
+    base_url: str,
+) -> List[M3UEntry]:
+    """
+    Parse standard M3U records while preserving EXTINF and other
+    channel directives. Each record ends at its first non-comment URL.
+    """
+    entries: List[M3UEntry] = []
+    pending: List[str] = []
+    current_info = ""
+    current_metadata: List[str] = []
+
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+
+        if not line:
             continue
 
-        host = part.split(":", 1)[0].lower()
+        if line.startswith("#EXTINF"):
+            if current_info:
+                pending = []
 
-        if host == current_host or "." not in host:
-            continue
-
-        if re.search(
-            r"\.(com|net|org|ru|by|io|app|dev|tv|uz|"
-            r"site|online|live|me|info|xyz)$",
-            host,
-        ):
-            add("https://" + part)
-
-    return result[:5]
-
-
-# ============================================================
-# HLS-парсер
-# ============================================================
-
-def attrs(raw):
-    result = {}
-    pattern = r'([^,=]+)=((?:"[^"]*")|[^,]*)'
-
-    for match in re.finditer(pattern, raw):
-        result[match.group(1).strip()] = (
-            match.group(2).strip().strip('"')
-        )
-
-    return result
-
-
-def looks_hls(body, content_type, url):
-    sample = body.lstrip(b"\xef\xbb\xbf\x00\t\r\n ")
-    path = urllib.parse.urlsplit(url).path.lower()
-
-    return (
-        sample.startswith(b"#EXTM3U")
-        or any(t in content_type.lower() for t in HLS_TYPES)
-        or path.endswith((".m3u8", ".m3u"))
-    )
-
-
-def parse_hls(text, base_url):
-    lines = [
-        line.strip()
-        for line in text.replace("\r", "").split("\n")
-        if line.strip()
-    ]
-
-    tags = collections.Counter(
-        line.split(":", 1)[0]
-        for line in lines if line.startswith("#")
-    )
-
-    result = {
-        "valid_header": bool(
-            lines and lines[0].lstrip("\ufeff") == "#EXTM3U"
-        ),
-        "line_count": len(lines),
-        "tag_counts": dict(tags),
-        "is_master": False,
-        "is_media": False,
-        "variants": [],
-        "renditions": [],
-        "segments": [],
-        "keys": [],
-        "maps": [],
-        "warnings": [],
-        "duplicate_uris": [],
-        "duplicate_variant_uris": [],
-        "target_duration": None,
-        "media_sequence": None,
-        "endlist": "#EXT-X-ENDLIST" in lines,
-        "discontinuities": 0,
-        "program_date_times": [],
-        "byte_ranges": [],
-        "declared_duration_seconds": 0.0,
-        "encryption_methods": [],
-        "playlist_type": None,
-    }
-
-    pending = None
-    seen = collections.Counter()
-
-    for line in lines:
-        if line.startswith("#EXT-X-STREAM-INF:"):
-            result["is_master"] = True
-            pending = attrs(line.split(":", 1)[1])
-            continue
-
-        if line.startswith("#EXT-X-MEDIA:"):
-            item = attrs(line.split(":", 1)[1])
-
-            if item.get("URI"):
-                item["resolved_uri"] = urllib.parse.urljoin(
-                    base_url, item["URI"]
-                )
-
-            result["renditions"].append(item)
-            continue
-
-        recognized = False
-
-        for tag, field in (
-            ("#EXT-X-TARGETDURATION:", "target_duration"),
-            ("#EXT-X-MEDIA-SEQUENCE:", "media_sequence"),
-            ("#EXT-X-PLAYLIST-TYPE:", "playlist_type"),
-        ):
-            if line.startswith(tag):
-                result[field] = line.split(":", 1)[1]
-                recognized = True
-                break
-
-        if recognized:
-            continue
-
-        if line == "#EXT-X-DISCONTINUITY":
-            result["discontinuities"] += 1
-            continue
-
-        if line.startswith("#EXT-X-PROGRAM-DATE-TIME:"):
-            result["program_date_times"].append(
-                line.split(":", 1)[1]
-            )
-            continue
-
-        if line.startswith("#EXT-X-BYTERANGE:"):
-            result["byte_ranges"].append(
-                line.split(":", 1)[1]
-            )
-            continue
-
-        if line.startswith((
-            "#EXT-X-KEY:", "#EXT-X-SESSION-KEY:"
-        )):
-            item = attrs(line.split(":", 1)[1])
-            method = item.get("METHOD")
-
-            if (
-                method
-                and method not in result["encryption_methods"]
-            ):
-                result["encryption_methods"].append(method)
-
-            if item.get("URI"):
-                item["resolved_uri"] = urllib.parse.urljoin(
-                    base_url, item["URI"]
-                )
-
-            result["keys"].append(item)
-            continue
-
-        if line.startswith("#EXT-X-MAP:"):
-            item = attrs(line.split(":", 1)[1])
-
-            if item.get("URI"):
-                item["resolved_uri"] = urllib.parse.urljoin(
-                    base_url, item["URI"]
-                )
-
-            result["maps"].append(item)
-            continue
-
-        if line.startswith("#EXTINF:"):
-            result["is_media"] = True
-
-            try:
-                value = float(
-                    line.split(":", 1)[1].split(",", 1)[0]
-                )
-                result["declared_duration_seconds"] += value
-            except (ValueError, IndexError):
-                result["warnings"].append(
-                    "Некорректная длительность EXTINF"
-                )
-
+            current_info = line
+            current_metadata = [
+                item for item in pending
+                if item.startswith("#")
+            ]
+            pending = []
             continue
 
         if line.startswith("#"):
+            if current_info:
+                current_metadata.append(line)
+            else:
+                pending.append(line)
             continue
 
-        uri = urllib.parse.urljoin(base_url, line)
-        seen[uri] += 1
+        resolved = resolve_url(base_url, line)
 
-        if pending is not None:
-            result["variants"].append({
-                "uri": uri,
-                "bandwidth": pending.get("BANDWIDTH"),
-                "average_bandwidth": pending.get(
-                    "AVERAGE-BANDWIDTH"
-                ),
-                "resolution": pending.get("RESOLUTION"),
-                "codecs": pending.get("CODECS"),
-                "frame_rate": pending.get("FRAME-RATE"),
-                "attributes": pending,
-            })
-            pending = None
-        else:
-            result["segments"].append(uri)
-
-    result["duplicate_uris"] = [
-        {"uri": uri, "count": count}
-        for uri, count in seen.items() if count > 1
-    ]
-
-    if not result["valid_header"]:
-        result["warnings"].append(
-            "Нет #EXTM3U в начале плейлиста"
-        )
-
-    if pending is not None:
-        result["warnings"].append(
-            "#EXT-X-STREAM-INF без URI"
-        )
-
-    if result["is_master"] and result["segments"]:
-        result["warnings"].append(
-            "Смешаны master-варианты и обычные URI"
-        )
-
-    if not result["is_master"] and not result["is_media"]:
-        result["warnings"].append(
-            "Не обнаружены теги master/media HLS"
-        )
-
-    if result["is_media"] and not result["segments"]:
-        result["warnings"].append(
-            "Есть EXTINF, но нет URI сегментов"
-        )
-
-    by_uri = collections.defaultdict(list)
-
-    for variant in result["variants"]:
-        by_uri[variant["uri"]].append(variant)
-
-    result["duplicate_variant_uris"] = [
-        {
-            "uri": uri,
-            "count": len(items),
-            "declared_resolutions": [
-                item.get("resolution") for item in items
-            ],
-            "declared_bandwidths": [
-                item.get("bandwidth") for item in items
-            ],
-        }
-        for uri, items in by_uri.items() if len(items) > 1
-    ]
-
-    return result
-
-
-# ============================================================
-# M3U: обнаружение и классификация плейлистов
-# ============================================================
-
-def is_playlist_url(url):
-    try:
-        path = urllib.parse.urlsplit(url).path.lower()
-        return path.endswith((".m3u", ".m3u8", ".m3u.txt"))
-    except Exception:
-        return False
-
-
-def extract_playlist_urls(body, base_url):
-    """
-    Извлекает URL плейлистов, не принимая обычные TS-потоки
-    за отдельные M3U-источники.
-    """
-    text = body.decode("utf-8-sig", errors="replace")
-    found = []
-    seen = set()
-
-    for raw in text.splitlines():
-        line = raw.strip().strip("\"'")
-
-        if not line or line.startswith("#"):
+        if not resolved:
+            current_info = ""
+            current_metadata = []
+            pending = []
             continue
 
-        candidates = re.findall(
-            r'https?://[^\s<>"\']+|'
-            r'//[^\s<>"\']+|'
-            r'(?<!\S)[^\s<>"\']+\.(?:m3u8?|m3u\.txt)'
-            r'(?:\?[^\s<>"\']*)?',
-            line,
-            flags=re.IGNORECASE,
-        )
-
-        if not candidates and line.lower().endswith(
-            (".m3u", ".m3u8", ".m3u.txt")
-        ):
-            candidates = [line]
-
-        for candidate in candidates:
-            candidate = candidate.rstrip("),;]")
-
-            try:
-                absolute = normalize(
-                    urllib.parse.urljoin(base_url, candidate)
-                )
-            except ValueError:
-                continue
-
-            if is_playlist_url(absolute) and absolute not in seen:
-                seen.add(absolute)
-                found.append(absolute)
-
-    return found
-
-
-def discover_livem3u(dissector):
-    """
-    Параллельно загружает INDEX.m3u и основной playlist.m3u.
-    Ошибка одного источника не блокирует обработку другого.
-    """
-    result = {
-        "source": LIVE_M3U_BASE,
-        "index_url": LIVE_M3U_INDEX,
-        "main_url": LIVE_M3U_MAIN,
-        "index_status": None,
-        "main_status": None,
-        "discovered": [],
-        "errors": [],
-    }
-
-    candidates = [LIVE_M3U_INDEX, LIVE_M3U_MAIN]
-
-    def fetch(url):
-        response = dissector.request(
-            url, "GET", limit=dissector.args.max_bytes
-        )
-        return url, response
-
-    futures = [
-        dissector.discovery_pool.submit(fetch, url)
-        for url in candidates
-    ]
-
-    responses = {}
-
-    for future in concurrent.futures.as_completed(futures):
-        try:
-            url, response = future.result()
-            responses[url] = response
-        except Exception as exc:
-            result["errors"].append({
-                "url": "LiveM3U discovery",
-                "error": f"{type(exc).__name__}: {exc}",
-            })
-
-    # Обрабатываем результаты в стабильном порядке.
-    for url in candidates:
-        response = responses.get(url)
-
-        if response is None:
-            continue
-
-        field = (
-            "index_status"
-            if url == LIVE_M3U_INDEX
-            else "main_status"
-        )
-
-        result[field] = {
-            "status": response["status"],
-            "error": response["error"],
-            "bytes": len(response["body"]),
-            "final_url": response["final_url"],
-            "truncated": response["truncated"],
-        }
-
-        if response["error"]:
-            result["errors"].append({
-                "url": redact(url),
-                "error": response["error"],
-            })
-
-        if response["body"]:
-            result["discovered"].extend(
-                extract_playlist_urls(
-                    response["body"],
-                    response["final_url"] or url,
+        if not current_info:
+            current_info = (
+                '#EXTINF:-1,{}'.format(
+                    urllib.parse.urlsplit(resolved).path.rsplit(
+                        "/", 1
+                    )[-1] or resolved
                 )
             )
+            current_metadata = list(pending)
 
-    unique = list(dict.fromkeys(result["discovered"]))
-    result["discovered"] = unique[:dissector.args.max_sources]
-    return result
+        title = ""
+        if "," in current_info:
+            title = current_info.split(",", 1)[1].strip()
+
+        entries.append(
+            M3UEntry(
+                metadata_lines=list(current_metadata),
+                info_line=current_info,
+                title=title,
+                url=resolved,
+            )
+        )
+
+        current_info = ""
+        current_metadata = []
+        pending = []
+
+    return entries
 
 
-def download_m3u_source(dissector, url):
+def parse_hls(
+    text: str,
+    base_url: str,
+) -> Dict[str, Any]:
     """
-    Загружает отдельный плейлист-источник и возвращает
-    диагностическую информацию о его содержимом.
+    Extract HLS master variants, alternate renditions, and media
+    segments. Segment URLs are never emitted as IPTV channels.
     """
-    response = dissector.request(
-        url, "GET", limit=dissector.args.max_bytes
-    )
-
-    body = response["body"]
-    text = body.decode("utf-8-sig", errors="replace")
-
-    playlist_lines = [
+    lines = [
         line.strip()
         for line in text.splitlines()
         if line.strip()
     ]
 
-    channel_entries = sum(
-        1 for line in playlist_lines
-        if line.startswith("#EXTINF:")
-    )
+    variants: List[Dict[str, Any]] = []
+    renditions: List[Dict[str, Any]] = []
+    segments: List[str] = []
+    warnings: List[str] = []
 
-    nested = extract_playlist_urls(
-        body, response["final_url"] or url
+    is_master = False
+    has_extinf = False
+    has_target_duration = False
+    has_endlist = False
+    has_media_sequence = False
+
+    pending_stream_info = ""
+    pending_extinf = False
+
+    for line in lines:
+        if line.startswith("#EXT-X-STREAM-INF:"):
+            is_master = True
+            pending_stream_info = line.partition(":")[2]
+            continue
+
+        if line.startswith("#EXT-X-MEDIA:"):
+            is_master = True
+            attrs = parse_attributes(line.partition(":")[2])
+            uri = attrs.get("URI", "")
+
+            renditions.append({
+                "attributes": attrs,
+                "url": resolve_url(base_url, uri) if uri else "",
+            })
+            continue
+
+        if line.startswith("#EXTINF:"):
+            has_extinf = True
+            pending_extinf = True
+            continue
+
+        if line.startswith("#EXT-X-TARGETDURATION:"):
+            has_target_duration = True
+            continue
+
+        if line.startswith("#EXT-X-MEDIA-SEQUENCE:"):
+            has_media_sequence = True
+            continue
+
+        if line.startswith("#EXT-X-ENDLIST"):
+            has_endlist = True
+            continue
+
+        if line.startswith("#"):
+            if HLS_TAG_RE.match(line):
+                pass
+            continue
+
+        resolved = resolve_url(base_url, line)
+
+        if not resolved:
+            continue
+
+        if pending_stream_info:
+            attrs = parse_attributes(pending_stream_info)
+
+            try:
+                bandwidth = int(
+                    attrs.get("BANDWIDTH", "0")
+                )
+            except ValueError:
+                bandwidth = 0
+
+            variants.append({
+                "url": resolved,
+                "bandwidth": bandwidth,
+                "attributes": attrs,
+            })
+
+            pending_stream_info = ""
+            continue
+
+        if pending_extinf:
+            segments.append(resolved)
+            pending_extinf = False
+            continue
+
+        # In a media playlist, a URI after EXT-X-MAP or a URI line
+        # without a preceding EXTINF may be an initialization segment.
+        # It is kept for structural diagnostics only.
+        if has_extinf:
+            segments.append(resolved)
+
+    if is_master and not variants and not renditions:
+        warnings.append(
+            "HLS master tags were found, but no variant URLs were parsed"
+        )
+
+    if has_extinf and not segments:
+        warnings.append(
+            "EXTINF tags were found, but no segment URLs were parsed"
+        )
+
+    is_media = (
+        has_extinf
+        and bool(segments)
+        and not variants
     )
 
     return {
-        "url": redact(url),
-        "final_url": response["final_url"],
-        "status": response["status"],
-        "error": response["error"],
-        "bytes": len(body),
-        "truncated": response["truncated"],
-        "looks_like_playlist": (
-            bool(body.lstrip(b"\xef\xbb\xbf").startswith(b"#EXTM3U"))
-            or is_playlist_url(url)
-        ),
-        "line_count": len(playlist_lines),
-        "channel_entries": channel_entries,
-        "nested_playlists": nested,
-        "content_type": next(
-            (
-                value for key, value in response["headers"].items()
-                if key.lower() == "content-type"
-            ),
-            "",
-        ),
+        "is_master": is_master,
+        "is_media": is_media,
+        "has_extinf": has_extinf,
+        "has_target_duration": has_target_duration,
+        "has_endlist": has_endlist,
+        "has_media_sequence": has_media_sequence,
+        "variants": variants,
+        "renditions": renditions,
+        "segments": segments,
+        "warnings": warnings,
+        "line_count": len(lines),
     }
 
 
-# ============================================================
-# Основной анализатор
-# ============================================================
+def looks_like_playlist(
+    url: str,
+    result: HttpResult,
+) -> bool:
+    content_type = (result.content_type or "").lower()
+
+    if any(item in content_type for item in PLAYLIST_TYPES):
+        return True
+
+    body_start = result.body.lstrip()[:128].upper()
+
+    if body_start.startswith(b"#EXTM3U"):
+        return True
+
+    if is_playlist_url(url):
+        return True
+
+    return False
+
+
+def is_html_error_page(result: HttpResult) -> bool:
+    content_type = (result.content_type or "").lower()
+    prefix = result.body.lstrip()[:256].lower()
+
+    if "text/html" in content_type:
+        return True
+
+    if (
+        prefix.startswith(b"<!doctype html")
+        or prefix.startswith(b"<html")
+        or b"<html" in prefix[:128]
+    ):
+        return True
+
+    return False
+
+
+def direct_stream_acceptable(result: HttpResult) -> Tuple[bool, str]:
+    """
+    Conservative HTTP-level check for a direct media endpoint.
+    This is not a full codec/decode test.
+    """
+    if result.status is None:
+        return False, "No HTTP status"
+
+    if not (200 <= result.status < 300):
+        return False, "HTTP status {}".format(result.status)
+
+    if not result.body:
+        return False, "Empty response body"
+
+    if is_html_error_page(result):
+        return False, "HTML response instead of a media stream"
+
+    content_type = (result.content_type or "").lower()
+
+    if any(content_type.startswith(t) for t in MEDIA_TYPES):
+        return True, "HTTP success, non-empty media-like response"
+
+    if any(t in content_type for t in PLAYLIST_TYPES):
+        return False, "Playlist response, not a terminal stream"
+
+    # Some IPTV servers return application/unknown or no Content-Type.
+    # Reject obvious text/error responses, but accept a non-empty body.
+    if content_type.startswith("text/"):
+        prefix = result.body.lstrip()[:256].lower()
+
+        if (
+            prefix.startswith(b"error")
+            or prefix.startswith(b"access denied")
+            or prefix.startswith(b"forbidden")
+            or prefix.startswith(b"not found")
+        ):
+            return False, "Text error response"
+
+        return False, "Text response is not confirmed as media"
+
+    return True, "HTTP success, non-empty response; media type inconclusive"
+
+
+def extract_playlist_urls(text: str, base_url: str) -> List[str]:
+    """
+    Extract playlist URLs from an index-like text document.
+    Only explicit HTTP(S) URLs are accepted here.
+    """
+    found: List[str] = []
+
+    for match in URL_RE.findall(text or ""):
+        candidate = match.rstrip("),.;]}")
+
+        if not candidate:
+            continue
+
+        normalized = normalize_url(candidate)
+
+        if normalized and is_playlist_url(normalized):
+            found.append(normalized)
+
+    # Also support relative playlist paths in a simple index.
+    for raw_line in (text or "").splitlines():
+        line = raw_line.strip()
+
+        if not line or line.startswith("#"):
+            continue
+
+        if line.startswith(("http://", "https://")):
+            continue
+
+        if ".m3u" not in line.lower():
+            continue
+
+        resolved = resolve_url(base_url, line)
+
+        if resolved:
+            found.append(resolved)
+
+    unique: List[str] = []
+    seen: Set[str] = set()
+
+    for item in found:
+        if item not in seen:
+            seen.add(item)
+            unique.append(item)
+
+    return unique
+
+
+def merge_metadata(
+    outer: Optional[M3UEntry],
+    inner: Optional[M3UEntry],
+) -> Tuple[List[str], str, str]:
+    """
+    Prefer a child entry's explicit channel metadata. If the child has
+    only a bare URL, inherit the parent channel metadata.
+    """
+    if inner is not None and inner.info_line:
+        return (
+            list(inner.metadata_lines),
+            inner.info_line,
+            inner.title,
+        )
+
+    if outer is not None:
+        return (
+            list(outer.metadata_lines),
+            outer.info_line,
+            outer.title,
+        )
+
+    return [], "#EXTINF:-1,Unknown stream", "Unknown stream"
+
+
+@dataclass
+class WorkItem:
+    url: str
+    depth: int = 0
+    inherited_entry: Optional[M3UEntry] = None
+    parent_url: str = ""
+    role: str = "candidate"
+
 
 class Dissector:
-    def __init__(self, args):
+    def __init__(self, args: argparse.Namespace) -> None:
         self.args = args
-        self.client = Client(args)
 
-        self.visited = set()
-        self._visited_lock = threading.RLock()
-        self._shutdown = False
-
-        self.discovery_pool = concurrent.futures.ThreadPoolExecutor(
-            max_workers=DISCOVERY_WORKERS,
-            thread_name_prefix="phoenix-discovery",
-        )
-        self.download_pool = concurrent.futures.ThreadPoolExecutor(
-            max_workers=DOWNLOAD_WORKERS,
-            thread_name_prefix="phoenix-download",
-        )
-        self.parser_pool = concurrent.futures.ThreadPoolExecutor(
-            max_workers=PARSER_WORKERS,
-            thread_name_prefix="phoenix-parser",
-        )
-        self.url_pool = concurrent.futures.ThreadPoolExecutor(
-            max_workers=URL_WORKERS,
-            thread_name_prefix="phoenix-url",
+        self.client = Client(
+            timeout=args.timeout,
+            max_bytes=args.max_bytes,
+            max_total_bytes=args.max_total_bytes,
+            max_runtime=args.max_runtime,
+            max_requests=args.max_requests,
+            user_agent=args.user_agent,
+            insecure_tls=args.insecure_tls,
         )
 
-    def shutdown(self):
-        if self._shutdown:
-            return
+        self.work_queue: queue.Queue = queue.Queue()
 
-        self._shutdown = True
+        self.lock = threading.RLock()
 
-        # Сначала прекращаем подачу новых заданий.
-        self.discovery_pool.shutdown(
-            wait=True, cancel_futures=True
-        )
-        self.url_pool.shutdown(
-            wait=True, cancel_futures=True
-        )
-        self.parser_pool.shutdown(
-            wait=True, cancel_futures=True
-        )
-        self.download_pool.shutdown(
-            wait=True, cancel_futures=True
-        )
+        self.visited: Set[str] = set()
+        self.queued_count = 0
 
-    def request(self, url, method="GET", headers=None, limit=None):
-        """
-        Все HTTP-операции проходят через отдельный пул загрузки.
-        Вызовы из URL/discovery-пулов не блокируют сам пул загрузки.
-        """
-        future = self.download_pool.submit(
-            self.client.request, url, method, headers, limit
-        )
-        return future.result()
+        self.records: List[Dict[str, Any]] = []
+        self.errors: List[Dict[str, Any]] = []
+        self.events: List[Dict[str, Any]] = []
+        self.validated: List[Dict[str, Any]] = []
+        self.network_reports: List[Dict[str, Any]] = []
 
-    def parse_playlist(self, text, base_url):
-        future = self.parser_pool.submit(
-            parse_hls, text, base_url
-        )
-        return future.result()
+        self.network_diagnostics_done: Set[str] = set()
 
-    def check_network(self, url):
-        host, port = host_port(url)
-        dns = self.client.resolve(host, port)
-        network = {"dns": dns}
+        self.stop_event = threading.Event()
+        self.finished_workers = 0
 
-        if dns.get("error"):
-            network["tcp"] = {
-                "connected": False,
-                "error": "Пропущено из-за ошибки DNS/политики IP",
-            }
-
-            if urllib.parse.urlsplit(url).scheme == "https":
-                network["tls"] = {
-                    "verified": False,
-                    "error": "Пропущено из-за ошибки DNS/политики IP",
-                }
-
-            return network
-
-        addresses = dns.get("addresses", [])
-
-        network["tcp"] = tcp_diagnostics(
-            host, port, addresses, self.args.timeout
-        )
-
-        if urllib.parse.urlsplit(url).scheme == "https":
-            network["tls"] = tls_diagnostics(
-                host, port, addresses, self.args.timeout
-            )
-
-        return network
-
-    def _claim_url(self, url):
-        with self._visited_lock:
-            if url in self.visited:
-                return "SKIPPED_DUPLICATE"
-
-            if len(self.visited) >= self.args.max_sources:
-                return "SOURCE_LIMIT"
-
-            self.visited.add(url)
-            return None
-
-    def check(self, url, depth=0, parent=None, kind="source"):
-        if depth > self.args.max_depth:
-            return {
-                "url": redact(url),
-                "resource_type": kind,
-                "status_label": "DEPTH_LIMIT",
-            }
-
-        claim_error = self._claim_url(url)
-
-        if claim_error:
-            return {
-                "url": redact(url),
-                "resource_type": kind,
-                "status_label": claim_error,
-            }
-
-        try:
-            parsed = urllib.parse.urlsplit(normalize(url))
-        except Exception as exc:
-            return {
-                "url": redact(url),
-                "resource_type": kind,
-                "status_label": "BROKEN",
-                "errors": [f"Некорректный URL: {exc}"],
-            }
-
-        record = {
-            "url": redact(url),
-            "parent": redact(parent) if parent else None,
-            "resource_type": kind,
-            "depth": depth,
-            "checked_at": now(),
-            "host": parsed.hostname,
-            "path": parsed.path,
-            "attempts": [],
-            "children": [],
-            "errors": [],
-            "status_label": "UNKNOWN",
-        }
-
-        record["network"] = self.check_network(url)
-
-        head = self.request(url, "HEAD", limit=0)
-
-        record["head"] = {
-            k: v for k, v in head.items()
-            if k not in ("body", "headers")
-        }
-        record["head"]["headers"] = safe_headers(
-            head.get("headers", {})
-        )
-
-        origins = origins_for(url, self.args.origin)
-        strategies = [("plain", {})]
-
-        strategies += [
-            (
-                "origin:" + origin,
-                {"Origin": origin, "Referer": origin + "/"},
-            )
-            for origin in origins
-        ]
-
-        strategies.append((
-            "x-requested-with",
-            {"X-Requested-With": "XMLHttpRequest"},
-        ))
-
-        strategies += [
-            (
-                "origin+x-requested-with:" + origin,
-                {
-                    "Origin": origin,
-                    "Referer": origin + "/",
-                    "X-Requested-With": "XMLHttpRequest",
-                },
-            )
-            for origin in origins
-        ]
-
-        best = None
-        tried = set()
-
-        for label, headers in strategies:
-            key = tuple(sorted(headers.items()))
-
-            if key in tried:
-                continue
-
-            tried.add(key)
-
-            response = self.request(
-                url, "GET", headers,
-                limit=self.args.max_bytes,
-            )
-
-            record["attempts"].append({
-                "strategy": label,
-                "status": response["status"],
-                "final_url": response["final_url"],
-                "error": response["error"],
-                "headers": safe_headers(response["headers"]),
-                "elapsed_ms": response["elapsed_ms"],
-                "body_bytes": len(response["body"]),
-                "redirects": response["redirects"],
-                "truncated": response["truncated"],
+    def log_event(
+        self,
+        kind: str,
+        url: str,
+        message: str,
+        **extra: Any,
+    ) -> None:
+        with self.lock:
+            self.events.append({
+                "time": now_iso(),
+                "kind": kind,
+                "url": redact_url(url),
+                "message": message,
+                **extra,
             })
 
-            if best is None:
-                best = response
-            elif (
-                response["status"] is not None
-                and (
-                    best["status"] is None
-                    or (
-                        best["status"] >= 400
-                        and response["status"] < 400
-                    )
-                )
-            ):
-                best = response
+    def add_error(
+        self,
+        url: str,
+        stage: str,
+        message: str,
+    ) -> None:
+        with self.lock:
+            self.errors.append({
+                "time": now_iso(),
+                "url": redact_url(url),
+                "stage": stage,
+                "message": message,
+            })
 
-            if (
-                response["status"] is not None
-                and 200 <= response["status"] < 300
-                and response["body"]
-            ):
-                best = response
-                break
+    def enqueue(
+        self,
+        item: WorkItem,
+    ) -> bool:
+        url = normalize_url(item.url)
 
-            if self.client.budget_error():
-                break
+        if not url:
+            return False
 
-        if best is None:
-            record["errors"].append("Нет результата HTTP")
-            return record
+        item.url = url
 
-        headers = best["headers"]
-        body = best["body"]
-        status = best["status"]
+        with self.lock:
+            if url in self.visited:
+                self.events.append({
+                    "time": now_iso(),
+                    "kind": "duplicate_or_cycle",
+                    "url": redact_url(url),
+                    "message": "URL already visited; skipped",
+                    "depth": item.depth,
+                })
+                return False
 
-        content_type = next(
-            (
-                value for key, value in headers.items()
-                if key.lower() == "content-type"
+            if self.queued_count >= self.args.max_sources:
+                self.events.append({
+                    "time": now_iso(),
+                    "kind": "source_limit",
+                    "url": redact_url(url),
+                    "message": "Maximum URL count reached",
+                    "depth": item.depth,
+                })
+                return False
+
+            if item.depth > self.args.max_depth:
+                self.events.append({
+                    "time": now_iso(),
+                    "kind": "depth_limit",
+                    "url": redact_url(url),
+                    "message": "Maximum traversal depth reached",
+                    "depth": item.depth,
+                })
+                return False
+
+            self.visited.add(url)
+            self.queued_count += 1
+
+        self.work_queue.put(item)
+        return True
+
+    def maybe_network_diagnostics(self, url: str) -> None:
+        if not self.args.network_diagnostics:
+            return
+
+        with self.lock:
+            if url in self.network_diagnostics_done:
+                return
+            self.network_diagnostics_done.add(url)
+
+        try:
+            result = network_diagnostics(
+                url,
+                timeout=self.args.timeout,
+                insecure_tls=self.args.insecure_tls,
+            )
+        except Exception as exc:
+            result = {
+                "url": redact_url(url),
+                "error": "{}: {}".format(type(exc).__name__, exc),
+            }
+
+        with self.lock:
+            self.network_reports.append(result)
+
+    def request_candidate(
+        self,
+        url: str,
+        likely_playlist: bool,
+    ) -> HttpResult:
+        headers: Dict[str, str] = {}
+
+        if not likely_playlist:
+            # Many IPTV servers support Range requests. Servers that
+            # ignore Range may still return 200; Client reads only the
+            # configured small probe limit.
+            headers["Range"] = "bytes=0-4095"
+
+        first = self.client.request(
+            url,
+            method="GET",
+            headers=headers,
+            read_limit=(
+                self.args.max_bytes
+                if likely_playlist
+                else self.args.probe_bytes
             ),
-            "",
         )
 
-        record.update({
-            "http_status": status,
-            "final_url": redact(best["final_url"]),
-            "response_headers": safe_headers(headers),
-            "content_type": content_type,
-            "body_bytes": len(body),
-            "body_truncated": best["truncated"],
-            "redirects": best["redirects"],
-            "elapsed_ms": best["elapsed_ms"],
-            "server_claimed_urls": {
-                key: value for key, value in headers.items()
-                if key.lower() in CLAIM_HEADERS
-            },
-        })
-
-        if body and looks_hls(
-            body, content_type, best["final_url"] or url
+        if (
+            first.ok
+            and looks_like_playlist(url, first)
+            and first.truncated
+            and self.args.refetch_truncated_playlists
         ):
-            hls = self.parse_playlist(
-                body.decode("utf-8-sig", errors="replace"),
-                best["final_url"] or url,
+            self.log_event(
+                "playlist_refetch",
+                url,
+                "Playlist probe was truncated; attempting full fetch",
             )
-            record["hls"] = hls
 
-            children = []
+            second = self.client.request(
+                first.final_url or url,
+                method="GET",
+                headers={},
+                read_limit=self.args.max_bytes,
+            )
 
+            if second.status is not None:
+                return second
+
+        return first
+
+    def process_item(self, item: WorkItem) -> None:
+        url = item.url
+
+        if self.stop_event.is_set():
+            return
+
+        if self.client.remaining_runtime() <= 0:
+            self.add_error(url, "budget", "Runtime limit reached")
+            return
+
+        self.maybe_network_diagnostics(url)
+
+        likely_playlist = is_playlist_url(url)
+
+        result = self.request_candidate(
+            url,
+            likely_playlist=likely_playlist,
+        )
+
+        record: Dict[str, Any] = {
+            "url": redact_url(url),
+            "parent_url": redact_url(item.parent_url),
+            "depth": item.depth,
+            "role": item.role,
+            "status": result.status,
+            "final_url": redact_url(
+                result.final_url or url
+            ),
+            "content_type": result.content_type,
+            "bytes_read": result.bytes_read,
+            "truncated": result.truncated,
+            "elapsed_seconds": round(
+                result.elapsed_seconds, 3
+            ),
+            "http_ok": result.ok,
+            "error": result.error,
+            "classification": "unclassified",
+            "decision": "not_emitted",
+        }
+
+        with self.lock:
+            self.records.append(record)
+
+        if not result.ok:
+            self.add_error(
+                url,
+                "http",
+                result.error
+                or "HTTP status {}".format(result.status),
+            )
+            record["classification"] = "http_failure"
+            return
+
+        final_url = normalize_url(result.final_url or url)
+
+        if looks_like_playlist(final_url, result):
+            self.process_playlist(
+                item=item,
+                result=result,
+                final_url=final_url,
+                record=record,
+            )
+            return
+
+        accepted, reason = direct_stream_acceptable(result)
+
+        record["classification"] = (
+            "direct_stream" if accepted else "not_confirmed_stream"
+        )
+        record["stream_check"] = reason
+
+        if accepted:
+            self.emit_validated(
+                url=final_url,
+                entry=item.inherited_entry,
+                source=item.parent_url or url,
+                validation={
+                    "type": "direct_http_probe",
+                    "status": result.status,
+                    "content_type": result.content_type,
+                    "bytes_read": result.bytes_read,
+                    "reason": reason,
+                },
+            )
+            record["decision"] = "emitted"
+        else:
+            self.add_error(
+                url,
+                "stream_validation",
+                reason,
+            )
+
+    def process_playlist(
+        self,
+        item: WorkItem,
+        result: HttpResult,
+        final_url: str,
+        record: Dict[str, Any],
+    ) -> None:
+        text = result.text
+        upper = text.lstrip().upper()
+
+        if not upper.startswith("#EXTM3U"):
+            # Index pages can be plain URL lists rather than M3U files.
             if (
-                self.args.mode != "quick"
-                and depth < self.args.max_depth
+                "INDEX.M3U" in final_url.upper()
+                or "PLAYLISTS" in final_url.upper()
             ):
-                children += [
-                    (item["uri"], "variant")
-                    for item in hls["variants"]
-                ]
+                children = extract_playlist_urls(
+                    text, final_url
+                )
 
-                children += [
-                    (item["resolved_uri"], "rendition")
-                    for item in hls["renditions"]
-                    if item.get("resolved_uri")
-                ]
+                record["classification"] = "playlist_index"
+                record["child_count"] = len(children)
 
-                if not hls["is_master"]:
-                    children += [
-                        (item["resolved_uri"], "key_or_map")
-                        for item in hls["keys"] + hls["maps"]
-                        if item.get("resolved_uri")
-                        and not item["resolved_uri"].startswith("data:")
-                    ]
-
-                    children += [
-                        (segment, "segment")
-                        for segment in hls["segments"][
-                            :self.args.max_segments
-                        ]
-                    ]
-
-                local_seen = set()
-                unique = []
-
-                for child_url, child_kind in children:
-                    if child_url not in local_seen:
-                        local_seen.add(child_url)
-                        unique.append((child_url, child_kind))
-
-                # Рекурсия выполняется в текущем URL-потоке:
-                # вложенный вызов не ждёт задачу из того же пула.
-                for child_url, child_kind in unique[
-                    :self.args.max_children
-                ]:
-                    record["children"].append(
-                        self.check(
-                            child_url, depth + 1,
-                            url, child_kind,
+                for child in children:
+                    self.enqueue(
+                        WorkItem(
+                            url=child,
+                            depth=item.depth + 1,
+                            inherited_entry=item.inherited_entry,
+                            parent_url=final_url,
+                            role="index_child",
                         )
                     )
 
-            bad = [
-                child for child in record["children"]
-                if child.get("status_label") in (
-                    "BROKEN", "ACCESS_RESTRICTED",
-                    "UNKNOWN", "PARTIAL",
-                )
-            ]
+                if not children:
+                    self.add_error(
+                        final_url,
+                        "index_parse",
+                        "No child playlist URLs found in index",
+                    )
 
-            record["status_label"] = (
-                "PARTIAL"
+                return
+
+            record["classification"] = "not_m3u"
+            self.add_error(
+                final_url,
+                "playlist_parse",
+                "URL looks like a playlist, but body is not #EXTM3U",
+            )
+            return
+
+        hls = parse_hls(text, final_url)
+
+        record["hls"] = {
+            "is_master": hls["is_master"],
+            "is_media": hls["is_media"],
+            "has_extinf": hls["has_extinf"],
+            "has_target_duration": hls["has_target_duration"],
+            "has_endlist": hls["has_endlist"],
+            "has_media_sequence": hls["has_media_sequence"],
+            "variant_count": len(hls["variants"]),
+            "rendition_count": len(hls["renditions"]),
+            "segment_count": len(hls["segments"]),
+            "warnings": hls["warnings"],
+        }
+
+        # HLS master playlist: variants are child playlists.
+        if hls["is_master"] and hls["variants"]:
+            record["classification"] = "hls_master"
+            record["child_count"] = len(hls["variants"])
+
+            variants = list(hls["variants"])
+
+            if self.args.hls_variant_policy == "highest":
+                variants.sort(
+                    key=lambda v: v.get("bandwidth", 0),
+                    reverse=True,
+                )
+                variants = variants[:1]
+            elif self.args.hls_variant_policy == "lowest":
+                variants.sort(
+                    key=lambda v: v.get("bandwidth", 0)
+                )
+                variants = variants[:1]
+            # "all" traverses all variants.
+
+            for variant in variants:
+                self.enqueue(
+                    WorkItem(
+                        url=variant["url"],
+                        depth=item.depth + 1,
+                        inherited_entry=item.inherited_entry,
+                        parent_url=final_url,
+                        role="hls_variant",
+                    )
+                )
+
+            # Alternate renditions may be audio-only media playlists.
+            if self.args.include_hls_renditions:
+                for rendition in hls["renditions"]:
+                    rendition_url = rendition.get("url", "")
+
+                    if rendition_url:
+                        self.enqueue(
+                            WorkItem(
+                                url=rendition_url,
+                                depth=item.depth + 1,
+                                inherited_entry=item.inherited_entry,
+                                parent_url=final_url,
+                                role="hls_rendition",
+                            )
+                        )
+
+            return
+
+        # HLS media playlist: validate its structure and test one
+        # referenced segment. The segment itself is never emitted.
+        if hls["is_media"]:
+            record["classification"] = "hls_media_playlist"
+
+            if not hls["segments"]:
+                self.add_error(
+                    final_url,
+                    "hls_validation",
+                    "No segment URLs found",
+                )
+                return
+
+            segment_url = hls["segments"][0]
+            segment_result: Optional[HttpResult] = None
+
+            if self.args.check_hls_segment:
+                segment_result = self.client.request(
+                    segment_url,
+                    method="GET",
+                    headers={"Range": "bytes=0-1023"},
+                    read_limit=self.args.segment_probe_bytes,
+                )
+
+                segment_ok = (
+                    segment_result.ok
+                    and bool(segment_result.body)
+                    and not is_html_error_page(segment_result)
+                )
+
+                record["hls"]["first_segment_probe"] = {
+                    "url": redact_url(segment_url),
+                    "status": segment_result.status,
+                    "content_type": segment_result.content_type,
+                    "bytes_read": segment_result.bytes_read,
+                    "ok": segment_ok,
+                    "error": segment_result.error,
+                }
+
+                if not segment_ok:
+                    self.add_error(
+                        segment_url,
+                        "hls_segment_probe",
+                        segment_result.error
+                        or "First HLS segment probe failed",
+                    )
+                    return
+
+            self.emit_validated(
+                url=final_url,
+                entry=item.inherited_entry,
+                source=item.parent_url or final_url,
+                validation={
+                    "type": "hls_media_playlist",
+                    "status": result.status,
+                    "segment_count": len(hls["segments"]),
+                    "first_segment_checked": bool(
+                        self.args.check_hls_segment
+                    ),
+                    "first_segment_ok": (
+                        True
+                        if not self.args.check_hls_segment
+                        else bool(
+                            segment_result
+                            and segment_result.ok
+                            and segment_result.body
+                            and not is_html_error_page(
+                                segment_result
+                            )
+                        )
+                    ),
+                    "warning": (
+                        "HTTP/HLS structure check; no full decode performed"
+                    ),
+                },
+            )
+
+            record["decision"] = "emitted"
+            return
+
+        # Generic M3U playlist: walk channel entries recursively.
+        entries = parse_m3u_entries(text, final_url)
+
+        if entries:
+            record["classification"] = "nested_m3u"
+            record["child_count"] = len(entries)
+
+            for entry in entries:
+                inherited = entry
+
                 if (
-                    hls["warnings"]
-                    or hls["duplicate_variant_uris"]
-                    or bad
-                    or best["truncated"]
+                    item.inherited_entry is not None
+                    and not entry.title
+                ):
+                    metadata, info, title = merge_metadata(
+                        item.inherited_entry,
+                        entry,
+                    )
+                    inherited = M3UEntry(
+                        metadata_lines=metadata,
+                        info_line=info,
+                        title=title,
+                        url=entry.url,
+                    )
+
+                self.enqueue(
+                    WorkItem(
+                        url=entry.url,
+                        depth=item.depth + 1,
+                        inherited_entry=inherited,
+                        parent_url=final_url,
+                        role="m3u_entry",
+                    )
                 )
-                else "WORKING"
+
+            return
+
+        # Some indexes contain URLs but still start with #EXTM3U.
+        # If no EXTINF records exist, extract playlist references.
+        children = extract_playlist_urls(text, final_url)
+
+        if children:
+            record["classification"] = "m3u_index"
+            record["child_count"] = len(children)
+
+            for child in children:
+                self.enqueue(
+                    WorkItem(
+                        url=child,
+                        depth=item.depth + 1,
+                        inherited_entry=item.inherited_entry,
+                        parent_url=final_url,
+                        role="m3u_index_child",
+                    )
+                )
+            return
+
+        record["classification"] = "empty_or_unsupported_playlist"
+        self.add_error(
+            final_url,
+            "playlist_parse",
+            "No M3U entries, HLS variants, or media segments found",
+        )
+
+    def emit_validated(
+        self,
+        url: str,
+        entry: Optional[M3UEntry],
+        source: str,
+        validation: Dict[str, Any],
+    ) -> None:
+        url = normalize_url(url)
+
+        if not url:
+            return
+
+        if entry is None:
+            metadata_lines: List[str] = []
+            info_line = "#EXTINF:-1,{}".format(
+                urllib.parse.urlsplit(url).hostname or "Validated stream"
+            )
+            title = info_line.split(",", 1)[1]
+        else:
+            metadata_lines = list(entry.metadata_lines)
+            info_line = entry.info_line or "#EXTINF:-1,Validated stream"
+            title = entry.title
+
+        with self.lock:
+            # Preserve one playlist entry per terminal URL. This avoids
+            # duplicate variants from overlapping parent playlists.
+            for existing in self.validated:
+                if existing["url"] == url:
+                    existing.setdefault("sources", []).append(
+                        redact_url(source)
+                    )
+                    return
+
+            self.validated.append({
+                "url": url,
+                "metadata_lines": metadata_lines,
+                "info_line": info_line,
+                "title": title,
+                "source": redact_url(source),
+                "sources": [redact_url(source)],
+                "validation": validation,
+                "validated_at": now_iso(),
+            })
+
+    def worker(self) -> None:
+        while True:
+            try:
+                item = self.work_queue.get(timeout=0.25)
+            except queue.Empty:
+                if self.stop_event.is_set():
+                    return
+
+                if self.client.remaining_runtime() <= 0:
+                    self.stop_event.set()
+                    return
+
+                continue
+
+            try:
+                if self.client.remaining_runtime() <= 0:
+                    self.add_error(
+                        item.url,
+                        "budget",
+                        "Runtime limit reached before processing URL",
+                    )
+                    self.stop_event.set()
+                else:
+                    self.process_item(item)
+            except Exception as exc:
+                self.add_error(
+                    item.url,
+                    "internal",
+                    "{}: {}".format(type(exc).__name__, exc),
+                )
+            finally:
+                self.work_queue.task_done()
+
+    def run(self, roots: List[str]) -> None:
+        for root in roots:
+            self.enqueue(
+                WorkItem(
+                    url=root,
+                    depth=0,
+                    inherited_entry=None,
+                    parent_url="",
+                    role="root",
+                )
             )
 
-        elif status is not None and 200 <= status < 300 and body:
-            record["status_label"] = "ACCESSIBLE_NON_HLS"
-            record["body_preview"] = body[:200].decode(
-                "utf-8", errors="replace"
-            ).replace("\x00", "?")
-
-        elif status in (401, 403):
-            record["status_label"] = "ACCESS_RESTRICTED"
-            record["errors"].append(
-                f"HTTP {status}: доступ ограничен сервером"
+        if self.args.discover_livem3u:
+            self.enqueue(
+                WorkItem(
+                    url=LIVE_M3U_INDEX,
+                    depth=0,
+                    role="livem3u_index",
+                )
+            )
+            self.enqueue(
+                WorkItem(
+                    url=LIVE_M3U_MAIN,
+                    depth=0,
+                    role="livem3u_main",
+                )
             )
 
-        elif status is not None and status >= 400:
-            record["status_label"] = "BROKEN"
-            record["errors"].append(f"HTTP {status}")
+        worker_count = max(1, min(self.args.workers, 64))
 
-        elif best["error"]:
-            record["status_label"] = "UNKNOWN"
-            record["errors"].append(best["error"])
+        threads: List[threading.Thread] = []
 
-        if not body and status is not None and 200 <= status < 300:
-            record["errors"].append(
-                "Успешный HTTP-ответ с пустым телом"
+        for index in range(worker_count):
+            thread = threading.Thread(
+                target=self.worker,
+                name="PhoenixWorker-{}".format(index + 1),
+                daemon=True,
+            )
+            thread.start()
+            threads.append(thread)
+
+        try:
+            # queue.join() waits for every item, including child URLs
+            # enqueued by active workers.
+            while True:
+                if self.client.remaining_runtime() <= 0:
+                    self.stop_event.set()
+                    break
+
+                if self.work_queue.unfinished_tasks == 0:
+                    break
+
+                time.sleep(0.1)
+
+            self.work_queue.join()
+
+        except KeyboardInterrupt:
+            self.stop_event.set()
+            self.add_error(
+                "",
+                "runtime",
+                "Interrupted by user",
             )
 
-        return record
+        finally:
+            self.stop_event.set()
+
+            for thread in threads:
+                thread.join(timeout=1.0)
+
+    def report(self) -> Dict[str, Any]:
+        with self.lock:
+            classification_counts = Counter(
+                item.get("classification", "unknown")
+                for item in self.records
+            )
+
+            return {
+                "program": "Phoenix URL Dissector",
+                "version": VERSION,
+                "created_at": now_iso(),
+                "settings": {
+                    "timeout": self.args.timeout,
+                    "max_bytes": self.args.max_bytes,
+                    "max_total_bytes": self.args.max_total_bytes,
+                    "max_runtime": self.args.max_runtime,
+                    "max_requests": self.args.max_requests,
+                    "max_depth": self.args.max_depth,
+                    "max_sources": self.args.max_sources,
+                    "workers": self.args.workers,
+                    "probe_bytes": self.args.probe_bytes,
+                    "check_hls_segment": self.args.check_hls_segment,
+                    "hls_variant_policy": self.args.hls_variant_policy,
+                },
+                "budget": self.client.snapshot(),
+                "summary": {
+                    "urls_seen": len(self.visited),
+                    "http_records": len(self.records),
+                    "validated_terminal_streams": len(self.validated),
+                    "errors": len(self.errors),
+                    "classifications": dict(classification_counts),
+                },
+                "validated_streams": [
+                    {
+                        **item,
+                        "url": redact_url(item["url"]),
+                    }
+                    for item in self.validated
+                ],
+                "records": self.records,
+                "errors": self.errors,
+                "events": self.events,
+                "network_diagnostics": self.network_reports,
+            }
 
 
-# ============================================================
-# Загрузка пользовательских источников
-# ============================================================
+def load_input_urls(args: argparse.Namespace) -> List[str]:
+    urls: List[str] = []
 
-def load_urls(args):
-    items = list(args.url or [])
+    if args.url:
+        urls.extend(args.url)
 
     if args.input_file:
         path = Path(args.input_file)
 
         if not path.exists():
-            raise FileNotFoundError(f"Не найден файл: {path}")
+            raise FileNotFoundError(
+                "Input file does not exist: {}".format(path)
+            )
 
-        items += path.read_text(
-            encoding="utf-8-sig", errors="replace"
-        ).splitlines()
+        for raw_line in path.read_text(
+            encoding="utf-8-sig",
+            errors="replace",
+        ).splitlines():
+            line = raw_line.strip()
+
+            if not line or line.startswith("#"):
+                continue
+
+            urls.append(line)
 
     if args.stdin:
-        items += list(sys.stdin)
+        for raw_line in sys.stdin:
+            line = raw_line.strip()
 
-    result = []
+            if line and not line.startswith("#"):
+                urls.append(line)
 
-    for line in items:
-        line = line.strip()
+    unique: List[str] = []
+    seen: Set[str] = set()
 
-        if not line or line.startswith("#"):
-            continue
+    for url in urls:
+        normalized = normalize_url(url)
 
-        for token in line.split():
-            if token.startswith(("http://", "https://", "//")):
-                try:
-                    url = normalize(token)
-                    if url and url not in result:
-                        result.append(url)
-                except ValueError:
-                    pass
+        if normalized and normalized not in seen:
+            seen.add(normalized)
+            unique.append(normalized)
 
-    return result
+    return unique
 
 
-# ============================================================
-# Параллельное обнаружение и загрузка M3U-источников
-# ============================================================
-
-def process_m3u_sources(dissector, urls):
-    """
-    Параллельно загружает M3U/M3U8-источники, извлекает
-    вложенные ссылки на плейлисты и формирует диагностические
-    сведения. Исходные URL сохраняются в стабильном порядке.
-    """
-    unique_urls = list(dict.fromkeys(
-        url for url in urls if is_playlist_url(url)
-    ))
-
-    unique_urls = unique_urls[:dissector.args.max_sources]
-
-    futures = {
-        url: dissector.discovery_pool.submit(
-            download_m3u_source, dissector, url
-        )
-        for url in unique_urls
-    }
-
-    results = []
-    discovered_nested = []
-
-    for url in unique_urls:
-        try:
-            result = futures[url].result()
-        except Exception as exc:
-            result = {
-                "url": redact(url),
-                "status": None,
-                "error": f"{type(exc).__name__}: {exc}",
-                "bytes": 0,
-                "nested_playlists": [],
-            }
-
-        results.append(result)
-        discovered_nested.extend(
-            result.get("nested_playlists", [])
-        )
-
-    nested_unique = list(dict.fromkeys(discovered_nested))
-    return results, nested_unique
-
-
-# ============================================================
-# Отчёты
-# ============================================================
-
-def flatten(record):
-    yield record
-
-    for child in record.get("children", []):
-        yield from flatten(child)
-
-
-def text_report(report):
+def build_m3u(
+    validated: List[Dict[str, Any]],
+    include_source_comments: bool = False,
+) -> str:
     lines = [
-        f"Phoenix URL Dissector {VERSION}",
-        f"UTC: {report['generated_at']}",
-        f"Mode: {report['mode']}",
-        "=" * 78,
+        "#EXTM3U",
+        "# Phoenix URL Dissector {}".format(VERSION),
+        "# Only validated terminal endpoints are included",
     ]
 
-    counts = collections.Counter()
-
-    if report.get("livem3u"):
-        live = report["livem3u"]
-
-        lines += [
-            "",
-            "LIVEM3U DISCOVERY",
-            f"Index: {live['index_url']}",
-            f"Main: {live['main_url']}",
-            f"Discovered playlist URLs: {len(live['discovered'])}",
-        ]
-
-        for error in live.get("errors", []):
+    for item in validated:
+        if include_source_comments:
             lines.append(
-                f"  DISCOVERY ERROR {error['url']}: {error['error']}"
-            )
-
-    if report.get("m3u_sources"):
-        lines += [
-            "",
-            "M3U SOURCE DOWNLOADS",
-            f"Sources processed: {len(report['m3u_sources'])}",
-        ]
-
-        for item in report["m3u_sources"]:
-            lines.append(
-                f"  [{item.get('status')}] "
-                f"{item.get('url')} "
-                f"bytes={item.get('bytes', 0)} "
-                f"entries={item.get('channel_entries', 0)}"
-            )
-
-            if item.get("error"):
-                lines.append("    ERROR: " + item["error"])
-
-            lines.append(
-                f"    nested playlists="
-                f"{len(item.get('nested_playlists', []))}"
-            )
-
-    for source in report["sources"]:
-        lines += [
-            "",
-            f"[{source.get('status_label', 'UNKNOWN')}] "
-            f"{source.get('url')}",
-            (
-                f"HTTP={source.get('http_status')} "
-                f"type={source.get('content_type')} "
-                f"bytes={source.get('body_bytes')}"
-            ),
-        ]
-
-        for node in flatten(source):
-            counts[node.get("status_label", "UNKNOWN")] += 1
-
-        for error in source.get("errors", []):
-            lines.append("  ERROR: " + error)
-
-        network = source.get("network") or {}
-        tcp = network.get("tcp") or {}
-
-        if tcp:
-            lines.append(
-                f"  TCP connected={tcp.get('connected')} "
-                f"latency_ms={tcp.get('elapsed_ms')}"
-            )
-
-        tls = network.get("tls") or {}
-
-        if tls:
-            lines.append(
-                f"  TLS version={tls.get('tls_version')} "
-                f"verified={tls.get('verified')} "
-                f"cipher={tls.get('cipher')}"
-            )
-
-        hls = source.get("hls") or {}
-
-        if hls:
-            lines.append(
-                f"  HLS master={hls.get('is_master')} "
-                f"media={hls.get('is_media')} "
-                f"variants={len(hls.get('variants', []))} "
-                f"segments={len(hls.get('segments', []))} "
-                f"duration={hls.get('declared_duration_seconds')}s "
-                f"encryption={hls.get('encryption_methods')}"
-            )
-
-            for warning in hls.get("warnings", []):
-                lines.append("  HLS WARNING: " + warning)
-
-            for duplicate in hls.get("duplicate_variant_uris", []):
-                lines.append(
-                    f"  DUPLICATE VARIANT x{duplicate['count']}: "
-                    f"{duplicate['uri']} "
-                    f"resolutions={duplicate['declared_resolutions']}"
+                "# Phoenix-source: {}".format(
+                    redact_url(item.get("source", ""))
                 )
-
-            for variant in hls.get("variants", []):
-                lines.append(
-                    f"  VARIANT {variant.get('resolution')} "
-                    f"bw={variant.get('bandwidth')} "
-                    f"-> {variant['uri']}"
-                )
-
-        for child in source.get("children", []):
-            lines.append(
-                f"  CHILD {child.get('resource_type')} "
-                f"[{child.get('status_label')}] "
-                f"HTTP={child.get('http_status')} "
-                f"{child.get('url')}"
             )
 
-    lines += [
-        "",
-        "=" * 78,
-        "Statuses: " + ", ".join(
-            f"{key}={value}" for key, value in sorted(counts.items())
-        ),
-        "Note: ограниченная диагностика не гарантирует "
-        "непрерывное воспроизведение.",
-    ]
+        for metadata in item.get("metadata_lines", []):
+            if metadata and metadata.startswith("#"):
+                # Do not reinsert an accidental M3U header.
+                if metadata.upper() != "#EXTM3U":
+                    lines.append(metadata)
+
+        info_line = (
+            item.get("info_line")
+            or "#EXTINF:-1,Validated stream"
+        )
+
+        lines.append(info_line)
+        lines.append(item["url"])
 
     return "\n".join(lines) + "\n"
 
 
-# ============================================================
-# Самотестирование
-# ============================================================
-
-def self_test():
-    sample = (
-        "#EXTM3U\n"
-        "#EXT-X-STREAM-INF:BANDWIDTH=4716800,"
-        'RESOLUTION=1920x1080,CODECS="avc1,mp4a"\n'
-        "https://stream.example/a.m3u8\n"
-        "#EXT-X-STREAM-INF:BANDWIDTH=1000,RESOLUTION=640x360\n"
-        "https://stream.example/a.m3u8\n"
-    )
-
-    parsed = parse_hls(
-        sample, "https://example.org/master.m3u8"
-    )
-
-    assert parsed["valid_header"]
-    assert len(parsed["variants"]) == 2
-    assert len(parsed["duplicate_variant_uris"]) == 1
-
-    assert normalize("example.org/a.m3u8") == (
-        "https://example.org/a.m3u8"
-    )
-
-    assert "REDACTED" in redact(
-        "https://example.org/x?token=abc"
-    )
-
-    assert "https://xykt-fix.github.io" in origins_for(
-        "https://proxy.example/xykt-fix.github.io/a.m3u8"
-    )
-
-    extracted = extract_playlist_urls(
-        b"#EXTM3U\n"
-        b"https://example.org/data/playlists/NEWS.m3u\n"
-        b"https://example.org/live/channel/12345.ts\n",
-        "https://example.org/index.m3u",
-    )
-
-    assert len(extracted) == 1
-    assert extracted[0].endswith("NEWS.m3u")
-
-    print(f"Phoenix URL Dissector {VERSION}: self-test OK")
-
-
-# ============================================================
-# GitHub Actions workflow
-# ============================================================
-
-def write_workflow():
-    path = Path(".github/workflows/phoenix.yml")
+def write_text(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    path.write_text(
-        """name: Phoenix URL Dissector
+    temp_path = path.with_suffix(path.suffix + ".tmp")
+    temp_path.write_text(content, encoding="utf-8")
+    temp_path.replace(path)
+
+
+def write_outputs(
+    args: argparse.Namespace,
+    dissector: Dissector,
+) -> Dict[str, str]:
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    report = dissector.report()
+
+    safe_name = re.sub(
+        r"[^A-Za-z0-9_.-]+",
+        "_",
+        args.name.strip() or "phoenix_report",
+    )
+
+    json_path = output_dir / (safe_name + ".json")
+    txt_path = output_dir / (safe_name + ".txt")
+    m3u_path = output_dir / "validated_streams.m3u"
+
+    write_text(
+        json_path,
+        json.dumps(
+            report,
+            ensure_ascii=False,
+            indent=2,
+        ),
+    )
+
+    summary = report["summary"]
+    budget = report["budget"]
+
+    lines = [
+        "Phoenix URL Dissector {}".format(VERSION),
+        "=" * 72,
+        "Created: {}".format(report["created_at"]),
+        "",
+        "SUMMARY",
+        "-" * 72,
+        "URLs seen: {}".format(summary["urls_seen"]),
+        "HTTP records: {}".format(summary["http_records"]),
+        "Validated terminal streams: {}".format(
+            summary["validated_terminal_streams"]
+        ),
+        "Errors: {}".format(summary["errors"]),
+        "",
+        "CLASSIFICATIONS",
+        "-" * 72,
+    ]
+
+    for key, value in sorted(
+        summary["classifications"].items()
+    ):
+        lines.append("{}: {}".format(key, value))
+
+    lines.extend([
+        "",
+        "HTTP BUDGET",
+        "-" * 72,
+        "HTTP requests: {}/{}".format(
+            budget["http_requests"],
+            budget["max_requests"],
+        ),
+        "Bytes read: {}/{}".format(
+            budget["bytes_read"],
+            budget["max_total_bytes"],
+        ),
+        "Elapsed seconds: {}".format(
+            budget["elapsed_seconds"]
+        ),
+        "Runtime limit: {}".format(
+            budget["max_runtime_seconds"]
+        ),
+        "",
+        "VALIDATED TERMINAL STREAMS",
+        "-" * 72,
+    ])
+
+    if dissector.validated:
+        for index, item in enumerate(
+            dissector.validated, 1
+        ):
+            lines.append(
+                "{}. {}".format(
+                    index,
+                    redact_url(item["url"]),
+                )
+            )
+            lines.append(
+                "   Name: {}".format(
+                    item.get("title", "")
+                )
+            )
+            lines.append(
+                "   Validation: {}".format(
+                    item.get("validation", {}).get("type", "")
+                )
+            )
+    else:
+        lines.append(
+            "No terminal stream passed the configured validation."
+        )
+
+    lines.extend([
+        "",
+        "ERRORS",
+        "-" * 72,
+    ])
+
+    if dissector.errors:
+        for error in dissector.errors:
+            lines.append(
+                "[{}] {} | {} | {}".format(
+                    error.get("stage", ""),
+                    error.get("url", ""),
+                    error.get("message", ""),
+                    error.get("time", ""),
+                )
+            )
+    else:
+        lines.append("No errors recorded.")
+
+    lines.extend([
+        "",
+        "BUDGET EVENTS",
+        "-" * 72,
+    ])
+
+    if budget["budget_events"]:
+        lines.extend(budget["budget_events"])
+    else:
+        lines.append("No budget limit reached.")
+
+    lines.extend([
+        "",
+        "LIMITATIONS",
+        "-" * 72,
+        "HTTP success is not equivalent to successful video decoding.",
+        "HLS media playlists are structurally checked; optionally the",
+        "first referenced segment is probed. No full media decode is",
+        "performed by this standard-library-only script.",
+        "DNS/TCP/TLS checks, when enabled, are separate socket operations",
+        "and are not counted as HTTP requests.",
+    ])
+
+    write_text(txt_path, "\n".join(lines) + "\n")
+
+    write_text(
+        m3u_path,
+        build_m3u(
+            dissector.validated,
+            include_source_comments=args.m3u_source_comments,
+        ),
+    )
+
+    return {
+        "json": str(json_path),
+        "txt": str(txt_path),
+        "m3u": str(m3u_path),
+    }
+
+
+def write_github_actions_workflow(
+    path: str = ".github/workflows/phoenix-dissector.yml",
+) -> str:
+    """
+    Generate a minimal scheduled/manual GitHub Actions workflow.
+    The workflow assumes the Python script is named
+    URL_Dessector.py in the repository root.
+    """
+    content = r"""name: Phoenix URL Dissector
+
 on:
   workflow_dispatch:
-    inputs:
-      mode:
-        description: quick, deep or hls
-        required: true
-        default: deep
-  push:
-    paths:
-      - sources.txt
-      - phoenix_dissector.py
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
 jobs:
-  analyze:
+  diagnose:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
-    permissions:
-      contents: read
+    timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Analyze
-        run: >-
-          python phoenix_dissector.py
-          --input-file sources.txt
-          --mode "${{ github.event.inputs.mode || 'deep' }}"
-          --output-dir reports
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: phoenix-reports
-          path: reports/
-          if-no-files-found: warn
-""",
-        encoding="utf-8",
+
+      - name: Run Phoenix URL Dissector
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python -u URL_Dessector.py \
+            --input-file sources.txt \
+            --discover-livem3u \
+            --workers 16 \
+            --max-requests 500 \
+            --max-total-bytes 40000000 \
+            --max-runtime 900 \
+            --output-dir reports \
+            --name phoenix_report
+
+      - name: Commit generated reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/
+          if ! git diff --cached --quiet; then
+            git commit -m "Update Phoenix URL Dissector reports"
+            git push
+          fi
+"""
+    output = Path(path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    write_text(output, content)
+    return str(output)
+
+
+def self_test() -> int:
+    sample = """#EXTM3U
+#EXTINF:-1 tvg-id="demo" tvg-name="Demo" group-title="Test",Demo channel
+#EXTVLCOPT:http-user-agent=TestAgent
+https://example.com/live.m3u8
+"""
+    entries = parse_m3u_entries(
+        sample,
+        "https://example.com/root.m3u",
     )
 
-    print(f"Создан файл: {path}")
+    assert len(entries) == 1
+    assert entries[0].title == "Demo channel"
+    assert 'tvg-id="demo"' in entries[0].info_line
+    assert entries[0].metadata_lines == [
+        "#EXTVLCOPT:http-user-agent=TestAgent"
+    ]
+
+    hls_sample = """#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-TARGETDURATION:10
+#EXTINF:10.0,
+segment001.ts
+#EXTINF:10.0,
+segment002.ts
+#EXT-X-ENDLIST
+"""
+    hls = parse_hls(
+        hls_sample,
+        "https://example.com/stream/index.m3u8",
+    )
+
+    assert hls["is_media"]
+    assert len(hls["segments"]) == 2
+    assert (
+        hls["segments"][0]
+        == "https://example.com/stream/segment001.ts"
+    )
+
+    master_sample = """#EXTM3U
+#EXT-X-STREAM-INF:BANDWIDTH=1200000,RESOLUTION=1280x720
+720p/index.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=500000,RESOLUTION=640x360
+360p/index.m3u8
+"""
+    master = parse_hls(
+        master_sample,
+        "https://example.com/master.m3u8",
+    )
+
+    assert master["is_master"]
+    assert len(master["variants"]) == 2
+
+    assert normalize_url(
+        "HTTPS://Example.COM:443/test.m3u8"
+    ) == "https://example.com/test.m3u8"
+
+    print("Self-test passed.")
+    return 0
 
 
-# ============================================================
-# CLI
-# ============================================================
-
-def main():
+def make_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description=f"Phoenix URL Dissector {VERSION}"
+        description=(
+            "Phoenix URL Dissector {}: recursive M3U/HLS "
+            "diagnostics and validated terminal playlist builder."
+        ).format(VERSION)
     )
 
-    parser.add_argument("--url", action="append")
-    parser.add_argument("--input-file")
-    parser.add_argument("--stdin", action="store_true")
-
     parser.add_argument(
-        "--mode", choices=("quick", "deep", "hls"),
-        default="deep",
+        "--url",
+        action="append",
+        default=[],
+        help="Root URL; may be supplied more than once",
     )
 
-    parser.add_argument("--origin")
-    parser.add_argument("--timeout", type=float, default=10)
-    parser.add_argument("--max-bytes", type=int, default=1_000_000)
     parser.add_argument(
-        "--max-total-bytes", type=int, default=30_000_000
+        "--input-file",
+        default="",
+        help="Text file containing one URL per line",
     )
-    parser.add_argument("--max-runtime", type=float, default=120)
-    parser.add_argument("--max-requests", type=int, default=250)
-    parser.add_argument("--max-depth", type=int, default=2)
-    parser.add_argument("--max-segments", type=int, default=3)
-    parser.add_argument("--max-children", type=int, default=12)
-    parser.add_argument("--max-redirects", type=int, default=5)
-    parser.add_argument("--max-sources", type=int, default=100)
-    parser.add_argument("--user-agent", default=UA)
-    parser.add_argument("--output-dir", default="phoenix_reports")
-    parser.add_argument("--name", default="phoenix_report")
-    parser.add_argument("--allow-private", action="store_true")
-    parser.add_argument("--insecure-tls", action="store_true")
-    parser.add_argument("--discover-livem3u", action="store_true")
+
     parser.add_argument(
-        "--download-m3u-sources",
+        "--stdin",
         action="store_true",
-        help="Параллельно скачать и проанализировать M3U-источники",
+        help="Read root URLs from stdin",
     )
-    parser.add_argument("--init-actions", action="store_true")
-    parser.add_argument("--self-test", action="store_true")
 
-    args = parser.parse_args()
+    parser.add_argument(
+        "--mode",
+        choices=("quick", "deep", "hls"),
+        default="deep",
+        help=(
+            "quick: shallow; deep: recursive M3U/HLS; "
+            "hls: deep with HLS segment probe"
+        ),
+    )
+
+    parser.add_argument(
+        "--discover-livem3u",
+        action="store_true",
+        help="Add LiveM3U INDEX.m3u and playlist.m3u as roots",
+    )
+
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=12.0,
+        help="Per-request timeout in seconds",
+    )
+
+    parser.add_argument(
+        "--max-bytes",
+        type=int,
+        default=2_000_000,
+        help="Maximum body bytes reserved for one HTTP request",
+    )
+
+    parser.add_argument(
+        "--max-total-bytes",
+        type=int,
+        default=40_000_000,
+        help="Global aggregate HTTP response-body byte budget",
+    )
+
+    parser.add_argument(
+        "--max-runtime",
+        type=float,
+        default=300.0,
+        help="Maximum total runtime in seconds",
+    )
+
+    parser.add_argument(
+        "--max-requests",
+        type=int,
+        default=500,
+        help="Global HTTP request budget",
+    )
+
+    parser.add_argument(
+        "--max-depth",
+        type=int,
+        default=8,
+        help="Maximum child traversal depth",
+    )
+
+    parser.add_argument(
+        "--max-sources",
+        type=int,
+        default=1500,
+        help="Maximum distinct URLs enqueued",
+    )
+
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=16,
+        help="Concurrent workers (1-64)",
+    )
+
+    parser.add_argument(
+        "--probe-bytes",
+        type=int,
+        default=4096,
+        help="Response bytes used for a direct-stream probe",
+    )
+
+    parser.add_argument(
+        "--segment-probe-bytes",
+        type=int,
+        default=1024,
+        help="Maximum body bytes read from the first HLS segment",
+    )
+
+    parser.add_argument(
+        "--max-redirects",
+        type=int,
+        default=10,
+        help="Compatibility option; urllib handles redirects",
+    )
+
+    parser.add_argument(
+        "--max-children",
+        type=int,
+        default=1000,
+        help="Compatibility option; --max-sources is the global URL cap",
+    )
+
+    parser.add_argument(
+        "--max-segments",
+        type=int,
+        default=200,
+        help="Compatibility option for report consumers",
+    )
+
+    parser.add_argument(
+        "--max-total-requests",
+        type=int,
+        default=0,
+        help=argparse.SUPPRESS,
+    )
+
+    parser.add_argument(
+        "--user-agent",
+        default=DEFAULT_USER_AGENT,
+        help="HTTP User-Agent",
+    )
+
+    parser.add_argument(
+        "--output-dir",
+        default="reports",
+        help="Directory for report files and generated playlist",
+    )
+
+    parser.add_argument(
+        "--name",
+        default="phoenix_report",
+        help="Report file base name",
+    )
+
+    parser.add_argument(
+        "--allow-private",
+        action="store_true",
+        help=(
+            "Compatibility flag; private HTTP(S) targets are not "
+            "blocked by default in this version"
+        ),
+    )
+
+    parser.add_argument(
+        "--insecure-tls",
+        action="store_true",
+        help="Disable TLS certificate verification",
+    )
+
+    parser.add_argument(
+        "--network-diagnostics",
+        action="store_true",
+        help="Run separate DNS/TCP/TLS diagnostics",
+    )
+
+    parser.add_argument(
+        "--check-hls-segment",
+        action="store_true",
+        help="Probe the first HLS segment before accepting media playlist",
+    )
+
+    parser.add_argument(
+        "--refetch-truncated-playlists",
+        action="store_true",
+        help="Retry a truncated playlist with the full per-request cap",
+    )
+
+    parser.add_argument(
+        "--hls-variant-policy",
+        choices=("all", "highest", "lowest"),
+        default="all",
+        help="HLS master variant policy",
+    )
+
+    parser.add_argument(
+        "--include-hls-renditions",
+        action="store_true",
+        help="Also traverse alternate HLS audio/subtitle renditions",
+    )
+
+    parser.add_argument(
+        "--m3u-source-comments",
+        action="store_true",
+        help="Write source comments into the generated M3U",
+    )
+
+    parser.add_argument(
+        "--init-actions",
+        action="store_true",
+        help="Generate a GitHub Actions workflow",
+    )
+
+    parser.add_argument(
+        "--self-test",
+        action="store_true",
+        help="Run offline parser tests and exit",
+    )
+
+    return parser
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    parser = make_parser()
+    args = parser.parse_args(argv)
 
     if args.self_test:
-        self_test()
-        return 0
+        return self_test()
+
+    if args.mode == "quick":
+        args.max_depth = min(args.max_depth, 1)
+        args.check_hls_segment = False
+
+    if args.mode == "hls":
+        args.check_hls_segment = True
+
+    if args.max_total_requests > 0:
+        args.max_requests = min(
+            args.max_requests,
+            args.max_total_requests,
+        )
+
+    if args.max_bytes <= 0:
+        parser.error("--max-bytes must be greater than zero")
+
+    if args.max_total_bytes <= 0:
+        parser.error("--max-total-bytes must be greater than zero")
+
+    if args.max_requests <= 0:
+        parser.error("--max-requests must be greater than zero")
+
+    if args.max_runtime <= 0:
+        parser.error("--max-runtime must be greater than zero")
+
+    if args.max_depth < 0:
+        parser.error("--max-depth cannot be negative")
+
+    if args.max_sources <= 0:
+        parser.error("--max-sources must be greater than zero")
 
     if args.init_actions:
-        write_workflow()
-        return 0
+        path = write_github_actions_workflow()
+        print("GitHub Actions workflow generated:", path)
 
-    if (
-        args.timeout <= 0
-        or args.max_bytes < 1024
-        or args.max_total_bytes < args.max_bytes
-        or args.max_runtime <= 0
-        or args.max_requests < 1
-        or args.max_sources < 1
-        or min(
-            args.max_depth,
-            args.max_segments,
-            args.max_children,
-            args.max_redirects,
-        ) < 0
-    ):
-        parser.error("Некорректные лимиты")
+        if not (
+            args.url
+            or args.input_file
+            or args.stdin
+            or args.discover_livem3u
+        ):
+            return 0
 
     try:
-        urls = load_urls(args)
+        roots = load_input_urls(args)
     except Exception as exc:
         print(
-            f"Ошибка входных данных: {exc}",
+            "Input error: {}: {}".format(type(exc).__name__, exc),
             file=sys.stderr,
         )
         return 2
 
-    if not urls and not args.discover_livem3u:
+    if not roots and not args.discover_livem3u:
         parser.error(
-            "Укажи --url, --input-file или --discover-livem3u"
+            "Provide --url, --input-file, --stdin, "
+            "or --discover-livem3u"
         )
 
-    Path(args.output_dir).mkdir(
-        parents=True, exist_ok=True
-    )
+    print("=" * 72)
+    print("Phoenix URL Dissector", VERSION)
+    print("=" * 72)
+    print("Root URLs:", len(roots))
+    print("Workers:", max(1, min(args.workers, 64)))
+    print("HTTP request budget:", args.max_requests)
+    print("Aggregate byte budget:", args.max_total_bytes)
+    print("Runtime limit:", args.max_runtime, "seconds")
+    print("Maximum depth:", args.max_depth)
+    print("Output directory:", args.output_dir)
+    print()
 
     dissector = Dissector(args)
-
-    report = {
-        "tool": "Phoenix URL Dissector",
-        "version": VERSION,
-        "generated_at": now(),
-        "mode": args.mode,
-        "settings": {
-            "timeout": args.timeout,
-            "max_bytes": args.max_bytes,
-            "max_total_bytes": args.max_total_bytes,
-            "max_runtime": args.max_runtime,
-            "max_requests": args.max_requests,
-            "max_depth": args.max_depth,
-            "max_segments": args.max_segments,
-            "max_children": args.max_children,
-            "max_sources": args.max_sources,
-            "allow_private": args.allow_private,
-            "insecure_tls": args.insecure_tls,
-            "threading": {
-                "discovery_workers": DISCOVERY_WORKERS,
-                "download_workers": DOWNLOAD_WORKERS,
-                "parser_workers": PARSER_WORKERS,
-                "url_workers": URL_WORKERS,
-                "maximum_workers": (
-                    DISCOVERY_WORKERS
-                    + DOWNLOAD_WORKERS
-                    + PARSER_WORKERS
-                    + URL_WORKERS
-                ),
-            },
-        },
-        "livem3u": None,
-        "m3u_sources": [],
-        "sources": [],
-    }
+    started = time.monotonic()
 
     try:
-        if args.discover_livem3u:
-            print(
-                "[LiveM3U] Параллельно загружаю "
-                "индекс и основной плейлист...",
-                flush=True,
-            )
-
-            live = discover_livem3u(dissector)
-            report["livem3u"] = live
-
-            for url in live["discovered"]:
-                if url not in urls:
-                    urls.append(url)
-
-            print(
-                "[LiveM3U] Обнаружено плейлистов: "
-                f"{len(live['discovered'])}",
-                flush=True,
-            )
-
-        urls = list(dict.fromkeys(urls))[:args.max_sources]
-
-        if not urls:
-            parser.error(
-                "Не удалось обнаружить источники. "
-                "Проверь сеть или укажи --url/--input-file."
-            )
-
-        if args.download_m3u_sources:
-            print(
-                "[M3U] Параллельное скачивание источников...",
-                flush=True,
-            )
-
-            m3u_results, nested_urls = process_m3u_sources(
-                dissector, urls
-            )
-
-            report["m3u_sources"] = m3u_results
-
-            for url in nested_urls:
-                if url not in urls and len(urls) < args.max_sources:
-                    urls.append(url)
-
-            print(
-                f"[M3U] Обработано источников: "
-                f"{len(m3u_results)}",
-                flush=True,
-            )
-
-        urls = list(dict.fromkeys(urls))[:args.max_sources]
-
-        # Основные URL запускаются одновременно.
-        # Результаты добавляются в отчёт в исходном порядке.
-        futures = []
-
-        for index, url in enumerate(urls, 1):
-            print(
-                f"[{index}/{len(urls)}] {redact(url)}",
-                flush=True,
-            )
-
-            futures.append(
-                dissector.url_pool.submit(
-                    dissector.check, url
-                )
-            )
-
-        for index, (url, future) in enumerate(
-            zip(urls, futures), 1
-        ):
-            try:
-                record = future.result()
-            except KeyboardInterrupt:
-                raise
-            except Exception as exc:
-                record = {
-                    "url": redact(url),
-                    "status_label": "UNKNOWN",
-                    "errors": [
-                        f"{type(exc).__name__}: {exc}"
-                    ],
-                }
-
-            report["sources"].append(record)
-
-            print(
-                f"  [{index}/{len(urls)}] "
-                f"=> {record.get('status_label')} "
-                f"HTTP={record.get('http_status', '?')}",
-                flush=True,
-            )
-
-            budget_error = dissector.client.budget_error()
-
-            if budget_error:
-                print(
-                    "[LIMIT] " + budget_error,
-                    flush=True,
-                )
-                # Уже отправленные задания завершаются безопасно.
-                # Новые URL больше не добавляются.
-                break
-
+        dissector.run(roots)
+    except KeyboardInterrupt:
+        print("Interrupted by user.", file=sys.stderr)
     finally:
-        dissector.shutdown()
+        try:
+            outputs = write_outputs(args, dissector)
+        except Exception as exc:
+            print(
+                "Output error: {}: {}".format(type(exc).__name__, exc),
+                file=sys.stderr,
+            )
+            return 3
 
-    report["runtime"] = round(
-        time.monotonic() - dissector.client.started, 3
-    )
-    report["http_requests"] = dissector.client.request_count
-    report["downloaded_bytes"] = dissector.client.bytes_read
-    report["visited_urls"] = len(dissector.visited)
+    elapsed = time.monotonic() - started
+    report = dissector.report()
 
-    stem = re.sub(
-        r"[^A-Za-z0-9_.-]+", "_", args.name
-    ).strip("._") or "phoenix_report"
-
-    json_path = Path(args.output_dir) / f"{stem}.json"
-    txt_path = Path(args.output_dir) / f"{stem}.txt"
-
-    json_path.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
-
-    txt_path.write_text(
-        text_report(report),
-        encoding="utf-8",
-    )
-
-    print("\n" + text_report(report))
-    print(f"JSON: {json_path}")
-    print(f"TXT:  {txt_path}")
+    print()
+    print("=" * 72)
+    print("FINISHED")
+    print("=" * 72)
+    print("Elapsed:", round(elapsed, 2), "seconds")
+    print("URLs seen:", report["summary"]["urls_seen"])
+    print("HTTP requests:", report["budget"]["http_requests"])
+    print("Bytes read:", report["budget"]["bytes_read"])
     print(
-        "HTTP requests: "
-        f"{report['http_requests']}"
+        "Validated terminal streams:",
+        report["summary"]["validated_terminal_streams"],
     )
-    print(
-        "Downloaded bytes: "
-        f"{report['downloaded_bytes']}"
-    )
-    print(
-        "Runtime: "
-        f"{report['runtime']} s"
-    )
+    print("Errors:", report["summary"]["errors"])
+    print()
+    print("JSON report:", outputs["json"])
+    print("TXT report:", outputs["txt"])
+    print("Validated playlist:", outputs["m3u"])
+
+    if report["summary"]["validated_terminal_streams"] == 0:
+        print()
+        print(
+            "WARNING: no terminal streams passed the configured "
+            "checks. The output playlist contains only its header."
+        )
+        return 1
 
     return 0
 
 
 if __name__ == "__main__":
-    try:
-        raise SystemExit(main())
-    except KeyboardInterrupt:
-        print(
-            "Прервано пользователем",
-            file=sys.stderr,
-        )
-        raise SystemExit(130)
+    raise SystemExit(main())
