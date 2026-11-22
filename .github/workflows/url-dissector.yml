@@ -1,3 +1,4 @@
+
 name: Phoenix URL Dissector
 
 on:
@@ -16,7 +17,7 @@ jobs:
   run-dissector:
     name: Discover and analyze LiveM3U playlists
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 760
 
     steps:
       - name: Set up Python
@@ -36,10 +37,10 @@ jobs:
             --location \
             --silent \
             --show-error \
-            --retry 3 \
-            --retry-delay 2 \
-            --connect-timeout 15 \
-            --max-time 90 \
+            --retry 5 \
+            --retry-delay 3 \
+            --connect-timeout 30 \
+            --max-time 180 \
             "$SCRIPT_URL" \
             --output URL_Dessector.py
 
@@ -66,16 +67,16 @@ jobs:
           python -u URL_Dessector.py \
             --discover-livem3u \
             --mode deep \
-            --timeout 15 \
-            --max-bytes 1048576 \
-            --max-total-bytes 20971520 \
-            --max-runtime 300 \
-            --max-requests 100 \
-            --max-depth 3 \
-            --max-segments 10 \
-            --max-children 20 \
-            --max-redirects 5 \
-            --max-sources 100 \
+            --timeout 30 \
+            --max-bytes 52428800 \
+            --max-total-bytes 5368709120 \
+            --max-runtime 18000 \
+            --max-requests 100000 \
+            --max-depth 50 \
+            --max-segments 1000 \
+            --max-children 100000 \
+            --max-redirects 50 \
+            --max-sources 100000 \
             --output-dir reports \
             --name livem3u
 
@@ -92,4 +93,4 @@ jobs:
             *.m3u
             *.m3u8
           if-no-files-found: warn
-          retention-days: 7
+          retention-days: 30
