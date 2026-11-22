@@ -66,7 +66,7 @@ Moonbug Kids TV [2b06a5c4c688fdc05014acb4cba83de0]: действующий HLS �
 Kartoon Channel [38106c2840071d79284ead045e2a5858]: действующий HLS не получен; запись пропущена
 Wasabi (аниме) [ee3c34823d370bae91c0a7c1bd5b502c]: действующий HLS не получен; запись пропущена
 Water Bear [8ceccbefd972496f7c2dd5a7acc476fc]: действующий HLS не получен; запись пропущена
-Sony Cine [053ac917a4334e240103ca55941f869f]: действующий HLS не получен; запись пропущена
+Sony Cine [053ac917a4334e240103ca55941f869f]: ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
 AKC.tv [89e4d6310399df1d824f861e4b312b49]: действующий HLS не получен; запись пропущена
 Classic Arts Showcase [9e3983e7a21a86ad0b9475543d31ad2a]: действующий HLS не получен; запись пропущена
 Kronehit TV [bc1b811349f526188c839d377913e16a]: действующий HLS не получен; запись пропущена
