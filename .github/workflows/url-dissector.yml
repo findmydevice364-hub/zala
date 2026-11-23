@@ -1,36 +1,24 @@
 
-name: Phoenix URL Dissector — Full Scan and Release
+name: URL_Dessector.py
 
 on:
   workflow_dispatch:
-    inputs:
-      scan_timeout:
-        description: "Время сканирования в секундах; 0 — без внутреннего лимита"
-        required: true
-        default: "0"
-        type: string
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "0 21 * * 6" # 00:00 МСК каждое воскресенье
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
-  group: phoenix-url-dissector-${{ github.ref }}
+  group: git-for-uz-lists
   cancel-in-progress: false
 
 jobs:
-  scan:
-    name: Discover, validate, archive and publish
-    # Для 840 минут нужен зарегистрированный self-hosted runner.
-    runs-on: self-hosted
-    timeout-minutes: 840
-
-    env:
-      PYTHONUNBUFFERED: "1"
-      PYTHONDONTWRITEBYTECODE: "1"
-      TZ: Europe/Kaliningrad
-      SCAN_SCRIPT_URL: https://raw.githubusercontent.com/findmydevice364-hub/zala/main/URL_Dessector.py
+  run-bot:
+    name: Run URL_Dessector.py
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
 
     steps:
       - name: Checkout repository
@@ -39,194 +27,93 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
+      - name: Check two-week schedule
+        id: schedule
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            echo "Manual launch: bypassing schedule check."
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          START_DATE="2026-11-21"
+          TODAY="$(date -u +%Y-%m-%d)"
+
+          START_TS="$(date -u -d "$START_DATE" +%s)"
+          TODAY_TS="$(date -u -d "$TODAY" +%s)"
+
+          DAYS=$(( (TODAY_TS - START_TS) / 86400 ))
+
+          if [ "$DAYS" -ge 0 ] && [ $((DAYS % 14)) -eq 0 ]; then
+            echo "Two-week interval confirmed."
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Two-week interval not reached. Skipping."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Set up Python
+        if: steps.schedule.outputs.run == 'true'
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
-      - name: Install system tools
+      - name: Install dependencies
+        if: steps.schedule.outputs.run == 'true'
         shell: bash
         run: |
           set -euo pipefail
 
-          if command -v apt-get >/dev/null 2>&1; then
-            sudo apt-get update
-            sudo apt-get install -y \
-              ca-certificates \
-              curl \
-              ffmpeg \
-              git \
-              zip
-          elif ! command -v ffprobe >/dev/null 2>&1; then
-            echo "ffprobe is required on this runner."
-            exit 1
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install requests
+
+          if [ -f requirements.txt ]; then
+            python -m pip install -r requirements.txt
           fi
 
-          python --version
-          git --version
-          curl --version
-          ffprobe -version
-
-      - name: Prepare workspace
+      - name: Download URL_Dessector.py
+        if: steps.schedule.outputs.run == 'true'
         shell: bash
         run: |
           set -euo pipefail
 
-          mkdir -p reports release-assets
-          rm -f reports/scan_exit_code.txt
-          rm -f reports/workflow_run_info.txt
-          rm -f release-assets/Verifiziert_tv-reports.zip
+          SCRIPT_URL="https://raw.githubusercontent.com/findmydevice364-hub/zala/main/URL_Dessector.py"
 
-          {
-            echo "Workflow: ${GITHUB_WORKFLOW}"
-            echo "Run ID: ${GITHUB_RUN_ID}"
-            echo "Run attempt: ${GITHUB_RUN_ATTEMPT}"
-            echo "Repository: ${GITHUB_REPOSITORY}"
-            echo "Branch/ref: ${GITHUB_REF}"
-            echo "Started UTC: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            echo "Runner: ${RUNNER_NAME}"
-            echo "Runner OS: ${RUNNER_OS}"
-            echo "Runner architecture: ${RUNNER_ARCH}"
-          } > reports/workflow_run_info.txt
-
-      - name: Download current scanner
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          curl --fail --location --retry 5 --retry-all-errors \
-            --connect-timeout 30 \
-            --max-time 180 \
-            "$SCAN_SCRIPT_URL" \
-            --output URL_Dessector.py
+          curl -fL \
+            --retry 5 \
+            --retry-delay 3 \
+            --retry-all-errors \
+            "$SCRIPT_URL" \
+            -o URL_Dessector.py
 
           test -s URL_Dessector.py
-          sha256sum URL_Dessector.py | tee reports/scanner_sha256.txt
           python -m py_compile URL_Dessector.py
 
-      - name: Verify scanner arguments
+      - name: Run URL_Dessector.py
+        if: steps.schedule.outputs.run == 'true'
         shell: bash
         run: |
           set -euo pipefail
-          python URL_Dessector.py --help | tee reports/scanner_help.txt
+          python -u URL_Dessector.py
 
-          for option in \
-            --discover-livem3u \
-            --timeout \
-            --max-bytes \
-            --max-total-bytes \
-            --max-runtime \
-            --max-requests \
-            --max-depth \
-            --max-children \
-            --max-sources \
-            --output-dir
-          do
-            if ! grep -Fq -- "$option" reports/scanner_help.txt; then
-              echo "Required scanner option is missing: $option"
-              exit 1
-            fi
-          done
-
-      - name: Run recursive HLS discovery and validation
-        id: scan
-        continue-on-error: true
-        shell: bash
-        env:
-          SCAN_TIMEOUT: ${{ inputs.scan_timeout || '0' }}
-        run: |
-          set -uo pipefail
-
-          mkdir -p reports
-
-          python -u URL_Dessector.py \
-            --discover-livem3u \
-            --timeout 30 \
-            --max-bytes 0 \
-            --max-total-bytes 0 \
-            --max-runtime "$SCAN_TIMEOUT" \
-            --max-requests 0 \
-            --max-depth 0 \
-            --max-children 0 \
-            --max-sources 0 \
-            --output-dir reports \
-            2>&1 | tee reports/scan_console.log
-
-          result=${PIPESTATUS[0]}
-          echo "$result" > reports/scan_exit_code.txt
-          exit "$result"
-
-      - name: Record scan summary
-        if: always()
-        shell: bash
-        run: |
-          set -u
-
-          {
-            echo
-            echo "Scan exit code: $(cat reports/scan_exit_code.txt 2>/dev/null || echo unknown)"
-            echo "Finished UTC: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            echo
-            echo "Report files:"
-            find reports -maxdepth 4 -type f -printf '%p (%s bytes)\n' \
-              2>/dev/null | sort || true
-          } >> reports/workflow_run_info.txt
-
-      - name: Verify generated report files
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          if [ ! -d reports ]; then
-            mkdir -p reports
-          fi
-
-          find reports -maxdepth 4 -type f -print | sort \
-            > reports/report_file_index.txt
-
-          if [ ! -s reports/report_file_index.txt ]; then
-            echo "No report files were generated." \
-              > reports/REPORT_GENERATION_WARNING.txt
-          fi
-
-      - name: Create reports archive
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          mkdir -p release-assets
-          rm -f release-assets/Verifiziert_tv-reports.zip
-
-          if [ -d reports ] && [ -n "$(find reports -type f -print -quit)" ]; then
-            zip -qr release-assets/Verifiziert_tv-reports.zip reports
-          else
-            echo "No reports directory content available." \
-              > release-assets/REPORT_GENERATION_WARNING.txt
-            zip -qr release-assets/Verifiziert_tv-reports.zip \
-              release-assets/REPORT_GENERATION_WARNING.txt
-          fi
-
-          sha256sum release-assets/Verifiziert_tv-reports.zip \
-            > release-assets/SHA256SUMS.txt
-
-      - name: Upload workflow artifact
-        if: always()
+      - name: Upload complete DREG logs
+        if: always() && steps.schedule.outputs.run == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: Phoenix-URL-Dissector-${{ github.run_id }}-${{ github.run_attempt }}
+          name: Phoenix-Hub-DREG-Logs-${{ github.run_number }}
           path: |
-            reports/**
-            release-assets/Verifiziert_tv-reports.zip
-            release-assets/SHA256SUMS.txt
+            Main/logs/SCALA_DREG.log
+            Main/logs/TITAN_DREG.log
+            Main/logs/SCALA_DREG_TITAN.log
           if-no-files-found: warn
+          compression-level: 6
           retention-days: 30
-          compression-level: 0
 
-      - name: Commit reports to repository
-        if: always() && github.event_name != 'pull_request'
-        continue-on-error: true
+      - name: Commit and push playlists only
+        if: success() && steps.schedule.outputs.run == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -234,69 +121,80 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -f reports/
+          touch .gitignore
+
+          grep -qxF '.tools/ffmpeg/ffprobe' .gitignore || \
+            echo '.tools/ffmpeg/ffprobe' >> .gitignore
+
+          grep -qxF '.tools/ffmpeg/ffprobe.exe' .gitignore || \
+            echo '.tools/ffmpeg/ffprobe.exe' >> .gitignore
+
+          grep -qxF '__pycache__/' .gitignore || \
+            echo '__pycache__/' >> .gitignore
+
+          grep -qxF '*.py[cod]' .gitignore || \
+            echo '*.py[cod]' >> .gitignore
+
+          FILES=(
+            "Main/donors_uz.m3u"
+            "Main/stable_uz.m3u"
+          )
+
+          for file in "${FILES[@]}"; do
+            if [ ! -s "$file" ]; then
+              echo "::error::Missing or empty playlist: $file"
+              exit 1
+            fi
+          done
+
+          git add -f -- "${FILES[@]}"
+          git add -- .gitignore
+
+          ALLOWED="$(printf '%s\n' \
+            ".gitignore" \
+            "Main/donors_uz.m3u" \
+            "Main/stable_uz.m3u")"
+
+          ACTUAL="$(git diff --cached --name-only)"
+
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+
+            if ! printf '%s\n' "$ALLOWED" | grep -Fxq -- "$file"; then
+              echo "::error::Unexpected file staged for commit: $file"
+              exit 1
+            fi
+          done <<< "$ACTUAL"
 
           if git diff --cached --quiet; then
-            echo "No report changes to commit."
-          else
-            git commit -m "Update Phoenix URL Dissector reports [skip ci]"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            echo "No playlist or configuration changes to commit."
+            exit 0
           fi
 
-      - name: Publish GitHub Release
-        if: always() && github.event_name != 'pull_request'
-        continue-on-error: true
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
+          echo "Files prepared for commit:"
+          git diff --cached --name-only
 
-          tag="phoenix-dissector-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          title="Phoenix URL Dissector — Run ${GITHUB_RUN_ID}"
+          git commit -m "Update Uzbek playlists"
 
-          scan_code="$(cat reports/scan_exit_code.txt 2>/dev/null || echo unknown)"
+          for attempt in 1 2 3; do
+            echo "Push attempt ${attempt}/3"
 
-          if [ "$scan_code" = "0" ]; then
-            status="Scan completed successfully"
-          else
-            status="Scan failed or did not finish successfully; inspect attached logs"
-          fi
+            git fetch origin main
 
-          cat > release-assets/release-notes.md <<EOF
-          # Phoenix URL Dissector
+            if ! git rebase origin/main; then
+              echo "::error::Rebase conflict detected."
+              git rebase --abort || true
+              exit 1
+            fi
 
-          - Repository: ${GITHUB_REPOSITORY}
-          - Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
-          - Branch/ref: ${GITHUB_REF}
-          - Commit at workflow start: ${GITHUB_SHA}
-          - Scanner exit code: ${scan_code}
-          - Result: ${status}
+            if git push origin HEAD:main; then
+              echo "Push successful."
+              exit 0
+            fi
 
-          The archive contains the reports generated by this run.
-          An HTTP 200 response alone does not prove that a stream is playable.
-          EOF
+            echo "Push rejected. Retrying..."
+            sleep 3
+          done
 
-          gh release create "$tag" \
-            release-assets/Verifiziert_tv-reports.zip \
-            release-assets/SHA256SUMS.txt \
-            --title "$title" \
-            --notes-file release-assets/release-notes.md \
-            --target "$GITHUB_SHA"
-
-          echo "Release tag: $tag"
-
-      - name: Fail workflow if scan failed
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          result="$(cat reports/scan_exit_code.txt 2>/dev/null || echo 1)"
-
-          if [ "$result" != "0" ]; then
-            echo "Scanner failed. Reports and release were attempted."
-            exit 1
-          fi
-
-          echo "Scanner finished successfully."
+          echo "::error::Push failed after 3 attempts."
+          exit 1
