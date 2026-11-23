@@ -145,9 +145,11 @@ def dns_lookup(host: str, port: int, allow_private: bool = False) -> Dict[str, A
 
 
 def tcp_diagnostics(host: str, port: int, timeout: float = 8) -> Dict[str, Any]:
+    """Probe TCP. A timeout of 0 means no explicit socket timeout."""
     started = time.monotonic()
+    effective_timeout = None if timeout == 0 else timeout
     try:
-        with socket.create_connection((host, port), timeout=timeout):
+        with socket.create_connection((host, port), timeout=effective_timeout):
             return {
                 "host": host, "port": port, "connected": True,
                 "elapsed_ms": round((time.monotonic() - started) * 1000, 2),
@@ -161,11 +163,13 @@ def tcp_diagnostics(host: str, port: int, timeout: float = 8) -> Dict[str, Any]:
 
 
 def tls_diagnostics(host: str, port: int = 443, timeout: float = 8) -> Dict[str, Any]:
+    """Inspect TLS. A timeout of 0 means no explicit socket timeout."""
     started = time.monotonic()
     result: Dict[str, Any] = {"host": host, "port": port}
+    effective_timeout = None if timeout == 0 else timeout
     try:
         context = ssl.create_default_context()
-        with socket.create_connection((host, port), timeout=timeout) as sock:
+        with socket.create_connection((host, port), timeout=effective_timeout) as sock:
             with context.wrap_socket(sock, server_hostname=host) as tls:
                 cert = tls.getpeercert()
                 cipher = tls.cipher()
@@ -241,7 +245,11 @@ class Client:
             request_headers["Range"] = "bytes=0-1048575"
         request_headers.update(headers or {})
 
-        for hop in range(self.args.max_redirects + 1):
+        # max_redirects=0 means unlimited redirects. Track redirect URLs separately
+        # so a redirect cycle is detected without imposing an arbitrary hop cap.
+        hop = 0
+        seen_redirect_urls = {current}
+        while True:
             if self._request_cap_reached():
                 self.locked_limit_reason = "MAX_REQUESTS"
                 return self._result(
@@ -270,7 +278,10 @@ class Client:
             req = urllib.request.Request(current, headers=request_headers, method=method)
             self.request_count += 1
             try:
-                response = self.opener.open(req, timeout=self.args.timeout)
+                # urllib accepts None for the socket default; timeout=0 is not a
+                # valid blocking timeout in Python's socket layer.
+                request_timeout = None if self.args.timeout == 0 else self.args.timeout
+                response = self.opener.open(req, timeout=request_timeout)
                 status = getattr(response, "status", 200)
                 response_headers = dict(response.headers.items())
                 body = b""
@@ -318,12 +329,22 @@ class Client:
                 status = exc.code
                 response_headers = dict(exc.headers.items()) if exc.headers else {}
                 location = response_headers.get("Location") or response_headers.get("location")
-                if status in REDIRECTS and location and hop < self.args.max_redirects:
+                can_follow_redirect = (
+                    self.args.max_redirects == 0 or hop < self.args.max_redirects
+                )
+                if status in REDIRECTS and location and can_follow_redirect:
                     next_url = urllib.parse.urljoin(current, location)
                     chain.append({
                         "status": status, "from": redact(current),
                         "location": redact(next_url),
                     })
+                    if next_url in seen_redirect_urls:
+                        return self._result(
+                            original_url, current, method, status, response_headers, b"",
+                            "Обнаружен цикл HTTP-редиректов", chain, started, last_dns,
+                        )
+                    seen_redirect_urls.add(next_url)
+                    hop += 1
                     old = urllib.parse.urlsplit(current)
                     new = urllib.parse.urlsplit(next_url)
                     if (old.hostname or "").lower() != (new.hostname or "").lower():
@@ -366,7 +387,7 @@ class Client:
                 )
         return self._result(
             original_url, current, method, None, {}, b"",
-            "Превышен лимит редиректов", chain, started, last_dns,
+            "Обход редиректов завершён", chain, started, last_dns,
         )
 
     @staticmethod
@@ -1411,8 +1432,8 @@ def main() -> int:
     if args.init_actions:
         write_workflow()
         return 0
-    if args.timeout <= 0 or args.max_redirects < 0 or args.segment_probe_bytes < 1 or args.ffprobe_timeout <= 0:
-        parser.error("timeout должен быть > 0, max-redirects >= 0, segment-probe-bytes >= 1")
+    if args.timeout < 0 or args.max_redirects < 0 or args.segment_probe_bytes < 1 or args.ffprobe_timeout <= 0:
+        parser.error("timeout должен быть >= 0 (0 = без явного тайм-аута), max-redirects >= 0 (0 = без лимита), segment-probe-bytes >= 1")
     for name in ("max_bytes", "max_total_bytes", "max_runtime", "max_requests",
                  "max_depth", "max_children", "max_sources", "max_segments"):
         if getattr(args, name) < 0:
