@@ -17,7 +17,6 @@ jobs:
   run-dissector:
     name: Discover and analyze LiveM3U playlists
     runs-on: ubuntu-latest
-    timeout-minutes: 780
 
     steps:
       - name: Set up Python
@@ -66,7 +65,7 @@ jobs:
           set -euo pipefail
           python -u URL_Dessector.py --self-test
 
-      - name: Run URL Dissector
+      - name: Run URL Dissector without application scan limits
         shell: bash
         run: |
           set -euo pipefail
@@ -75,14 +74,14 @@ jobs:
 
           python -u URL_Dessector.py \
             --discover-livem3u \
-            --timeout 30 \
-            --max-bytes 52428800 \
-            --max-total-bytes 5368709120 \
-            --max-runtime 18000 \
-            --max-requests 100000 \
-            --max-depth 50 \
-            --max-children 100000 \
-            --max-sources 100000 \
+            --timeout 0 \
+            --max-bytes 0 \
+            --max-total-bytes 0 \
+            --max-runtime 0 \
+            --max-requests 0 \
+            --max-depth 0 \
+            --max-children 0 \
+            --max-sources 0 \
             --workers 16 \
             --segment-probe-bytes 1048576 \
             --hls-variant-policy all \
