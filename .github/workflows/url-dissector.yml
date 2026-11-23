@@ -82,7 +82,8 @@ jobs:
             --max-depth 0 \
             --max-children 0 \
             --max-sources 0 \
-            --workers 16 \
+            --max-segments 0 \
+            --max-redirects 0 \
             --segment-probe-bytes 1048576 \
             --hls-variant-policy all \
             --check-hls-segment \
@@ -97,6 +98,8 @@ jobs:
             reports/
             *.txt
             *.json
+            *.jsonl
+            *.csv
             *.log
             *.m3u
             *.m3u8
