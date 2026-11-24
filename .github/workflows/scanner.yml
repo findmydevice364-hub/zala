@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: zala-raw-scanner
@@ -17,6 +17,11 @@ jobs:
     timeout-minutes: 30
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -37,15 +42,17 @@ jobs:
         run: |
           python -u scanner.py
 
-      - name: Upload scanner results
+      - name: Save results to repository root
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ZALA-RAW-Scanner-Results
-          path: |
-            FOUND_CHANNELS.m3u
-            scan_state.json
-            DREG_log.txt
-            SKALA_log.txt
-          if-no-files-found: warn
-          retention-days: 14
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -f FOUND_CHANNELS.m3u scan_state.json DREG_log.txt SKALA_log.txt
+
+          if ! git diff --cached --quiet; then
+            git commit -m "Update IPTV scanner results"
+            git push origin HEAD:${GITHUB_REF_NAME}
+          else
+            echo "No changes to save"
+          fi
