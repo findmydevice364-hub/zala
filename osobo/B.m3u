@@ -1,0 +1,9 @@
+#EXTM3U
+#EXTINF:-1,QUEST FHD
+http://93.186.201.93:80/stream/385/index.m3u8
+#EXTINF:-1,NICK FHD
+http://93.186.201.93:80/stream/397/index.m3u8
+#EXTINF:-1,MORE4 FHD
+http://93.186.201.93:80/stream/402/index.m3u8
+#EXTINF:-1,NAT GEO FHD
+http://93.186.201.93:80/stream/405/index.m3u8

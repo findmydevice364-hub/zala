@@ -1,0 +1,75 @@
+#EXTM3U
+#EXTINF:-1,Bundesliga
+http://94.130.48.67:8042/stream/11/index.m3u8
+#EXTINF:-1,RTL EVENT 1
+http://94.130.48.67:8042/stream/13/index.m3u8
+#EXTINF:-1,Sky Atlantic
+http://94.130.48.67:8042/stream/29/index.m3u8
+#EXTINF:-1,Sky One
+http://94.130.48.67:8042/stream/30/index.m3u8
+#EXTINF:-1,Sky Crime
+http://94.130.48.67:8042/stream/32/index.m3u8
+#EXTINF:-1,Sky Krimi
+http://94.130.48.67:8042/stream/33/index.m3u8
+#EXTINF:-1,Sky Documentaries
+http://94.130.48.67:8042/stream/34/index.m3u8
+#EXTINF:-1,Sky Nature
+http://94.130.48.67:8042/stream/35/index.m3u8
+#EXTINF:-1,Universal TV
+http://94.130.48.67:8042/stream/36/index.m3u8
+#EXTINF:-1,Crime & Investigation
+http://94.130.48.67:8042/stream/37/index.m3u8
+#EXTINF:-1,SyFy
+http://94.130.48.67:8042/stream/38/index.m3u8
+#EXTINF:-1,13th Street
+http://94.130.48.67:8042/stream/39/index.m3u8
+#EXTINF:-1,WarnerTV Serie
+http://94.130.48.67:8042/stream/40/index.m3u8
+#EXTINF:-1,WarnerTV Comedy
+http://94.130.48.67:8042/stream/41/index.m3u8
+#EXTINF:-1,History
+http://94.130.48.67:8042/stream/42/index.m3u8
+#EXTINF:-1,Sky Cinema Premiere
+http://94.130.48.67:8042/stream/43/index.m3u8
+#EXTINF:-1,Sky Cinema Feelgood
+http://94.130.48.67:8042/stream/44/index.m3u8
+#EXTINF:-1,Sky Cinema Action
+http://94.130.48.67:8042/stream/45/index.m3u8
+#EXTINF:-1,Sky Cinema Blockbuster
+http://94.130.48.67:8042/stream/46/index.m3u8
+#EXTINF:-1,Sky Cinema Classics
+http://94.130.48.67:8042/stream/47/index.m3u8
+#EXTINF:-1,WarnerTV Film
+http://94.130.48.67:8042/stream/48/index.m3u8
+#EXTINF:-1,Sky Sport News
+http://94.130.48.67:8042/stream/49/index.m3u8
+#EXTINF:-1,Sky Sport Top Event
+http://94.130.48.67:8042/stream/50/index.m3u8
+#EXTINF:-1,Sky Sport F1
+http://94.130.48.67:8042/stream/51/index.m3u8
+#EXTINF:-1,Sky Sport Premier League
+http://94.130.48.67:8042/stream/52/index.m3u8
+#EXTINF:-1,Sky Sport Mix
+http://94.130.48.67:8042/stream/53/index.m3u8
+#EXTINF:-1,Bundesliga
+http://94.130.48.67:8042/stream/54/index.m3u8
+#EXTINF:-1,Sky Sport Tennis
+http://94.130.48.67:8042/stream/55/index.m3u8
+#EXTINF:-1,Sky Sport Golf
+http://94.130.48.67:8042/stream/56/index.m3u8
+#EXTINF:-1,Sky Sport Bundesliga 2
+http://94.130.48.67:8042/stream/90/index.m3u8
+#EXTINF:-1,Cartoon Network
+http://94.130.48.67:8042/stream/109/index.m3u8
+#EXTINF:-1,Nick Jr
+http://94.130.48.67:8042/stream/111/index.m3u8
+#EXTINF:-1,Nicktoons
+http://94.130.48.67:8042/stream/112/index.m3u8
+#EXTINF:-1,Sky Sci Fi
+http://94.130.48.67:8042/stream/114/index.m3u8
+#EXTINF:-1,Sky Cinema Blockbuster
+http://94.130.48.67:8042/stream/115/index.m3u8
+#EXTINF:-1,Heimatkanal
+http://94.130.48.67:8042/stream/117/index.m3u8
+#EXTINF:-1,Romance TV
+http://94.130.48.67:8042/stream/118/index.m3u8
