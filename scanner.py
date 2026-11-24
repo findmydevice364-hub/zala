@@ -1,14 +1,15 @@
 
-import requests
-import time
-import json
-import re
 import os
+import re
+import json
+import time
 import threading
+import requests
+
 from datetime import datetime
+from collections import deque
 from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
 from urllib.parse import urljoin, urlparse, unquote
-from collections import deque
 
 # =====================================================
 # CONFIGURATION
@@ -20,31 +21,21 @@ BASE = f"http://{HOST}:{PORT}/"
 
 WORKERS = 30
 TIMEOUT = 12
+
 MAX_BODY = 1024 * 1024
 MAX_DOCUMENTS = 300
 MAX_DEPTH = 5
+MAX_SEGMENT_SIZE = 4096
 
 OUTPUT_FILE = "FOUND_CHANNELS.m3u"
 STATE_FILE = "scan_state.json"
 DREG_FILE = "DREG_log.txt"
 SKALA_FILE = "SKALA_log.txt"
 
-KNOWN_CHANNELS = {
-    "cartoon_classics",
-    "detectivejam_hd",
-    "the_explorers_hd",
-    "magnat_hd",
-    "scream_hd",
-    "eda",
-    "romance_hd",
-    "start_triumf_hd",
-    "suspense_hd",
-    "kinoman",
-    "pes-i-ko"
-}
+USER_AGENT = "Authorized-IPTV-Scanner/3.0"
 
 # =====================================================
-# THREAD SAFE DATA
+# DATA
 # =====================================================
 
 lock = threading.RLock()
@@ -52,11 +43,30 @@ lock = threading.RLock()
 found = {}
 checked = set()
 in_progress = set()
+
 events = []
 
 started = time.time()
 last_dreg = started
 last_skala = started
+
+# =====================================================
+# HTTP SESSION PER THREAD
+# =====================================================
+
+local = threading.local()
+
+
+def session():
+    if not hasattr(local, "session"):
+        s = requests.Session()
+        s.headers.update({
+            "User-Agent": USER_AGENT
+        })
+        local.session = s
+
+    return local.session
+
 
 # =====================================================
 # LOGGING
@@ -65,12 +75,14 @@ last_skala = started
 def log(message):
     global last_dreg, last_skala
 
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    line = f"[{timestamp}] {message}"
+    line = (
+        f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] "
+        f"{message}"
+    )
 
     with lock:
-        events.append(line)
         print(line, flush=True)
+        events.append(line)
 
         now = time.time()
 
@@ -78,9 +90,8 @@ def log(message):
             with open(DREG_FILE, "a", encoding="utf-8") as f:
                 f.write(
                     f"\n===== 30 MIN REPORT {datetime.now()} =====\n"
-                    f"Checked: {len(checked)}\n"
-                    f"Found: {len(found)}\n"
                     f"Documents: {len(checked)}\n"
+                    f"Channels: {len(found)}\n"
                 )
 
             last_dreg = now
@@ -92,15 +103,16 @@ def log(message):
                 )
                 f.write("\n".join(events))
                 f.write(
-                    f"\nChecked: {len(checked)}\n"
-                    f"Found: {len(found)}\n"
+                    f"\nDocuments: {len(checked)}\n"
+                    f"Channels: {len(found)}\n"
                 )
 
-            last_skala = now
             events.clear()
+            last_skala = now
+
 
 # =====================================================
-# ROOT MASTER PLAYLIST DISCOVERY
+# PUBLIC DISCOVERY ENDPOINTS
 # =====================================================
 
 DISCOVERY_PATHS = [
@@ -123,15 +135,13 @@ DISCOVERY_PATHS = [
     "/all.m3u8",
     "/iptv.m3u",
     "/iptv.m3u8",
-    "/zala.m3u",
-    "/zala.m3u8",
     "/api/",
     "/api/channels",
     "/api/playlist",
     "/channels",
     "/status",
     "/robots.txt",
-    "/sitemap.xml",
+    "/sitemap.xml"
 ]
 
 # =====================================================
@@ -155,10 +165,10 @@ def valid_target(url):
 
 
 def normalize_url(url, base=BASE):
-    url = unquote(url.strip())
-
     if not url:
         return None
+
+    url = unquote(url.strip())
 
     result = urljoin(base, url)
 
@@ -174,29 +184,28 @@ def normalize_url(url, base=BASE):
 # HTTP REQUEST
 # =====================================================
 
-def get_url(url):
+def get_url(url, byte_limit=MAX_BODY):
     url = normalize_url(url)
 
     if not url:
         return None
 
     try:
-        with requests.get(
+        with session().get(
             url,
             timeout=TIMEOUT,
             allow_redirects=True,
+            stream=True,
             headers={
-                "User-Agent": "Authorized-IPTV-Inventory/2.0",
-                "Range": f"bytes=0-{MAX_BODY - 1}"
-            },
-            stream=True
+                "Range": f"bytes=0-{byte_limit - 1}"
+            }
         ) as response:
 
             if not valid_target(response.url):
                 return None
 
             body = response.raw.read(
-                MAX_BODY,
+                byte_limit,
                 decode_content=True
             )
 
@@ -204,7 +213,9 @@ def get_url(url):
                 "url": url,
                 "final_url": response.url,
                 "status": response.status_code,
-                "type": response.headers.get("Content-Type", ""),
+                "type": response.headers.get(
+                    "Content-Type", ""
+                ),
                 "body": body
             }
 
@@ -215,7 +226,7 @@ def get_url(url):
 
 # =====================================================
 # M3U PARSER
-# Preserves EXTINF and additional metadata
+# Preserves EXTINF and metadata
 # =====================================================
 
 def parse_m3u(text, playlist_url):
@@ -231,14 +242,12 @@ def parse_m3u(text, playlist_url):
         if line.startswith("#EXTM3U"):
             continue
 
-        if line.startswith("#EXTINF"):
+        if line.startswith("#EXTINF:"):
             metadata = [line]
             continue
 
         if line.startswith("#"):
-            if metadata and not line.startswith("#EXTVLCOPT:"):
-                metadata.append(line)
-            elif metadata:
+            if metadata:
                 metadata.append(line)
             continue
 
@@ -247,7 +256,6 @@ def parse_m3u(text, playlist_url):
         if url and metadata:
             extinf = metadata[0]
 
-            # Extract channel name without losing EXTINF attributes
             name = extinf.split(",", 1)[-1].strip()
 
             channels.append({
@@ -262,7 +270,7 @@ def parse_m3u(text, playlist_url):
 
 
 # =====================================================
-# EXTRACT LINKS FROM HTML / XML
+# EXTRACT PUBLISHED LINKS
 # =====================================================
 
 def extract_links(text, page_url):
@@ -278,21 +286,45 @@ def extract_links(text, page_url):
         for item in re.findall(pattern, text, re.I):
             url = normalize_url(item, page_url)
 
-            if url:
-                path = urlparse(url).path.lower()
+            if not url:
+                continue
 
-                if (
-                    path.endswith((
-                        ".m3u",
-                        ".m3u8",
-                        ".xml",
-                        ".json"
-                    ))
-                    or path in ("/", "/api/", "/channels")
-                ):
-                    links.add(url)
+            path = urlparse(url).path.lower()
+
+            if (
+                path.endswith((
+                    ".m3u",
+                    ".m3u8",
+                    ".xml",
+                    ".json"
+                ))
+                or path in (
+                    "/",
+                    "/api/",
+                    "/channels"
+                )
+            ):
+                links.add(url)
 
     return links
+
+
+# =====================================================
+# VALIDATE MEDIA SEGMENT
+# =====================================================
+
+def validate_segment(url):
+    url = normalize_url(url)
+
+    if not url:
+        return False
+
+    result = get_url(url, MAX_SEGMENT_SIZE)
+
+    if not result:
+        return False
+
+    return result["status"] in (200, 206) and bool(result["body"])
 
 
 # =====================================================
@@ -300,9 +332,7 @@ def extract_links(text, page_url):
 # =====================================================
 
 def validate_hls(url, depth=0):
-    url = normalize_url(url)
-
-    if not url or depth > 3:
+    if depth > 3:
         return False
 
     result = get_url(url)
@@ -312,68 +342,67 @@ def validate_hls(url, depth=0):
 
     body = result["body"]
 
-    if b"#EXTM3U" not in body[:1024]:
+    if not body.startswith(b"#EXTM3U"):
         return False
 
     text = body.decode("utf-8", errors="ignore")
+    lines = [x.strip() for x in text.splitlines() if x.strip()]
 
-    # Media playlist
-    if (
-        "#EXTINF:" in text
-        or "#EXT-X-TARGETDURATION:" in text
-        or "#EXT-X-MEDIA-SEQUENCE:" in text
-    ):
-        return True
-
-    # Master playlist: locate variants
-    lines = text.splitlines()
-
+    # Master playlist
     for i, line in enumerate(lines):
-        line = line.strip()
 
-        if line.startswith("#EXT-X-STREAM-INF"):
-            for candidate in lines[i + 1:]:
-                candidate = candidate.strip()
+        if line.startswith("#EXT-X-STREAM-INF:"):
+            for child_line in lines[i + 1:]:
+                if child_line.startswith("#"):
+                    continue
 
-                if candidate and not candidate.startswith("#"):
-                    child = normalize_url(candidate, url)
-
-                    if child and validate_hls(child, depth + 1):
-                        return True
-
-                    break
-
-        # I-frame variant
-        if line.startswith("#EXT-X-I-FRAME-STREAM-INF"):
-            match = re.search(r'URI="([^"]+)"', line)
-
-            if match:
-                child = normalize_url(match.group(1), url)
+                child = normalize_url(
+                    child_line,
+                    result["final_url"]
+                )
 
                 if child and validate_hls(child, depth + 1):
                     return True
+
+                break
+
+    # Media playlist
+    segments = []
+
+    for line in lines:
+        if line.startswith("#"):
+            continue
+
+        segment = normalize_url(line, result["final_url"])
+
+        if segment:
+            segments.append(segment)
+
+    if (
+        "#EXTINF:" in text
+        or "#EXT-X-TARGETDURATION:" in text
+    ):
+        # Verify an actual media segment
+        for segment in segments[:2]:
+            if validate_segment(segment):
+                return True
+
+        return False
 
     return False
 
 
 # =====================================================
-# KNOWN CHANNEL FILTER
-# =====================================================
-
-def is_known_channel(url):
-    path = urlparse(url).path.rstrip("/")
-    name = path.split("/")[-1].lower()
-
-    return name in KNOWN_CHANNELS
-
-
-# =====================================================
-# SAVE PLAYLIST
+# SAVE M3U
 # =====================================================
 
 def save_playlist():
     with lock:
         items = list(found.values())
+
+    if not items:
+        log("NO VERIFIED CHANNELS: keeping previous playlist")
+        return False
 
     temp = OUTPUT_FILE + ".tmp"
 
@@ -384,90 +413,25 @@ def save_playlist():
             items,
             key=lambda x: x["name"].lower()
         ):
-            for metadata in item["metadata"]:
-                f.write(metadata + "\n")
+            url = item["url"]
 
-            f.write(item["url"] + "\n")
+            if not valid_target(url):
+                continue
+
+            metadata = item.get("metadata") or [
+                f"#EXTINF:-1,{item['name']}"
+            ]
+
+            for line in metadata:
+                f.write(line.replace("\r", "") + "\n")
+
+            f.write(url + "\n")
 
     os.replace(temp, OUTPUT_FILE)
 
+    log(f"PLAYLIST SAVED: {len(items)} channels")
 
-# =====================================================
-# CHANNEL VERIFICATION
-# =====================================================
-
-def verify_channel(channel):
-    url = channel["url"]
-
-    if is_known_channel(url):
-        log(f"KNOWN CHANNEL SKIPPED: {channel['name']}")
-        return
-
-    with lock:
-        if url in checked or url in in_progress:
-            return
-
-        in_progress.add(url)
-
-    try:
-        if validate_hls(url):
-            with lock:
-                found[url] = channel
-
-            log(f"FOUND HLS: {channel['name']} | {url}")
-            save_playlist()
-
-        else:
-            log(f"INVALID HLS: {url}")
-
-    finally:
-        with lock:
-            in_progress.discard(url)
-            checked.add(url)
-
-
-# =====================================================
-# DOCUMENT DISCOVERY
-# =====================================================
-
-def discover(url, depth=0):
-    result = get_url(url)
-
-    if not result:
-        return []
-
-    status = result["status"]
-
-    log(
-        f"DOCUMENT: {url} | HTTP {status} | "
-        f"{result['type']}"
-    )
-
-    if status not in (200, 206):
-        return []
-
-    text = result["body"].decode("utf-8", errors="ignore")
-
-    discovered = []
-
-    # Check whether root or another endpoint is itself M3U
-    if "#EXTM3U" in text[:2048]:
-        channels = parse_m3u(text, result["final_url"])
-
-        log(
-            f"PLAYLIST DETECTED: {url} | "
-            f"Entries: {len(channels)}"
-        )
-
-        for channel in channels:
-            verify_channel(channel)
-
-    # Discover nested playlist and metadata links
-    if depth < MAX_DEPTH:
-        for link in extract_links(text, result["final_url"]):
-            discovered.append((link, depth + 1))
-
-    return discovered
+    return True
 
 
 # =====================================================
@@ -487,7 +451,12 @@ def save_state():
     temp = STATE_FILE + ".tmp"
 
     with open(temp, "w", encoding="utf-8") as f:
-        json.dump(state, f, ensure_ascii=False, indent=2)
+        json.dump(
+            state,
+            f,
+            ensure_ascii=False,
+            indent=2
+        )
 
     os.replace(temp, STATE_FILE)
 
@@ -505,51 +474,149 @@ def restore_state():
             state = json.load(f)
 
         if (
-            state.get("host") == HOST
-            and state.get("port") == PORT
+            state.get("host") != HOST
+            or state.get("port") != PORT
         ):
-            old_found = state.get("found", {})
+            return
 
-            with lock:
-                for url, item in old_found.items():
+        old_found = state.get("found", {})
 
-                    # Support previous state format
-                    if isinstance(item, str):
-                        item = {
-                            "name": item,
-                            "url": url,
-                            "metadata": [
-                                f"#EXTINF:-1,{item}"
-                            ]
-                        }
+        with lock:
+            for url, item in old_found.items():
 
-                    if (
-                        isinstance(item, dict)
-                        and valid_target(url)
-                        and item.get("metadata")
-                    ):
-                        found[url] = item
+                if isinstance(item, str):
+                    item = {
+                        "name": item,
+                        "url": url,
+                        "metadata": [
+                            f"#EXTINF:-1,{item}"
+                        ]
+                    }
 
-            log(f"RESTORED CHANNELS: {len(found)}")
+                if (
+                    isinstance(item, dict)
+                    and valid_target(url)
+                ):
+                    item.setdefault("url", url)
+                    item.setdefault("name", "Unknown")
+                    item.setdefault(
+                        "metadata",
+                        [f"#EXTINF:-1,{item['name']}"]
+                    )
+
+                    found[url] = item
+
+        log(f"RESTORED CHANNELS: {len(found)}")
 
     except Exception as e:
-        log(f"STATE RESTORE ERROR: {e}")
+        log(f"STATE ERROR: {e}")
+
+
+# =====================================================
+# VERIFY CHANNEL
+# ALL CHANNELS ARE INCLUDED
+# =====================================================
+
+def verify_channel(channel):
+    url = channel["url"]
+
+    with lock:
+        if url in checked or url in in_progress:
+            return
+
+        in_progress.add(url)
+
+    try:
+        if validate_hls(url):
+            with lock:
+                found[url] = channel
+
+            log(
+                f"VERIFIED CHANNEL: "
+                f"{channel['name']} | {url}"
+            )
+
+            save_playlist()
+            save_state()
+
+        else:
+            log(f"UNVERIFIED STREAM: {url}")
+
+    finally:
+        with lock:
+            in_progress.discard(url)
+            checked.add(url)
+
+
+# =====================================================
+# DISCOVERY WORKER
+# =====================================================
+
+def discover(url, depth=0):
+    result = get_url(url)
+
+    if not result:
+        return []
+
+    if result["status"] not in (200, 206):
+        log(f"HTTP {result['status']}: {url}")
+        return []
+
+    text = result["body"].decode(
+        "utf-8",
+        errors="ignore"
+    )
+
+    log(
+        f"DOCUMENT: {url} | "
+        f"HTTP {result['status']}"
+    )
+
+    discovered = []
+
+    # Master playlist / regular M3U
+    if text.lstrip().startswith("#EXTM3U"):
+        channels = parse_m3u(
+            text,
+            result["final_url"]
+        )
+
+        log(
+            f"PLAYLIST DETECTED: {url} | "
+            f"ENTRIES: {len(channels)}"
+        )
+
+        for channel in channels:
+            verify_channel(channel)
+
+    # Additional published playlist links
+    if depth < MAX_DEPTH:
+        for link in extract_links(
+            text,
+            result["final_url"]
+        ):
+            discovered.append((link, depth + 1))
+
+    return discovered
 
 
 # =====================================================
 # MAIN DISCOVERY ENGINE
-# Dynamically processes newly discovered playlists
 # =====================================================
 
 def main():
     log("=" * 60)
     log(f"START SCAN: {BASE}")
     log(f"WORKERS: {WORKERS}")
+    log("ALL CHANNELS ENABLED")
     log("ROOT MASTER PLAYLIST DISCOVERY ENABLED")
     log("=" * 60)
 
     restore_state()
-    save_playlist()
+
+    # Keep previous verified results
+    if found:
+        save_playlist()
 
     queue = deque()
 
@@ -562,13 +629,16 @@ def main():
     submitted = set()
     completed = set()
 
-    with ThreadPoolExecutor(max_workers=WORKERS) as executor:
+    with ThreadPoolExecutor(
+        max_workers=WORKERS
+    ) as executor:
 
         pending = {}
 
-        while (queue or pending) and len(completed) < MAX_DOCUMENTS:
+        while (
+            queue or pending
+        ) and len(completed) < MAX_DOCUMENTS:
 
-            # Submit newly discovered documents
             while (
                 queue
                 and len(pending) < WORKERS
@@ -576,7 +646,7 @@ def main():
             ):
                 url, depth = queue.popleft()
 
-                if url in submitted or url in completed:
+                if url in submitted:
                     continue
 
                 submitted.add(url)
@@ -602,24 +672,24 @@ def main():
 
                 completed.add(url)
 
+                with lock:
+                    checked.add(url)
+
                 try:
                     new_links = future.result()
 
                     for link, new_depth in new_links:
                         if (
                             link not in submitted
-                            and link not in completed
                             and new_depth <= MAX_DEPTH
                         ):
                             queue.append((link, new_depth))
 
                 except Exception as e:
-                    log(f"DISCOVERY ERROR {url}: {e}")
+                    log(f"DISCOVERY ERROR: {url} | {e}")
 
                 save_state()
-                save_playlist()
 
-    # Final save
     save_playlist()
     save_state()
 
@@ -628,10 +698,9 @@ def main():
     log("=" * 60)
     log("SCAN FINISHED")
     log(f"DOCUMENTS: {len(completed)}")
-    log(f"CHECKED CHANNELS: {len(checked)}")
-    log(f"FOUND CHANNELS: {len(found)}")
+    log(f"CHANNELS CHECKED: {len(checked)}")
+    log(f"VERIFIED CHANNELS: {len(found)}")
     log(f"TIME: {elapsed} seconds")
-    log(f"OUTPUT: {OUTPUT_FILE}")
     log("=" * 60)
 
     with open(DREG_FILE, "a", encoding="utf-8") as f:
@@ -640,14 +709,14 @@ def main():
             f"Documents: {len(completed)}\n"
             f"Checked: {len(checked)}\n"
             f"Found: {len(found)}\n"
-            f"Time: {elapsed} seconds\n"
+            f"Time: {elapsed}\n"
         )
 
     with open(SKALA_FILE, "a", encoding="utf-8") as f:
         f.write("\n".join(events) + "\n")
 
     print("\nFINAL RESULT")
-    print(f"Found: {len(found)}")
+    print(f"Verified channels: {len(found)}")
     print(f"Playlist: {OUTPUT_FILE}")
 
 
