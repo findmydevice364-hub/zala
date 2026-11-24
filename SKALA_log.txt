@@ -1,0 +1,41 @@
+[2026-11-24 15:43:01] ============================================================
+[2026-11-24 15:43:01] START SCAN: http://88.218.242.237:8001/
+[2026-11-24 15:43:01] WORKERS: 30
+[2026-11-24 15:43:01] ROOT MASTER PLAYLIST DISCOVERY ENABLED
+[2026-11-24 15:43:01] ============================================================
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/ | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/master_playlist.m3u | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/channels.m3u | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/master.m3u8 | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/master_playlist.m3u8 | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/playlist.m3u | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/master.m3u | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/playlist.m3u8 | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/channels.m3u8 | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/live.m3u | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/index.m3u | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/tv.m3u | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/tv.m3u8 | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/iptv.m3u | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/index.m3u8 | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/all.m3u8 | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/live.m3u8 | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/all.m3u | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/zala.m3u | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/iptv.m3u8 | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/api/ | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/zala.m3u8 | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/api/playlist | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/api/channels | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/status | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/robots.txt | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/channels | HTTP 404 | text/html
+[2026-11-24 15:43:02] DOCUMENT: http://88.218.242.237:8001/sitemap.xml | HTTP 404 | text/html
+[2026-11-24 15:43:02] ============================================================
+[2026-11-24 15:43:02] SCAN FINISHED
+[2026-11-24 15:43:02] DOCUMENTS: 28
+[2026-11-24 15:43:02] CHECKED CHANNELS: 0
+[2026-11-24 15:43:02] FOUND CHANNELS: 0
+[2026-11-24 15:43:02] TIME: 0.29 seconds
+[2026-11-24 15:43:02] OUTPUT: FOUND_CHANNELS.m3u
+[2026-11-24 15:43:02] ============================================================
