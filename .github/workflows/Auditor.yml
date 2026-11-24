@@ -1,0 +1,57 @@
+
+name: IPTV Auditor
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: iptv-auditor
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run IPTV Auditor
+        run: python -u IpTV-Auditor.py
+
+      - name: Verify audit results
+        run: |
+          test -f COMPACT/stable.m3u
+          test -f COMPACT/IPTVmir.m3u8
+          test -f COMPACT/legacy/IPTVstable.m3u8
+          test -f IPTV_AUDIT/report.json
+
+      - name: Commit and push results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -f COMPACT/ IPTV_AUDIT/
+
+          if git diff --cached --quiet; then
+            echo "No changes to publish."
+            exit 0
+          fi
+
+          git commit -m "Update IPTV audit results"
+
+          git pull --rebase origin main
+          git push origin HEAD:main
