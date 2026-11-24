@@ -1,34 +1,84 @@
 {
   "host": "88.218.242.237",
   "port": 8001,
-  "checked": [
-    "http://88.218.242.237:8001/robots.txt",
-    "http://88.218.242.237:8001/channels.m3u",
-    "http://88.218.242.237:8001/iptv.m3u",
-    "http://88.218.242.237:8001/playlist.m3u",
-    "http://88.218.242.237:8001/live.m3u",
-    "http://88.218.242.237:8001/tv.m3u8",
-    "http://88.218.242.237:8001/master_playlist.m3u",
-    "http://88.218.242.237:8001/index.m3u",
-    "http://88.218.242.237:8001/channels",
-    "http://88.218.242.237:8001/channels.m3u8",
-    "http://88.218.242.237:8001/api/",
-    "http://88.218.242.237:8001/live.m3u8",
-    "http://88.218.242.237:8001/index.m3u8",
-    "http://88.218.242.237:8001/",
-    "http://88.218.242.237:8001/api/channels",
-    "http://88.218.242.237:8001/status",
-    "http://88.218.242.237:8001/tv.m3u",
-    "http://88.218.242.237:8001/all.m3u",
-    "http://88.218.242.237:8001/sitemap.xml",
-    "http://88.218.242.237:8001/all.m3u8",
-    "http://88.218.242.237:8001/master_playlist.m3u8",
-    "http://88.218.242.237:8001/api/playlist",
-    "http://88.218.242.237:8001/master.m3u8",
-    "http://88.218.242.237:8001/master.m3u",
-    "http://88.218.242.237:8001/iptv.m3u8",
-    "http://88.218.242.237:8001/playlist.m3u8"
-  ],
-  "found": {},
-  "updated": "2026-11-24T15:49:42.318571"
+  "found": {
+    "http://88.218.242.237:8001/Start_Triumf_HD": {
+      "name": "Старт Триумф",
+      "url": "http://88.218.242.237:8001/Start_Triumf_HD",
+      "metadata": [
+        "#EXTINF:-1,Старт Триумф"
+      ]
+    },
+    "http://88.218.242.237:8001/Romance_HD": {
+      "name": "romance_hd HD",
+      "url": "http://88.218.242.237:8001/Romance_HD",
+      "metadata": [
+        "#EXTINF:-1,romance_hd HD"
+      ]
+    },
+    "http://88.218.242.237:8001/Suspense_HD": {
+      "name": "suspense_hd HD",
+      "url": "http://88.218.242.237:8001/Suspense_HD",
+      "metadata": [
+        "#EXTINF:-1,suspense_hd HD"
+      ]
+    },
+    "http://88.218.242.237:8001/DetectiveJam_HD": {
+      "name": "detective_lam_hd HD",
+      "url": "http://88.218.242.237:8001/DetectiveJam_HD",
+      "metadata": [
+        "#EXTINF:-1,detective_lam_hd HD"
+      ]
+    },
+    "http://88.218.242.237:8001/Magnat_HD": {
+      "name": "magnat HD",
+      "url": "http://88.218.242.237:8001/Magnat_HD",
+      "metadata": [
+        "#EXTINF:-1,magnat HD"
+      ]
+    },
+    "http://88.218.242.237:8001/The_Explorers_HD": {
+      "name": "explorers_hd HD",
+      "url": "http://88.218.242.237:8001/The_Explorers_HD",
+      "metadata": [
+        "#EXTINF:-1,explorers_hd HD"
+      ]
+    },
+    "http://88.218.242.237:8001/Scream_HD": {
+      "name": "Scream HD",
+      "url": "http://88.218.242.237:8001/Scream_HD",
+      "metadata": [
+        "#EXTINF:-1,Scream HD"
+      ]
+    },
+    "http://88.218.242.237:8001/kinoman": {
+      "name": "kinoman",
+      "url": "http://88.218.242.237:8001/kinoman",
+      "metadata": [
+        "#EXTINF:-1,kinoman"
+      ]
+    },
+    "http://88.218.242.237:8001/eda": {
+      "name": "Еда",
+      "url": "http://88.218.242.237:8001/eda",
+      "metadata": [
+        "#EXTINF:-1,Еда"
+      ]
+    },
+    "http://88.218.242.237:8001/pes-i-ko": {
+      "name": "pes-i-ko",
+      "url": "http://88.218.242.237:8001/pes-i-ko",
+      "metadata": [
+        "#EXTINF:-1,pes-i-ko"
+      ]
+    },
+    "http://88.218.242.237:8001/Cartoon_Classics": {
+      "name": "cartoon_classic",
+      "url": "http://88.218.242.237:8001/Cartoon_Classics",
+      "metadata": [
+        "#EXTINF:-1,cartoon_classic"
+      ]
+    }
+  },
+  "updated": "2026-11-24T15:54:04.280479"
 }
