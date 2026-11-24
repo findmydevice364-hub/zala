@@ -10,11 +10,11 @@ Version:         3.8.0-alpha.1
 VersionCode:     31.8.0.1
 Build ID:        P3100-A1-20261116
 Release channel: ALPHA
-Revision:        16-SOURCE-DREG-DUAL
+Revision:        30-SOURCE-DREG-DUAL
 
 File:            git_bot_for_stable.py
 
-16-source IPTV collector, validation pipeline, RTRS normalizer,
+30-source IPTV collector, validation pipeline, RTRS normalizer,
 Chebur catch-up preservation, Disney HLS handling and DREG dual logging.
 
 DREG:
@@ -61,14 +61,14 @@ VERSION = "3.8.0-alpha.1"
 VERSION_CODE = "31.8.0.1"
 BUILD_ID = "P3100-A1-20261116"
 RELEASE_CHANNEL = "ALPHA"
-REVISION = "16-SOURCE-DREG-DUAL"
+REVISION = "30-SOURCE-DREG-DUAL"
 
 PROJECT_NAME = 'Phoenix Hub "Baryshnikov"'
 SCRIPT_NAME = "git_bot_for_stable.py"
 
 
 # =============================================================================
-# DONOR URLS — 16 SOURCES
+# DONOR URLS — 30 SOURCES
 # =============================================================================
 
 SOURCE_URL = (
@@ -132,6 +132,64 @@ ALISKA_SOURCE_URL = (
     "https://raw.githubusercontent.com/"
     "findmydevice364-hub/zala/main/Aliska.m3u"
 )
+VASIL_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "vasil133767-afk/my-iptv/main/playlist.m3u"
+)
+
+# OSOBO additional donors
+OSOBO_B_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/B.m3u"
+)
+OSOBO_DDD_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/DDD.m3u"
+)
+OSOBO_HH1_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/HH (1).m3u"
+)
+OSOBO_HH_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/HH.m3u"
+)
+OSOBO_PL1_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/PL1.m3u"
+)
+OSOBO_RAPID_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/RAPID.m3u"
+)
+OSOBO_RO_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/RO.m3u"
+)
+OSOBO_T_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/T.m3u"
+)
+OSOBO_CHANNELS_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/channels.m3u"
+)
+OSOBO_LIST_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/list.m3u"
+)
+OSOBO_PLAYLIST2_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/playlist(2).m3u"
+)
+OSOBO_PLAYLIST_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/playlist.m3u"
+)
+OSOBO_WET_SOURCE_URL = (
+    "https://raw.githubusercontent.com/"
+    "findmydevice364-hub/zala/main/osobo/weT.m3u"
+)
 
 
 # Environment overrides for every donor.
@@ -152,6 +210,20 @@ for _source_name in (
     "HVK_CONTROL_SOURCE_URL",
     "CHANNELS_INVENTORY_SOURCE_URL",
     "ALISKA_SOURCE_URL",
+    "VASIL_SOURCE_URL",
+    "OSOBO_B_SOURCE_URL",
+    "OSOBO_DDD_SOURCE_URL",
+    "OSOBO_HH1_SOURCE_URL",
+    "OSOBO_HH_SOURCE_URL",
+    "OSOBO_PL1_SOURCE_URL",
+    "OSOBO_RAPID_SOURCE_URL",
+    "OSOBO_RO_SOURCE_URL",
+    "OSOBO_T_SOURCE_URL",
+    "OSOBO_CHANNELS_SOURCE_URL",
+    "OSOBO_LIST_SOURCE_URL",
+    "OSOBO_PLAYLIST2_SOURCE_URL",
+    "OSOBO_PLAYLIST_SOURCE_URL",
+    "OSOBO_WET_SOURCE_URL",
 ):
     globals()[_source_name] = os.environ.get(
         _source_name, globals()[_source_name]
@@ -539,7 +611,7 @@ def start_dreg():
         target_branch=TARGET_PUSH_BRANCH,
         python=platform.python_version(),
         platform=platform.platform(),
-        source_count=16,
+        source_count=30,
     )
 
     DREG.log(
@@ -2388,7 +2460,7 @@ def process_hvk_control(existing_entries):
 
 
 # =============================================================================
-# DONOR CONFIGURATION — 15 NORMAL + HVK CONTROL
+# DONOR CONFIGURATION — 29 NORMAL + HVK CONTROL
 # =============================================================================
 
 def build_source_list():
@@ -2412,6 +2484,21 @@ def build_source_list():
             False,
         ),
         ("ALISKA_SOURCE_URL", ALISKA_SOURCE_URL, False),
+        ("VASIL_SOURCE_URL", VASIL_SOURCE_URL, False),
+        # OSOBO donors
+        ("OSOBO_B_SOURCE_URL", OSOBO_B_SOURCE_URL, False),
+        ("OSOBO_DDD_SOURCE_URL", OSOBO_DDD_SOURCE_URL, False),
+        ("OSOBO_HH1_SOURCE_URL", OSOBO_HH1_SOURCE_URL, False),
+        ("OSOBO_HH_SOURCE_URL", OSOBO_HH_SOURCE_URL, False),
+        ("OSOBO_PL1_SOURCE_URL", OSOBO_PL1_SOURCE_URL, False),
+        ("OSOBO_RAPID_SOURCE_URL", OSOBO_RAPID_SOURCE_URL, False),
+        ("OSOBO_RO_SOURCE_URL", OSOBO_RO_SOURCE_URL, False),
+        ("OSOBO_T_SOURCE_URL", OSOBO_T_SOURCE_URL, False),
+        ("OSOBO_CHANNELS_SOURCE_URL", OSOBO_CHANNELS_SOURCE_URL, False),
+        ("OSOBO_LIST_SOURCE_URL", OSOBO_LIST_SOURCE_URL, False),
+        ("OSOBO_PLAYLIST2_SOURCE_URL", OSOBO_PLAYLIST2_SOURCE_URL, False),
+        ("OSOBO_PLAYLIST_SOURCE_URL", OSOBO_PLAYLIST_SOURCE_URL, False),
+        ("OSOBO_WET_SOURCE_URL", OSOBO_WET_SOURCE_URL, False),
     ]
 
 
@@ -2473,7 +2560,7 @@ def publish_changes(modified_files, added_total):
 
     commit_msg = (
         f"chore: Phoenix Baryshnikov {VERSION} "
-        f"({REVISION}) — 16-source IPTV + DREG dual logs"
+        f"({REVISION}) — 30-source IPTV + DREG dual logs"
     )
 
     run(["git", "commit", "-m", commit_msg], check=True)
@@ -2505,7 +2592,7 @@ def main():
       1. Git preflight and optional branch preparation.
       2. DREG initialization.
       3. ffprobe bootstrap.
-      4. Parallel download of 15 ordinary donors.
+      4. Parallel download of 29 ordinary donors.
       5. HVK unique-URL fallback.
       6. Four playlist targets.
       7. Local completion or Git publication.
@@ -2555,7 +2642,7 @@ def main():
         skip_push=SKIP_PUSH,
         target_branch=TARGET_PUSH_BRANCH,
         dreg_include_in_git=DREG_INCLUDE_IN_GIT,
-        source_count=16,
+        source_count=30,
     )
 
     try:
@@ -2576,7 +2663,7 @@ def main():
 
         # ---------------------------------------------------------------------
         # Parallel ordinary donors.
-        # 15 ordinary donors + 1 HVK control donor.
+        # 29 ordinary donors + 1 HVK control donor.
         # ---------------------------------------------------------------------
 
         sources = build_source_list()
