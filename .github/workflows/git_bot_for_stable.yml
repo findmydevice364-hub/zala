@@ -3,7 +3,7 @@ name: git_bot_for_stable.py
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 1 * * *" # Ежедневно в 03:00 по Калининграду (UTC+2)
+    - cron: "0 1 * * *"   # 03:00 Калининград (UTC+2)
 
 permissions:
   contents: write
@@ -37,10 +37,25 @@ jobs:
             pip install -r requirements.txt
           fi
 
-      - name: Run bot
+      - name: Run bot (без push)
+        env:
+          SKIP_PUSH: "true"
+          DREG_INCLUDE_IN_GIT: "false"
         run: python -u git_bot_for_stable.py
 
-      - name: Commit and push changes safely
+      # ---- Логи/отчёты в артефакты (не в git) ----
+      - name: Upload DREG logs as artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreg-logs-${{ github.run_id }}
+          path: |
+            logs/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      # ---- В git только плейлисты ----
+      - name: Commit and push only playlists
         if: success()
         shell: bash
         run: |
@@ -49,14 +64,35 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -A
+          # Только плейлисты (подправь список под свои файлы)
+          PLAYLISTS=(
+            "stable.m3u"
+            "IPTVmir.m3u8"
+            "legacy/IPTVstable.m3u8"
+            "RTRS_stable.m3u8"
+          )
 
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
+          # Добавляем только существующие
+          to_add=()
+          for f in "${PLAYLISTS[@]}"; do
+            if [ -f "$f" ]; then
+              to_add+=("$f")
+            fi
+          done
+
+          if [ ${#to_add[@]} -eq 0 ]; then
+            echo "No playlist files found."
             exit 0
           fi
 
-          git commit -m "Update files via git_bot_for_stable.py"
+          git add -- "${to_add[@]}"
+
+          if git diff --cached --quiet; then
+            echo "No playlist changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update playlists via git_bot_for_stable.py"
 
           for attempt in 1 2 3; do
             echo "Push attempt ${attempt}/3"
