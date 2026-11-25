@@ -249,7 +249,7 @@
     "master_urls": [
       "http://91.205.196.7:8000/playlist.m3u8"
     ],
-    "channel_record_count": 162,
+    "channel_record_count": 164,
     "channel_records": [
       64,
       65,
@@ -412,7 +412,9 @@
       253,
       254,
       255,
-      256
+      256,
+      257,
+      258
     ]
   },
   {

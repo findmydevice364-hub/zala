@@ -4,17 +4,17 @@
   "masters_attempted": 1,
   "masters_successful": 1,
   "masters_failed": 0,
-  "channels_parsed": 256,
-  "channels_exported": 256,
+  "channels_parsed": 258,
+  "channels_exported": 258,
   "channels_filtered": 0,
   "duplicate_urls_preserved": 31,
   "nested_masters_discovered": 0,
-  "bytes_downloaded": 19758,
+  "bytes_downloaded": 19900,
   "nodes_registered": 17,
   "unique_master_urls": 1,
-  "total_channel_occurrences": 256,
+  "total_channel_occurrences": 258,
   "total_nodes": 17,
   "total_errors": 0,
   "adult_filter_enabled": true,
-  "completed_at": "2026-11-22T13:41:44.600283+00:00"
+  "completed_at": "2026-11-25T16:17:54.296032+00:00"
 }

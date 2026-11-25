@@ -505,6 +505,10 @@ http://91.205.196.7:8000/play/a03u
 http://91.205.196.7:8000/play/a039
 #EXTINF:-1 group-title="-",DOM_INT
 http://91.205.196.7:8000/play/a037
+#EXTINF:-1 group-title="-",NTV_MIR
+http://91.205.196.7:8000/play/a03b
+#EXTINF:-1 group-title="-",PERVI_MIR
+http://91.205.196.7:8000/play/a03c
 #EXTINF:-1 group-title="-",REN_INT
 http://91.205.196.7:8000/play/a038
 #EXTINF:-1 group-title="-",STS_INT
