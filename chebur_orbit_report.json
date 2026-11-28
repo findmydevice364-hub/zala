@@ -1,6 +1,6 @@
 {
   "engine": "CHEBUR DONOR BUILDER",
-  "version": "3.0",
+  "version": "4.1",
   "source_url": "https://raw.githubusercontent.com/spartvan/iptvrus/dh-pages/%D0%A7%D0%B5%D0%B1%D1%83%D1%80.NET_2.m3u",
   "output": "Chebur_donor.m3u",
   "orbit_range": {
@@ -9,17 +9,17 @@
     "total_positions": 73
   },
   "source": {
-    "total_entries": 16011,
-    "russian_geoblock_entries": 649,
-    "recognized_orbits": 543,
-    "outside_requested_range": []
+    "total_entries_after_cleanup": 15830,
+    "recognized_orbits": 597
   },
   "output_statistics": {
-    "total_entries": 17227,
-    "generated_entries": 1216
+    "total_entries": 17318,
+    "generated_entries": 1488,
+    "total_lines": 54045,
+    "increase_entries": 1488
   },
   "programmed_channels": {
-    "name:рен тв": {
+    "россия геоблок|рен тв|zabava-htlive.cdn.ngenix.net|/hls/ch_rentv/variant.m3u8": {
       "channel": "РЕН ТВ",
       "group": "Россия Геоблок",
       "source_records": 19,
@@ -41,7 +41,6 @@
         -2,
         -1,
         2,
-        4,
         7
       ],
       "generated_hours": [
@@ -68,6 +67,7 @@
         0,
         1,
         3,
+        4,
         5,
         6,
         8,
@@ -102,14 +102,115 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_RENTV/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_RENTV_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_RENTV_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:че": {
+    "россия геоблок|рен тв|rt-ural-ekt-htlive.cdn.ngenix.net|/hls/ch_r02_ott_rentv/variant.m3u8": {
+      "channel": "РЕН ТВ",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        4
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|че|zabava-htlive.cdn.ngenix.net|/hls/ch_peretz/variant.m3u8": {
       "channel": "Че",
       "group": "Россия Геоблок",
-      "source_records": 18,
+      "source_records": 19,
       "existing_hours": [
         -16,
         -15,
@@ -127,7 +228,6 @@
         -3,
         -2,
         -1,
-        2,
         7
       ],
       "generated_hours": [
@@ -153,6 +253,7 @@
         -17,
         0,
         1,
+        2,
         3,
         4,
         5,
@@ -189,11 +290,112 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_PERETZ/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_PERETZ_7/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_PERETZ_7/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:disney channel": {
+    "россия геоблок|че|rt-ural-chel-htlive.cdn.ngenix.net|/hls/ch_r02_ott_peretz/variant.m3u8": {
+      "channel": "Че",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        2
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|disney channel|zabava-htlive.cdn.ngenix.net|/hls/ch_disney/variant.m3u8": {
       "channel": "Disney Channel",
       "group": "Россия Геоблок",
       "source_records": 18,
@@ -214,7 +416,6 @@
         -3,
         -2,
         -1,
-        4,
         7
       ],
       "generated_hours": [
@@ -242,6 +443,7 @@
         1,
         2,
         3,
+        4,
         5,
         6,
         8,
@@ -276,275 +478,115 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_DISNEY/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_DISNEY_7/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_DISNEY_7/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:домашний": {
+    "россия геоблок|disney channel|rt-sib-bul-htlive-lb.cdn.ngenix.net|/hls/ch_r02_disneychannel/variant.m3u8": {
+      "channel": "Disney Channel",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        4
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|домашний|zabava-htlive.cdn.ngenix.net|/hls/ch_domashniy/variant.m3u8": {
       "channel": "Домашний",
       "group": "Россия Геоблок",
-      "source_records": 19,
-      "existing_hours": [
-        -16,
-        -15,
-        -14,
-        -13,
-        -12,
-        -11,
-        -10,
-        -9,
-        -8,
-        -7,
-        -6,
-        -5,
-        -4,
-        -3,
-        -2,
-        -1,
-        2,
-        4,
-        7
-      ],
-      "generated_hours": [
-        -36,
-        -35,
-        -34,
-        -33,
-        -32,
-        -31,
-        -30,
-        -29,
-        -28,
-        -27,
-        -26,
-        -25,
-        -24,
-        -23,
-        -22,
-        -21,
-        -20,
-        -19,
-        -18,
-        -17,
-        0,
-        1,
-        3,
-        5,
-        6,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20,
-        21,
-        22,
-        23,
-        24,
-        25,
-        26,
-        27,
-        28,
-        29,
-        30,
-        31,
-        32,
-        33,
-        34,
-        35,
-        36
-      ],
-      "missing_hours": [],
-      "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
-      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_DOMASHNIY/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_DOMASHNY_2/variant.m3u8"
-    },
-    "name:звезда": {
-      "channel": "Звезда",
-      "group": "Россия Геоблок",
-      "source_records": 19,
-      "existing_hours": [
-        -16,
-        -15,
-        -14,
-        -13,
-        -12,
-        -11,
-        -10,
-        -9,
-        -8,
-        -7,
-        -6,
-        -5,
-        -4,
-        -3,
-        -2,
-        -1,
-        2,
-        4,
-        7
-      ],
-      "generated_hours": [
-        -36,
-        -35,
-        -34,
-        -33,
-        -32,
-        -31,
-        -30,
-        -29,
-        -28,
-        -27,
-        -26,
-        -25,
-        -24,
-        -23,
-        -22,
-        -21,
-        -20,
-        -19,
-        -18,
-        -17,
-        0,
-        1,
-        3,
-        5,
-        6,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20,
-        21,
-        22,
-        23,
-        24,
-        25,
-        26,
-        27,
-        28,
-        29,
-        30,
-        31,
-        32,
-        33,
-        34,
-        35,
-        36
-      ],
-      "missing_hours": [],
-      "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
-      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_ZVEZDA/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_ZVEZDA_2/variant.m3u8"
-    },
-    "name:карусель": {
-      "channel": "Карусель",
-      "group": "Россия Геоблок",
       "source_records": 18,
-      "existing_hours": [
-        -16,
-        -15,
-        -14,
-        -13,
-        -12,
-        -11,
-        -10,
-        -9,
-        -8,
-        -7,
-        -6,
-        -5,
-        -4,
-        -3,
-        -2,
-        -1,
-        3,
-        7
-      ],
-      "generated_hours": [
-        -36,
-        -35,
-        -34,
-        -33,
-        -32,
-        -31,
-        -30,
-        -29,
-        -28,
-        -27,
-        -26,
-        -25,
-        -24,
-        -23,
-        -22,
-        -21,
-        -20,
-        -19,
-        -18,
-        -17,
-        0,
-        1,
-        2,
-        4,
-        5,
-        6,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20,
-        21,
-        22,
-        23,
-        24,
-        25,
-        26,
-        27,
-        28,
-        29,
-        30,
-        31,
-        32,
-        33,
-        34,
-        35,
-        36
-      ],
-      "missing_hours": [],
-      "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
-      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_KARUSEL/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_KARUSEL_7/variant.m3u8"
-    },
-    "name:матч! тв": {
-      "channel": "Матч! ТВ",
-      "group": "Россия Геоблок",
-      "source_records": 16,
       "existing_hours": [
         -16,
         -15,
@@ -584,9 +626,7 @@
         -19,
         -18,
         -17,
-        0
-      ],
-      "missing_hours": [
+        0,
         1,
         2,
         3,
@@ -624,15 +664,212 @@
         35,
         36
       ],
-      "url_strategy": "offset-only",
-      "strategy_note": "Observed offset URL available; positive path versions not inferred",
-      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_MATCHTV/variant.m3u8?version=2&offset=-3600",
-      "positive_template": null
+      "missing_hours": [],
+      "url_strategy": "offset",
+      "strategy_note": "Observed query offset template used for all hours",
+      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_DOMASHNIY/variant.m3u8?version=2&offset=-3600",
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:мир": {
-      "channel": "Мир",
+    "россия геоблок|домашний|zabava-htlive.cdn.ngenix.net|/hls/ch_domashny/variant.m3u8": {
+      "channel": "Домашний",
       "group": "Россия Геоблок",
-      "source_records": 19,
+      "source_records": 2,
+      "existing_hours": [
+        2,
+        7
+      ],
+      "generated_hours": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ],
+      "url_strategy": "positive-path",
+      "strategy_note": "Observed positive path template; zero may use base path; negative hours unavailable",
+      "offset_template": null,
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_DOMASHNY_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|домашний|rt-sib-bul-htlive-lb.cdn.ngenix.net|/hls/ch_r04_domashny/variant.m3u8": {
+      "channel": "Домашний",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        4
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|звезда|zabava-htlive.cdn.ngenix.net|/hls/ch_zvezda/variant.m3u8": {
+      "channel": "Звезда",
+      "group": "Россия Геоблок",
+      "source_records": 21,
       "existing_hours": [
         -16,
         -15,
@@ -712,12 +949,19 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
-      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_MIR/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_MIR_2/variant.m3u8"
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
+      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_ZVEZDA/variant.m3u8?version=2&offset=-3600",
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_ZVEZDA_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:нтв": {
-      "channel": "НТВ",
+    "россия геоблок|карусель|zabava-htlive.cdn.ngenix.net|/hls/ch_karusel/variant.m3u8": {
+      "channel": "Карусель",
       "group": "Россия Геоблок",
       "source_records": 20,
       "existing_hours": [
@@ -737,9 +981,7 @@
         -3,
         -2,
         -1,
-        1,
-        2,
-        4,
+        3,
         7
       ],
       "generated_hours": [
@@ -764,7 +1006,9 @@
         -18,
         -17,
         0,
-        3,
+        1,
+        2,
+        4,
         5,
         6,
         8,
@@ -799,14 +1043,21 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
-      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_NTV/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_NTV_7/variant.m3u8"
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
+      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_KARUSEL/variant.m3u8?version=2&offset=-3600",
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_KARUSEL_7/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:отр": {
-      "channel": "ОТР",
+    "россия геоблок|матч! тв|zabava-htlive.cdn.ngenix.net|/hls/ch_matchtv/variant.m3u8": {
+      "channel": "Матч! ТВ",
       "group": "Россия Геоблок",
-      "source_records": 16,
+      "source_records": 17,
       "existing_hours": [
         -16,
         -15,
@@ -846,9 +1097,7 @@
         -19,
         -18,
         -17,
-        0
-      ],
-      "missing_hours": [
+        0,
         1,
         2,
         3,
@@ -886,15 +1135,23 @@
         35,
         36
       ],
-      "url_strategy": "offset-only",
-      "strategy_note": "Observed offset URL available; positive path versions not inferred",
-      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_OTR/variant.m3u8?version=2&offset=-3600",
-      "positive_template": null
+      "missing_hours": [],
+      "url_strategy": "offset",
+      "strategy_note": "Observed query offset template used for all hours",
+      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_MATCHTV/variant.m3u8?version=2&offset=-3600",
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:первый канал": {
-      "channel": "Первый канал",
+    "россия геоблок|мир|zabava-htlive.cdn.ngenix.net|/hls/ch_mir/variant.m3u8": {
+      "channel": "Мир",
       "group": "Россия Геоблок",
-      "source_records": 23,
+      "source_records": 20,
       "existing_hours": [
         -16,
         -15,
@@ -912,12 +1169,8 @@
         -3,
         -2,
         -1,
-        1,
-        3,
-        4,
-        5,
-        6,
-        8
+        2,
+        7
       ],
       "generated_hours": [
         -36,
@@ -940,10 +1193,1235 @@
         -19,
         -18,
         -17,
-        0
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
       ],
+      "missing_hours": [],
+      "url_strategy": "hybrid",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
+      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_MIR/variant.m3u8?version=2&offset=-3600",
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_MIR_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|мир|rt-sib-bul-htlive.cdn.ngenix.net|/hls/ch_r01_ott_sib_bul_mir/variant.m3u8": {
+      "channel": "Мир",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        4
+      ],
+      "generated_hours": [],
       "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
         2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|нтв|zabava-htlive.cdn.ngenix.net|/hls/ch_ntv/variant.m3u8": {
+      "channel": "НТВ",
+      "group": "Россия Геоблок",
+      "source_records": 19,
+      "existing_hours": [
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        7
+      ],
+      "generated_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "missing_hours": [],
+      "url_strategy": "hybrid",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
+      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_NTV/variant.m3u8?version=2&offset=-3600",
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_NTV_7/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|нтв|rt-vlg-saratov-htlive.cdn.ngenix.net|/hls/ch_r03_ott_vlg_saratov_ntv/variant.m3u8": {
+      "channel": "НТВ",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        1
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|нтв|rt-ural-ekt-htlive.cdn.ngenix.net|/hls/ch_r03_ott_ntv_ural_ekt/variant.m3u8": {
+      "channel": "НТВ",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        2
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|нтв|rt-sib-bul-htlive.cdn.ngenix.net|/hls/ch_r03_ott_sib_bul_ntv/variant.m3u8": {
+      "channel": "НТВ",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        4
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|отр|zabava-htlive.cdn.ngenix.net|/hls/ch_otr/variant.m3u8": {
+      "channel": "ОТР",
+      "group": "Россия Геоблок",
+      "source_records": 17,
+      "existing_hours": [
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ],
+      "generated_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "missing_hours": [],
+      "url_strategy": "offset",
+      "strategy_note": "Observed query offset template used for all hours",
+      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_OTR/variant.m3u8?version=2&offset=-3600",
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|первый канал|zabava-htlive.cdn.ngenix.net|/hls/ch_1tvsd/variant.m3u8": {
+      "channel": "Первый канал",
+      "group": "Россия Геоблок",
+      "source_records": 17,
+      "existing_hours": [
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ],
+      "generated_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "missing_hours": [],
+      "url_strategy": "offset",
+      "strategy_note": "Observed query offset template used for all hours",
+      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_1TVSD/variant.m3u8?version=2&offset=-3600",
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|первый канал|rt-vlg-saratov-htlive.cdn.ngenix.net|/hls/ch_r03_ott_vlg_saratov_1tv/variant.m3u8": {
+      "channel": "Первый канал",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        1
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|первый канал|rt-sib-omsk-htlive.cdn.ngenix.net|/hls/ch_r03_ott_sib_omsk_1tv_omskobl/variant.m3u8": {
+      "channel": "Первый канал",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        3
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|первый канал|rt-sib-bul-htlive.cdn.ngenix.net|/hls/ch_r03_ott_sib_bul_1tv/variant.m3u8": {
+      "channel": "Первый канал",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        4
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|первый канал|rt-sib-irk-htlive.cdn.ngenix.net|/hls/ch_r03_ott_sib_irk_1tv/variant.m3u8": {
+      "channel": "Первый канал",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        5
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|первый канал|rt-sib-chita-htlive.cdn.ngenix.net|/hls/ch_r03_1tv/variant.m3u8": {
+      "channel": "Первый канал",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        6
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|первый канал|s14553.cdn.ngenix.net|/hls/ch_r03_ott_dv_slin_1tv_slin/variant.m3u8": {
+      "channel": "Первый канал",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        8
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
         7,
         9,
         10,
@@ -974,21 +2452,217 @@
         35,
         36
       ],
-      "url_strategy": "offset-only",
-      "strategy_note": "Observed offset URL available; positive path versions not inferred",
-      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_1TVSD/variant.m3u8?version=2&offset=-3600",
-      "positive_template": null
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:пятница!": {
+    "россия геоблок|первый канал|rt-nw-klgr-htlive.cdn.ngenix.net|/hls/ch_r03_ott_nw_klgr_1tv/variant.m3u8": {
+      "channel": "Первый канал",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        -1
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|пятница|zabava-htlive.cdn.ngenix.net|/hls/ch_pyatnizza/variant.m3u8": {
+      "channel": "ПЯТНИЦА",
+      "group": "Россия Геоблок",
+      "source_records": 17,
+      "existing_hours": [
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ],
+      "generated_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "missing_hours": [],
+      "url_strategy": "offset",
+      "strategy_note": "Observed query offset template used for all hours",
+      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_PYATNIZZA/variant.m3u8?version=2&offset=-3600",
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|пятница!|zabava-htlive.cdn.ngenix.net|/hls/ch_pyatnizza/variant.m3u8": {
       "channel": "Пятница!",
       "group": "Россия Геоблок",
       "source_records": 2,
       "existing_hours": [
-        2,
         4
       ],
       "generated_hours": [
+        0,
         1,
+        2,
         3,
         5,
         6,
@@ -1059,62 +2733,30 @@
         -4,
         -3,
         -2,
-        -1,
-        0
-      ],
-      "url_strategy": "positive-path-only",
-      "strategy_note": "Observed positive path URL available; negative and zero versions not inferred",
-      "offset_template": null,
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_FRIDAY_2/variant.m3u8"
-    },
-    "name:пятница": {
-      "channel": "ПЯТНИЦА",
-      "group": "Россия Геоблок",
-      "source_records": 16,
-      "existing_hours": [
-        -16,
-        -15,
-        -14,
-        -13,
-        -12,
-        -11,
-        -10,
-        -9,
-        -8,
-        -7,
-        -6,
-        -5,
-        -4,
-        -3,
-        -2,
         -1
       ],
-      "generated_hours": [
-        -36,
-        -35,
-        -34,
-        -33,
-        -32,
-        -31,
-        -30,
-        -29,
-        -28,
-        -27,
-        -26,
-        -25,
-        -24,
-        -23,
-        -22,
-        -21,
-        -20,
-        -19,
-        -18,
-        -17,
-        0
+      "url_strategy": "positive-path",
+      "strategy_note": "Observed positive path template; zero may use base path; negative hours unavailable",
+      "offset_template": null,
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_PYATNIZZA_4/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|пятница!|zabava-htlive.cdn.ngenix.net|/hls/ch_friday/variant.m3u8": {
+      "channel": "Пятница!",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        2
       ],
-      "missing_hours": [
+      "generated_hours": [
+        0,
         1,
-        2,
         3,
         4,
         5,
@@ -1150,12 +2792,57 @@
         35,
         36
       ],
-      "url_strategy": "offset-only",
-      "strategy_note": "Observed offset URL available; positive path versions not inferred",
-      "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_PYATNIZZA/variant.m3u8?version=2&offset=-3600",
-      "positive_template": null
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1
+      ],
+      "url_strategy": "positive-path",
+      "strategy_note": "Observed positive path template; zero may use base path; negative hours unavailable",
+      "offset_template": null,
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_FRIDAY_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:пятый канал": {
+    "россия геоблок|пятый канал|zabava-htlive.cdn.ngenix.net|/hls/ch_5tv/variant.m3u8": {
       "channel": "Пятый канал",
       "group": "Россия Геоблок",
       "source_records": 19,
@@ -1177,7 +2864,6 @@
         -2,
         -1,
         2,
-        4,
         7
       ],
       "generated_hours": [
@@ -1204,6 +2890,7 @@
         0,
         1,
         3,
+        4,
         5,
         6,
         8,
@@ -1238,14 +2925,115 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_5TV/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_5TV_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_5TV_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1": {
+    "россия геоблок|пятый канал|rt-sib-bul-htlive.cdn.ngenix.net|/hls/ch_r02_ott_sib_bul_5tv/variant.m3u8": {
+      "channel": "Пятый канал",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        4
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|россия 1|zabava-htlive.cdn.ngenix.net|/hls/ch_russia1/variant.m3u8": {
       "channel": "Россия 1",
       "group": "Россия Геоблок",
-      "source_records": 26,
+      "source_records": 21,
       "existing_hours": [
         -16,
         -15,
@@ -1263,15 +3051,9 @@
         -3,
         -2,
         -1,
-        1,
         2,
-        3,
         4,
-        5,
-        6,
-        7,
-        8,
-        9
+        6
       ],
       "generated_hours": [
         -36,
@@ -1295,6 +3077,12 @@
         -18,
         -17,
         0,
+        1,
+        3,
+        5,
+        7,
+        8,
+        9,
         10,
         11,
         12,
@@ -1325,14 +3113,679 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_RUSSIA1/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_RUSSIA1_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_RUSSIA1_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24": {
+    "россия геоблок|россия 1|rt-vlg-saratov-htlive.cdn.ngenix.net|/hls/ch_r04_ott_vlg_saratov_rossia1/variant.m3u8": {
+      "channel": "Россия 1",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        1
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|россия 1|rt-sib-omsk-htlive.cdn.ngenix.net|/hls/ch_r04_ott_sib_omsk_rossia1_omskobl/variant.m3u8": {
+      "channel": "Россия 1",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        3
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|россия 1|rt-sib-irk-htlive.cdn.ngenix.net|/hls/ch_r04_ott_sib_irk_rossia1/variant.m3u8": {
+      "channel": "Россия 1",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        5
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|россия 1|s91030.cdn.ngenix.net|/hls/ch_r04_ott_dv_vld_rossia1_ott/variant.m3u8": {
+      "channel": "Россия 1",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        7
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|россия 1|s14553.cdn.ngenix.net|/hls/ch_r04_ott_dv_slin_rossia1_slin/variant.m3u8": {
+      "channel": "Россия 1",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        8
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|россия 1|s14131.cdn.ngenix.net|/hls/ch_r04_ott_dv_kam_rossia1_pkam_ott/variant.m3u8": {
+      "channel": "Россия 1",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        9
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|россия 1|rt-nw-klgr-htlive.cdn.ngenix.net|/hls/ch_r04_ott_nw_klgr_rossia1/variant.m3u8": {
+      "channel": "Россия 1",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        -1
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|россия 24|zabava-htlive.cdn.ngenix.net|/hls/ch_russia24/variant.m3u8": {
       "channel": "Россия 24",
       "group": "Россия Геоблок",
-      "source_records": 16,
+      "source_records": 18,
       "existing_hours": [
         -16,
         -15,
@@ -1372,9 +3825,7 @@
         -19,
         -18,
         -17,
-        0
-      ],
-      "missing_hours": [
+        0,
         1,
         2,
         3,
@@ -1412,12 +3863,20 @@
         35,
         36
       ],
-      "url_strategy": "offset-only",
-      "strategy_note": "Observed offset URL available; positive path versions not inferred",
+      "missing_hours": [],
+      "url_strategy": "offset",
+      "strategy_note": "Observed query offset template used for all hours",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_RUSSIA24/variant.m3u8?version=2&offset=-3600",
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия к": {
+    "россия геоблок|россия к|zabava-htlive.cdn.ngenix.net|/hls/ch_russiak/variant.m3u8": {
       "channel": "Россия К",
       "group": "Россия Геоблок",
       "source_records": 19,
@@ -1439,7 +3898,6 @@
         -2,
         -1,
         2,
-        4,
         7
       ],
       "generated_hours": [
@@ -1466,6 +3924,7 @@
         0,
         1,
         3,
+        4,
         5,
         6,
         8,
@@ -1500,14 +3959,115 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_RUSSIAK/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_RUSSIAK_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_RUSSIAK_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:стс": {
+    "россия геоблок|россия к|rt-sib-bul-htlive.cdn.ngenix.net|/hls/ch_r02_ott_sib_bul_rossiak/variant.m3u8": {
+      "channel": "Россия К",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        4
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|стс|zabava-htlive.cdn.ngenix.net|/hls/ch_sts/variant.m3u8": {
       "channel": "СТС",
       "group": "Россия Геоблок",
-      "source_records": 19,
+      "source_records": 20,
       "existing_hours": [
         -16,
         -15,
@@ -1526,7 +4086,6 @@
         -2,
         -1,
         2,
-        4,
         7
       ],
       "generated_hours": [
@@ -1553,6 +4112,7 @@
         0,
         1,
         3,
+        4,
         5,
         6,
         8,
@@ -1587,14 +4147,115 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_STS/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_STS_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_STS_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:стс love": {
+    "россия геоблок|стс|rt-sib-irk-htlive.cdn.ngenix.net|/hls/ch_r02_ott_sib_irk_sts/variant.m3u8": {
+      "channel": "СТС",
+      "group": "Россия Геоблок",
+      "source_records": 1,
+      "existing_hours": [
+        4
+      ],
+      "generated_hours": [],
+      "missing_hours": [
+        -36,
+        -35,
+        -34,
+        -33,
+        -32,
+        -31,
+        -30,
+        -29,
+        -28,
+        -27,
+        -26,
+        -25,
+        -24,
+        -23,
+        -22,
+        -21,
+        -20,
+        -19,
+        -18,
+        -17,
+        -16,
+        -15,
+        -14,
+        -13,
+        -12,
+        -11,
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "url_strategy": "none",
+      "strategy_note": "No matching LIVE URL template detected",
+      "offset_template": null,
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
+    },
+    "россия геоблок|стс love|zabava-htlive.cdn.ngenix.net|/hls/ch_stslove/variant.m3u8": {
       "channel": "СТС Love",
       "group": "Россия Геоблок",
-      "source_records": 18,
+      "source_records": 19,
       "existing_hours": [
         -16,
         -15,
@@ -1674,14 +4335,21 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_STSLOVE/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_STSLOVE_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_STSLOVE_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:супер": {
+    "россия геоблок|супер|zabava-htlive.cdn.ngenix.net|/hls/ch_super/variant.m3u8": {
       "channel": "Супер",
       "group": "Россия Геоблок",
-      "source_records": 19,
+      "source_records": 21,
       "existing_hours": [
         -16,
         -15,
@@ -1761,14 +4429,21 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_SUPER/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_SUPER_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_SUPER_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:тв 3": {
+    "россия геоблок|тв 3|zabava-htlive.cdn.ngenix.net|/hls/ch_tv3/variant.m3u8": {
       "channel": "ТВ 3",
       "group": "Россия Геоблок",
-      "source_records": 19,
+      "source_records": 21,
       "existing_hours": [
         -16,
         -15,
@@ -1848,14 +4523,21 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TV3/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TV3_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TV3_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:тв центр": {
+    "россия геоблок|тв центр|zabava-htlive.cdn.ngenix.net|/hls/ch_tvc/variant.m3u8": {
       "channel": "ТВ Центр",
       "group": "Россия Геоблок",
-      "source_records": 19,
+      "source_records": 21,
       "existing_hours": [
         -16,
         -15,
@@ -1935,14 +4617,21 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TVC/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TVC_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TVC_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:тнт": {
+    "россия геоблок|тнт|zabava-htlive.cdn.ngenix.net|/hls/ch_tnt/variant.m3u8": {
       "channel": "ТНТ",
       "group": "Россия Геоблок",
-      "source_records": 19,
+      "source_records": 21,
       "existing_hours": [
         -16,
         -15,
@@ -2022,14 +4711,21 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TNT/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TNT_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TNT_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:тнт4": {
+    "россия геоблок|тнт4|zabava-htlive.cdn.ngenix.net|/hls/ch_tnt4/variant.m3u8": {
       "channel": "ТНТ4",
       "group": "Россия Геоблок",
-      "source_records": 19,
+      "source_records": 21,
       "existing_hours": [
         -16,
         -15,
@@ -2109,14 +4805,21 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TNT4/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TNT4_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TNT4_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:ю": {
+    "россия геоблок|ю|zabava-htlive.cdn.ngenix.net|/hls/ch_u/variant.m3u8": {
       "channel": "Ю",
       "group": "Россия Геоблок",
-      "source_records": 19,
+      "source_records": 21,
       "existing_hours": [
         -16,
         -15,
@@ -2196,14 +4899,21 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_U/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_U_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_U_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:муз тв": {
+    "россия геоблок|муз тв|zabava-htlive.cdn.ngenix.net|/hls/ch_muztv/variant.m3u8": {
       "channel": "Муз ТВ",
       "group": "Россия Геоблок",
-      "source_records": 19,
+      "source_records": 21,
       "existing_hours": [
         -16,
         -15,
@@ -2283,11 +4993,18 @@
       ],
       "missing_hours": [],
       "url_strategy": "hybrid",
-      "strategy_note": "Positive versions use observed path suffix; zero and negative versions use observed offset",
+      "strategy_note": "Positive hours use observed path suffix; zero and negative hours use observed query offset",
       "offset_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_MUZTV/variant.m3u8?version=2&offset=-3600",
-      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_MUZTV_2/variant.m3u8"
+      "positive_template": "https://zabava-htlive.cdn.ngenix.net/hls/CH_MUZTV_2/variant.m3u8",
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (абакан": {
+    "россия геоблок|россия 1 (абакан|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_abakan.m3u8": {
       "channel": "Россия 1 (Абакан",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -2370,11 +5087,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (астрахань": {
+    "россия геоблок|россия 1 (астрахань|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_astrh.m3u8": {
       "channel": "Россия 1 (Астрахань",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -2457,11 +5181,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (барнаул": {
+    "россия геоблок|россия 1 (барнаул|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_bul.m3u8": {
       "channel": "Россия 1 (Барнаул",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -2544,11 +5275,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (белгород": {
+    "россия геоблок|россия 1 (белгород|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_belg.m3u8": {
       "channel": "Россия 1 (Белгород",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -2631,11 +5369,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (белгород": {
+    "россия геоблок|россия 24 (белгород|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_belg.m3u8": {
       "channel": "Россия 24 (Белгород",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -2718,11 +5463,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (благовещенск": {
+    "россия геоблок|россия 1 (благовещенск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_dv_blag.m3u8": {
       "channel": "Россия 1 (Благовещенск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -2805,11 +5557,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (благовещенск": {
+    "россия геоблок|россия 24 (благовещенск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_dv_blag.m3u8": {
       "channel": "Россия 24 (Благовещенск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -2892,11 +5651,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (брянск": {
+    "россия геоблок|россия 1 (брянск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_bryansk.m3u8": {
       "channel": "Россия 1 (Брянск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -2979,11 +5745,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (владивосток": {
+    "россия геоблок|россия 1 (владивосток|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_dv_vld.m3u8": {
       "channel": "Россия 1 (Владивосток",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -3066,11 +5839,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (волгоград": {
+    "россия геоблок|россия 1 (волгоград|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_vgrad.m3u8": {
       "channel": "Россия 1 (Волгоград",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -3153,11 +5933,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (волгоград": {
+    "россия геоблок|россия 24 (волгоград|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_vgrad.m3u8": {
       "channel": "Россия 24 (Волгоград",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -3240,11 +6027,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (вологда": {
+    "россия геоблок|россия 1 (вологда|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_vol.m3u8": {
       "channel": "Россия 1 (Вологда",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -3327,11 +6121,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (екатеринбург": {
+    "россия геоблок|россия 1 (екатеринбург|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_ekt.m3u8": {
       "channel": "Россия 1 (Екатеринбург",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -3414,11 +6215,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (екатеринбург": {
+    "россия геоблок|россия 24 (екатеринбург|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_ekt.m3u8": {
       "channel": "Россия 24 (Екатеринбург",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -3501,11 +6309,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (иваново": {
+    "россия геоблок|россия 1 (иваново|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_ivan.m3u8": {
       "channel": "Россия 1 (Иваново",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -3588,11 +6403,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (иркутск": {
+    "россия геоблок|россия 1 (иркутск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_irk.m3u8": {
       "channel": "Россия 1 (Иркутск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -3675,11 +6497,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (казань": {
+    "россия геоблок|россия 1 (казань|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_kzn.m3u8": {
       "channel": "Россия 1 (Казань",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -3762,11 +6591,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (казань": {
+    "россия геоблок|россия 24 (казань|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_kzn.m3u8": {
       "channel": "Россия 24 (Казань",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -3849,11 +6685,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (калининград": {
+    "россия геоблок|россия 1 (калининград|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_klgr.m3u8": {
       "channel": "Россия 1 (Калининград",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -3936,11 +6779,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (калуга": {
+    "россия геоблок|россия 1 (калуга|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_kaluga.m3u8": {
       "channel": "Россия 1 (Калуга",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -4023,11 +6873,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (калуга": {
+    "россия геоблок|россия 24 (калуга|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_kaluga.m3u8": {
       "channel": "Россия 24 (Калуга",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -4110,11 +6967,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (кемерово": {
+    "россия геоблок|россия 1 (кемерово|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_kem.m3u8": {
       "channel": "Россия 1 (Кемерово",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -4197,11 +7061,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (киров": {
+    "россия геоблок|россия 1 (киров|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_kirov.m3u8": {
       "channel": "Россия 1 (Киров",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -4284,11 +7155,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (кострома": {
+    "россия геоблок|россия 1 (кострома|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_kostroma.m3u8": {
       "channel": "Россия 1 (Кострома",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -4371,11 +7249,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (краснодар": {
+    "россия геоблок|россия 1 (краснодар|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_krdar.m3u8": {
       "channel": "Россия 1 (Краснодар",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -4458,11 +7343,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (краснодар": {
+    "россия геоблок|россия 24 (краснодар|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_krdar.m3u8": {
       "channel": "Россия 24 (Краснодар",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -4545,11 +7437,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (красноярск": {
+    "россия геоблок|россия 1 (красноярск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_krsk.m3u8": {
       "channel": "Россия 1 (Красноярск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -4632,11 +7531,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (курган": {
+    "россия геоблок|россия 1 (курган|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_krg.m3u8": {
       "channel": "Россия 1 (Курган",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -4719,11 +7625,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (курск": {
+    "россия геоблок|россия 1 (курск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_kursk.m3u8": {
       "channel": "Россия 1 (Курск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -4806,11 +7719,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (курск": {
+    "россия геоблок|россия 24 (курск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_kursk.m3u8": {
       "channel": "Россия 24 (Курск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -4893,11 +7813,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (липецк": {
+    "россия геоблок|россия 1 (липецк|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_lipetsk.m3u8": {
       "channel": "Россия 1 (Липецк",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -4980,11 +7907,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (магадан": {
+    "россия геоблок|россия 1 (магадан|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_dv_mgdn.m3u8": {
       "channel": "Россия 1 (Магадан",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -5067,11 +8001,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (майкоп": {
+    "россия геоблок|россия 1 (майкоп|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_mayk.m3u8": {
       "channel": "Россия 1 (Майкоп",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -5154,11 +8095,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (махачкала": {
+    "россия геоблок|россия 1 (махачкала|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_mahachk.m3u8": {
       "channel": "Россия 1 (Махачкала",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -5241,11 +8189,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (мурманск": {
+    "россия геоблок|россия 1 (мурманск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_murm.m3u8": {
       "channel": "Россия 1 (Мурманск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -5328,11 +8283,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (мурманск": {
+    "россия геоблок|россия 24 (мурманск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_murm.m3u8": {
       "channel": "Россия 24 (Мурманск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -5415,11 +8377,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (нальчик": {
+    "россия геоблок|россия 1 (нальчик|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_nalch.m3u8": {
       "channel": "Россия 1 (Нальчик",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -5502,11 +8471,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (нижний новгород": {
+    "россия геоблок|россия 1 (нижний новгород|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_nn.m3u8": {
       "channel": "Россия 1 (Нижний Новгород",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -5589,11 +8565,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (нижний новгород": {
+    "россия геоблок|россия 24 (нижний новгород|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_nn.m3u8": {
       "channel": "Россия 24 (Нижний Новгород",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -5676,11 +8659,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (омск": {
+    "россия геоблок|россия 24 (омск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_omsk.m3u8": {
       "channel": "Россия 24 (Омск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -5763,11 +8753,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (оренбург": {
+    "россия геоблок|россия 1 (оренбург|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_orb.m3u8": {
       "channel": "Россия 1 (Оренбург",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -5850,11 +8847,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (пенза": {
+    "россия геоблок|россия 1 (пенза|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_penza.m3u8": {
       "channel": "Россия 1 (Пенза",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -5937,11 +8941,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (пермь": {
+    "россия геоблок|россия 1 (пермь|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_perm.m3u8": {
       "channel": "Россия 1 (Пермь",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -6024,11 +9035,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (петрозаводск": {
+    "россия геоблок|россия 1 (петрозаводск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_pzav.m3u8": {
       "channel": "Россия 1 (Петрозаводск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -6111,11 +9129,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (псков": {
+    "россия геоблок|россия 1 (псков|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_pskv.m3u8": {
       "channel": "Россия 1 (Псков",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -6198,11 +9223,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (ростов на дону": {
+    "россия геоблок|россия 1 (ростов на дону|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_rd.m3u8": {
       "channel": "Россия 1 (Ростов на Дону",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -6285,11 +9317,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (рязань": {
+    "россия геоблок|россия 1 (рязань|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_ryaz.m3u8": {
       "channel": "Россия 1 (Рязань",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -6372,11 +9411,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (самара": {
+    "россия геоблок|россия 1 (самара|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_samara.m3u8": {
       "channel": "Россия 1 (Самара",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -6459,11 +9505,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (санкт-петербург": {
+    "россия геоблок|россия 1 (санкт-петербург|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_spb.m3u8": {
       "channel": "Россия 1 (Санкт-Петербург",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -6546,11 +9599,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (санкт-петербург": {
+    "россия геоблок|россия 24 (санкт-петербург|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_spb.m3u8": {
       "channel": "Россия 24 (Санкт-Петербург",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -6633,11 +9693,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (саратов": {
+    "россия геоблок|россия 1 (саратов|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_saratov.m3u8": {
       "channel": "Россия 1 (Саратов",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -6720,11 +9787,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (смоленск": {
+    "россия геоблок|россия 1 (смоленск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_smol.m3u8": {
       "channel": "Россия 1 (Смоленск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -6807,11 +9881,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (сочи": {
+    "россия геоблок|россия 1 (сочи|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_sochi.m3u8": {
       "channel": "Россия 1 (Сочи",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -6894,11 +9975,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (ставрополь": {
+    "россия геоблок|россия 1 (ставрополь|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_stavr.m3u8": {
       "channel": "Россия 1 (Ставрополь",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -6981,11 +10069,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (симферополь": {
+    "россия геоблок|россия 1 (симферополь|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_sfrpl.m3u8": {
       "channel": "Россия 1 (Симферополь",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -7068,11 +10163,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (тамбов": {
+    "россия геоблок|россия 1 (тамбов|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_tamb.m3u8": {
       "channel": "Россия 1 (Тамбов",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -7155,11 +10257,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (тверь": {
+    "россия геоблок|россия 1 (тверь|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_tver.m3u8": {
       "channel": "Россия 1 (Тверь",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -7242,11 +10351,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (томск": {
+    "россия геоблок|россия 1 (томск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_tomsk.m3u8": {
       "channel": "Россия 1 (Томск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -7329,11 +10445,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (тула": {
+    "россия геоблок|россия 1 (тула|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_tula.m3u8": {
       "channel": "Россия 1 (Тула",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -7416,11 +10539,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (тюмень": {
+    "россия геоблок|россия 1 (тюмень|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_tum.m3u8": {
       "channel": "Россия 1 (Тюмень",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -7503,11 +10633,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 24 (тюмень": {
+    "россия геоблок|россия 24 (тюмень|dmi3y-tv.ru|/hls/smotrim/region/ch_russia24_tum.m3u8": {
       "channel": "Россия 24 (Тюмень",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -7590,11 +10727,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (улан-удэ": {
+    "россия геоблок|россия 1 (улан-удэ|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_uude.m3u8": {
       "channel": "Россия 1 (Улан-Удэ",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -7677,11 +10821,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (ульяновск": {
+    "россия геоблок|россия 1 (ульяновск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_ul.m3u8": {
       "channel": "Россия 1 (Ульяновск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -7764,11 +10915,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (уфа": {
+    "россия геоблок|россия 1 (уфа|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_ufa.m3u8": {
       "channel": "Россия 1 (Уфа",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -7851,11 +11009,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (хабаровск": {
+    "россия геоблок|россия 1 (хабаровск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_dv_hvsk.m3u8": {
       "channel": "Россия 1 (Хабаровск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -7938,11 +11103,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (карачаево-черкесия": {
+    "россия геоблок|россия 1 (карачаево-черкесия|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_cherks.m3u8": {
       "channel": "Россия 1 (Карачаево-Черкесия",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -8025,11 +11197,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (чита": {
+    "россия геоблок|россия 1 (чита|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_chita.m3u8": {
       "channel": "Россия 1 (Чита",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -8112,11 +11291,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (элиста": {
+    "россия геоблок|россия 1 (элиста|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_elista.m3u8": {
       "channel": "Россия 1 (Элиста",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -8199,11 +11385,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (якутск": {
+    "россия геоблок|россия 1 (якутск|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_dv_ykt.m3u8": {
       "channel": "Россия 1 (Якутск",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -8286,11 +11479,18 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     },
-    "name:россия 1 (ярославль": {
+    "россия геоблок|россия 1 (ярославль|dmi3y-tv.ru|/hls/smotrim/region/ch_russia1_yarl.m3u8": {
       "channel": "Россия 1 (Ярославль",
       "group": "Россия Геоблок",
       "source_records": 1,
@@ -8373,20 +11573,30 @@
         36
       ],
       "url_strategy": "none",
-      "strategy_note": "No supported URL template detected",
+      "strategy_note": "No matching LIVE URL template detected",
       "offset_template": null,
-      "positive_template": null
+      "positive_template": null,
+      "archive": {
+        "catchup": "append",
+        "catchup_days": 3,
+        "catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+        "status": "PRESERVED_UNVERIFIED",
+        "live_offset_changes_archive": "Not verified; catchup append uses server URL behavior"
+      }
     }
   },
   "global_settings": {
-    "catchup_header_override": null,
-    "original_catchup_preserved": true,
-    "original_pause_metadata_preserved": true,
-    "original_audio_metadata_preserved": true,
-    "original_vlc_options_preserved": true,
-    "real_orbits_preserved": true,
-    "duplicates_preserved": true,
-    "original_order_preserved": true
+    "catchup": "default",
+    "catchup_days": 7,
+    "catchup_correction": 0,
+    "url_tvg": "https://gabbarit.page.link/epg",
+    "orbit_catchup": "append",
+    "orbit_catchup_days": 3,
+    "orbit_catchup_source": "?offset=-${offset}&utcstart=${timestamp}",
+    "original_duplicates_preserved": true,
+    "original_order_preserved": true,
+    "original_directives_preserved": true,
+    "real_orbits_preserved": true
   },
   "worker_configuration": {
     "download": 8,
@@ -8399,41 +11609,1139 @@
     "download": {
       "bytes": 3667970,
       "workers": 8,
-      "elapsed_seconds": 0.55
+      "elapsed_seconds": 0.426
     },
     "parser": {
       "workers": 16,
       "entries": 16011,
       "preamble_lines": 2,
-      "elapsed_seconds": 0.287
+      "elapsed_seconds": 0.215
+    },
+    "cleanup": {
+      "input_entries": 16011,
+      "kept_entries": 15830,
+      "removed_entries": 181,
+      "removed_records": [
+        {
+          "index": 0,
+          "title": "https://t.me/Ivan123123",
+          "group": "🔺 СТАБИЛЬНЫЙ ЛИСТ 🔺",
+          "url": "https://getfile.dokpub.com/yandex/get/https://disk.yandex.ru/d/WYl_ncJzcTgoVg"
+        },
+        {
+          "index": 1,
+          "title": "Юмани 410017822349973",
+          "group": "🔺 СКАЗАТЬ СПАСИБО 🔺",
+          "url": "https://getfile.dokpub.com/yandex/get/https://disk.yandex.ru/d/WYl_ncJzcTgoVg"
+        },
+        {
+          "index": 2,
+          "title": "Бусти https://boosty.to/chedonat/donate",
+          "group": "🔺 СКАЗАТЬ СПАСИБО 🔺",
+          "url": "https://getfile.dokpub.com/yandex/get/https://disk.yandex.ru/d/WYl_ncJzcTgoVg"
+        },
+        {
+          "index": 3,
+          "title": "Сбер https://pay.mysbertips.ru/06490239",
+          "group": "🔺 СКАЗАТЬ СПАСИБО 🔺",
+          "url": "https://getfile.dokpub.com/yandex/get/https://disk.yandex.ru/d/WYl_ncJzcTgoVg"
+        },
+        {
+          "index": 8,
+          "title": "Первый канал Евразия",
+          "group": "🇷🇺 Российские 🇷🇺",
+          "url": ""
+        },
+        {
+          "index": 21,
+          "title": "РТР Планета Северная Америка",
+          "group": "🇷🇺 Российские 🇷🇺",
+          "url": ""
+        },
+        {
+          "index": 58,
+          "title": "Пятый канал international",
+          "group": "🇷🇺 Российские 🇷🇺",
+          "url": ""
+        },
+        {
+          "index": 72,
+          "title": "RTVi HD",
+          "group": "🇷🇺 Российские 🇷🇺",
+          "url": ""
+        },
+        {
+          "index": 73,
+          "title": "RTVi Retro",
+          "group": "🇷🇺 Российские 🇷🇺",
+          "url": ""
+        },
+        {
+          "index": 93,
+          "title": "Царьград",
+          "group": "🇷🇺 Российские 🇷🇺",
+          "url": ""
+        },
+        {
+          "index": 95,
+          "title": "Выставка Россия",
+          "group": "🇷🇺 Российские 🇷🇺",
+          "url": ""
+        },
+        {
+          "index": 96,
+          "title": "Выставка Россия Int.",
+          "group": "🇷🇺 Российские 🇷🇺",
+          "url": ""
+        },
+        {
+          "index": 113,
+          "title": "Новый Мир",
+          "group": "🇷🇺 Российские 🇷🇺",
+          "url": ""
+        },
+        {
+          "index": 836,
+          "title": "312 Кино",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 837,
+          "title": "312 Сериал",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 839,
+          "title": "4K Русское кино",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 841,
+          "title": "Alpha Cinema",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 842,
+          "title": "Alpha Funny",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 843,
+          "title": "Alpha Games",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 845,
+          "title": "Alpha Onenite",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 848,
+          "title": "Alpha Series",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 849,
+          "title": "AMC",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 850,
+          "title": "AMC UA",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 864,
+          "title": "DetectiveJam",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 865,
+          "title": "Dunyo",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 869,
+          "title": "DUO3",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 870,
+          "title": "DUO6",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 872,
+          "title": "FamilyJam +6",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 876,
+          "title": "FilmUA Live",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 878,
+          "title": "FILMUADRAMA CEE",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 881,
+          "title": "FX Life",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 883,
+          "title": "Horror TV",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 889,
+          "title": "Jibek Joly",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 891,
+          "title": "Kino 1 HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 892,
+          "title": "Kino 2 HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 897,
+          "title": "KinoSweet",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 899,
+          "title": "Kinowood HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 901,
+          "title": "Kion хит +4",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 903,
+          "title": "Live SCARYPLACE",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 908,
+          "title": "NOW Series HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 909,
+          "title": "NOW Series HD UA",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 912,
+          "title": "Romance",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 913,
+          "title": "Russian Extreme Int.",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 921,
+          "title": "Sky2000 HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 928,
+          "title": "Sumiko",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 932,
+          "title": "The X-Files",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 937,
+          "title": "TV3 Plus HD LT",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 945,
+          "title": "Viasat Kino World",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 949,
+          "title": "VIJU TV1000 Новелла",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 950,
+          "title": "viju TV1000 Русское",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 978,
+          "title": "Кино+",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 986,
+          "title": "Кино Боевик HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 990,
+          "title": "Кино ТВ (Южно-Сахалинск)",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 991,
+          "title": "Кинокульт HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1006,
+          "title": "Кинохит HD Int.",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1007,
+          "title": "Классика Кино",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1008,
+          "title": "Коломбо",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1011,
+          "title": "Космос ТВ",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1014,
+          "title": "Крепкое кино",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1018,
+          "title": "Любимое Индийское Кино",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1021,
+          "title": "Мировое Кино HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1022,
+          "title": "Мосфильм. Золотая коллекция HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1024,
+          "title": "Муви ТВ",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1026,
+          "title": "Наш Киномир",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1028,
+          "title": "Наше Детство",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1031,
+          "title": "Наше любимое кино UA",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1034,
+          "title": "Наше новое кино HD Int.",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1035,
+          "title": "Наше родное кино",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1043,
+          "title": "Однажды в Милиции",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1044,
+          "title": "Ольга",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1046,
+          "title": "Планета \"Дети\"",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1049,
+          "title": "Премиальное HD +4",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1050,
+          "title": "Премиум Кино HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1055,
+          "title": "Родное кино Int.",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1062,
+          "title": "Семейное кино",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1063,
+          "title": "Семейное кино HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1066,
+          "title": "Сити Эдем - Кино Классика",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1076,
+          "title": "Следствие Вели",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1078,
+          "title": "Смотрим Мелодрамы",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1079,
+          "title": "Смотрим тайны",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1081,
+          "title": "Советское родное",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1084,
+          "title": "СТРАХ FHD (2.0)",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1086,
+          "title": "Страшное HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1089,
+          "title": "ТВ 21 International",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1090,
+          "title": "ТВ Рус",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1091,
+          "title": "ТВ Рус+",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1092,
+          "title": "Твiй Серiал HD",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1094,
+          "title": "Фантастика FHD (2.0)",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1098,
+          "title": "ФМУ Сериал",
+          "group": "КИНО",
+          "url": ""
+        },
+        {
+          "index": 1196,
+          "title": "FUEL TV",
+          "group": "Спорт",
+          "url": ""
+        },
+        {
+          "index": 1241,
+          "title": "Sport",
+          "group": "Спорт",
+          "url": ""
+        },
+        {
+          "index": 1244,
+          "title": "Setanta SPORTS 3",
+          "group": "Спорт",
+          "url": ""
+        },
+        {
+          "index": 1245,
+          "title": "Setanta SPORTS 4",
+          "group": "Спорт",
+          "url": ""
+        },
+        {
+          "index": 1246,
+          "title": "Setanta SPORTS Moldova",
+          "group": "Спорт",
+          "url": ""
+        },
+        {
+          "index": 1247,
+          "title": "Setanta SPORTS KZ",
+          "group": "Спорт",
+          "url": ""
+        },
+        {
+          "index": 1248,
+          "title": "Setanta SPORTS  Baltic",
+          "group": "Спорт",
+          "url": ""
+        },
+        {
+          "index": 1249,
+          "title": "TV Varzish",
+          "group": "Спорт",
+          "url": ""
+        },
+        {
+          "index": 1253,
+          "title": "TV 1+2 EE",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1259,
+          "title": "Failarmy CA",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1260,
+          "title": "Epic HD",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1264,
+          "title": "Myday",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1265,
+          "title": "One Planet",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1274,
+          "title": "Quiz TV HD",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1276,
+          "title": "Арт",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1278,
+          "title": "Бум",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1281,
+          "title": "Вкусное TV HD",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1285,
+          "title": "Еда. Рецепты Лазерсона",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1290,
+          "title": "Ключ HD",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1296,
+          "title": "Мегаполис HD",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1297,
+          "title": "Министерство Идей",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1298,
+          "title": "Мир Наизнанку",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1301,
+          "title": "НАЗАД В 90-е",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1302,
+          "title": "Народ всё видит",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1303,
+          "title": "Новый игровой канал",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1305,
+          "title": "Орёл и Решка",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1307,
+          "title": "Резонанс ТВ",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1308,
+          "title": "Родной Канал HD",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1309,
+          "title": "Русский Корабль",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1317,
+          "title": "Театр HD",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1318,
+          "title": "ТелеДОМ/ТелеБОМ",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1320,
+          "title": "Телеканал Народной Музыки",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1325,
+          "title": "DasturxonTV",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1328,
+          "title": "V1 Ego",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1329,
+          "title": "V1 Fem",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1331,
+          "title": "Food time",
+          "group": "РАЗВЛЕКАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1337,
+          "title": "Brodilo TV HD",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1345,
+          "title": "HD Media",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1347,
+          "title": "HDL Life",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1349,
+          "title": "History HD EE",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1350,
+          "title": "Joy cook",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1351,
+          "title": "Museum TV HD",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1352,
+          "title": "Museum TV 4К",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1360,
+          "title": "Sea TV",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1361,
+          "title": "Silk Way HD",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1364,
+          "title": "The Explorers",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1366,
+          "title": "Travel Guide-TV",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1369,
+          "title": "TV PRO",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1370,
+          "title": "Unknow Planet",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1375,
+          "title": "ZOO ПАРК",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1376,
+          "title": "World1",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1378,
+          "title": "АКВА ТВ",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1385,
+          "title": "Дайвинг TV",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1386,
+          "title": "Дача HD",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1402,
+          "title": "Знание ТВ",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1413,
+          "title": "МЫ",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1420,
+          "title": "Охотник и рыболов Int HD",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1423,
+          "title": "Первый Медицинский канал",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1424,
+          "title": "Первый Туристический",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1425,
+          "title": "Перпетуум Мобиле",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1427,
+          "title": "Полёт ТВ",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1431,
+          "title": "Рыбалка HD",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1434,
+          "title": "Соль ТВ HD",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1438,
+          "title": "Терра Инкогнита",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1442,
+          "title": "Туран ТВ",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1444,
+          "title": "Хочу все знать",
+          "group": "ПОЗНАВАТЕЛЬНЫЕ",
+          "url": ""
+        },
+        {
+          "index": 1448,
+          "title": "Anime Kids",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1451,
+          "title": "Big Buck Bunny",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1458,
+          "title": "Kids Planet+",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1459,
+          "title": "Kids Planet",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1462,
+          "title": "KidZone Max",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1463,
+          "title": "KidZone Mini",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1467,
+          "title": "Ninja",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1468,
+          "title": "Sunset Kids",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1483,
+          "title": "Лева",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1487,
+          "title": "Маша и Медведь",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1495,
+          "title": "НЯ HD",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1500,
+          "title": "Семейка",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1503,
+          "title": "Смешарики",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1504,
+          "title": "Советские мультфильмы",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1508,
+          "title": "Супер Герои",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1512,
+          "title": "Фиксики",
+          "group": "ДЕТСКИЕ",
+          "url": ""
+        },
+        {
+          "index": 1541,
+          "title": "Bridge Фрэш",
+          "group": "МУЗЫКА",
+          "url": ""
+        },
+        {
+          "index": 1553,
+          "title": "Groovezzo",
+          "group": "МУЗЫКА",
+          "url": ""
+        },
+        {
+          "index": 1591,
+          "title": "Fresh TV",
+          "group": "МУЗЫКА",
+          "url": ""
+        },
+        {
+          "index": 1623,
+          "title": "Mastiii",
+          "group": "МУЗЫКА",
+          "url": ""
+        },
+        {
+          "index": 1808,
+          "title": "Ushba TV-Кинозалы 27",
+          "group": "Ushba TV",
+          "url": ""
+        },
+        {
+          "index": 14455,
+          "title": "Радио Донат FM - Зарубежные хиты",
+          "group": "🧿 Радио 🧿",
+          "url": "https://c6.radioboss.fm:18089/stream"
+        },
+        {
+          "index": 14456,
+          "title": "Радио Донат FM - Музыка СССР",
+          "group": "🧿 Радио 🧿",
+          "url": "https://c6.radioboss.fm:18098/stream"
+        },
+        {
+          "index": 14457,
+          "title": "Радио Донат FM - Русская музыка",
+          "group": "🧿 Радио 🧿",
+          "url": "https://c6.radioboss.fm:18099/stream"
+        },
+        {
+          "index": 14458,
+          "title": "Радио Донат FM - Русский Рок",
+          "group": "🧿 Радио 🧿",
+          "url": "https://c6.radioboss.fm:18097/stream"
+        },
+        {
+          "index": 14459,
+          "title": "Радио Донат FM - Шансон",
+          "group": "🧿 Радио 🧿",
+          "url": "https://c6.radioboss.fm:18096/stream"
+        }
+      ],
+      "elapsed_seconds": 0.239
     },
     "orbit_detection": {
       "workers": 28,
-      "total_entries": 16011,
+      "total_entries": 15830,
       "russian_geoblock_entries": 649,
       "recognized_orbits": 543,
-      "elapsed_seconds": 0.628
+      "elapsed_seconds": 0.409
     },
     "orbit_generation": {
       "workers": 32,
-      "programmed_channels": 96,
-      "generation_tasks": 1216,
-      "generated_entries": 1216,
-      "elapsed_seconds": 0.103
+      "programmed_channels": 123,
+      "generation_tasks": 1488,
+      "generated_entries": 1488,
+      "existing_orbits_archive_updated": 597,
+      "elapsed_seconds": 0.182
     },
     "playlist_build": {
       "workers": 36,
-      "entries": 17227,
-      "output_bytes": 4147501,
-      "elapsed_seconds": 0.279
+      "entries": 17318,
+      "generated_entries": 1488,
+      "output_bytes": 4240291,
+      "output_lines": 54045,
+      "elapsed_seconds": 0.219
     }
   },
-  "elapsed_seconds": 1.873,
+  "elapsed_seconds": 1.703,
   "warnings": [
     "Generated URLs require provider validation.",
-    "Missing URL templates are not fabricated.",
-    "M3U metadata cannot create server-side archive.",
-    "Pause support depends on player and stream.",
-    "Worker pools process playlist records; they do not create parallel audio playback."
+    "A generated URL is based on an observed channel template.",
+    "Archive metadata does not create server-side archive access.",
+    "With catchup=append, archive behavior depends on provider URL handling.",
+    "The global seven-day setting does not override server retention limits.",
+    "Only recognized Russian geoblock groups are used for orbit generation."
   ]
 }
