@@ -1,0 +1,84 @@
+
+name: Chebur M3U Transformer
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 3 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chebur-transformer
+  cancel-in-progress: false
+
+jobs:
+  transform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download RAW transformer
+        run: |
+          curl -fL \
+            "https://raw.githubusercontent.com/findmydevice364-hub/zala/main/chebur_m3u_transformer.py" \
+            -o /tmp/chebur_m3u_transformer.py
+
+      - name: Run RAW transformer
+        run: |
+          python /tmp/chebur_m3u_transformer.py
+
+      - name: Validate results
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          files = [
+              "Chebur_donor.m3u",
+              "playlist_original.m3u",
+              "chebur_orbit_report.json"
+          ]
+
+          for name in files:
+              p = Path(name)
+              if not p.is_file() or p.stat().st_size == 0:
+                  raise SystemExit(f"ERROR: {name}")
+              print(f"OK: {name}: {p.stat().st_size} bytes")
+
+          report = json.loads(
+              Path("chebur_orbit_report.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+
+          print("Engine:", report["engine"])
+          print("Version:", report["version"])
+          print("Statistics:", report["output_statistics"])
+          PY
+
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            Chebur_donor.m3u \
+            playlist_original.m3u \
+            chebur_orbit_report.json
+
+          if git diff --cached --quiet; then
+            echo "No changes. Commit skipped."
+          else
+            git commit -m "Update Chebur donor playlist"
+            git push
+          fi
