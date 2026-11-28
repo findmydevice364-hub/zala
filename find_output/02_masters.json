@@ -7,9 +7,9 @@
     "status": "success",
     "channels": 130,
     "error": null,
-    "started_at": "2026-11-25T16:17:53.996890+00:00",
+    "started_at": "2026-11-28T14:38:00.886441+00:00",
     "final_url": "http://91.205.196.7:8000/playlist.m3u8",
     "content_type": "application/x-mpegurl",
-    "finished_at": "2026-11-25T16:17:54.285689+00:00"
+    "finished_at": "2026-11-28T14:38:01.269540+00:00"
   }
 ]

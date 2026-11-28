@@ -156,3 +156,30 @@
 2026-11-25 16:17:54,297 | INFO | Filtered 18+: 0
 2026-11-25 16:17:54,297 | INFO | Elapsed seconds: 0.42
 2026-11-25 16:17:54,297 | INFO | ====================================================================
+2026-11-28 14:38:00,735 | INFO | ====================================================================
+2026-11-28 14:38:00,735 | INFO | IPTV NODE MASTER AGGREGATOR v3.0.0
+2026-11-28 14:38:00,735 | INFO | Started: 2026-11-28T14:38:00.735960+00:00
+2026-11-28 14:38:00,736 | INFO | Channel deduplication: DISABLED
+2026-11-28 14:38:00,736 | INFO | 18+ filter: ENABLED
+2026-11-28 14:38:00,736 | INFO | Master count limit: DISABLED
+2026-11-28 14:38:00,736 | INFO | Depth limit: DISABLED
+2026-11-28 14:38:00,736 | INFO | ====================================================================
+2026-11-28 14:38:00,736 | INFO | [SOURCE] Downloading source playlist
+2026-11-28 14:38:00,877 | INFO | [SOURCE] Parsing source channels
+2026-11-28 14:38:00,883 | INFO | [SOURCE] Accepted records: 128
+2026-11-28 14:38:00,886 | INFO | [DISCOVERY] Initial catalog candidates: 1
+2026-11-28 14:38:00,886 | INFO | [MASTER] depth=1 | http://91.205.196.7:8000/playlist.m3u8
+2026-11-28 14:38:01,269 | INFO | [OK] 130 channel records | http://91.205.196.7:8000/playlist.m3u8
+2026-11-28 14:38:01,273 | INFO | [PROGRESS] masters=1 successful=1 channels=258 queue=0
+2026-11-28 14:38:01,274 | INFO | [EXPORT] Nodes: 17
+2026-11-28 14:38:01,274 | INFO | [EXPORT] Masters: 1
+2026-11-28 14:38:01,278 | INFO | [EXPORT] Channel occurrences: 258
+2026-11-28 14:38:01,279 | INFO | [EXPORT] Final master playlist written
+2026-11-28 14:38:01,279 | INFO | [VALIDATION] All output files checked
+2026-11-28 14:38:01,279 | INFO | ====================================================================
+2026-11-28 14:38:01,279 | INFO | [SUCCESS] Aggregation completed
+2026-11-28 14:38:01,280 | INFO | Masters: 1
+2026-11-28 14:38:01,280 | INFO | Channels: 258
+2026-11-28 14:38:01,280 | INFO | Filtered 18+: 0
+2026-11-28 14:38:01,280 | INFO | Elapsed seconds: 0.54
+2026-11-28 14:38:01,280 | INFO | ====================================================================
